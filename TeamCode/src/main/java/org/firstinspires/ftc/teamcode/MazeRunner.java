@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name="Main TeleOp", group = "Iterative Opmode")
-public class MainTeleop extends OpMode {
-    Hardware map;
+@TeleOp(name="Maze Runner", group = "Iterative Opmode")
+public class MazeRunner extends OpMode {
+    DriveMap map;
 
     // drive values
     double drive = 0.0;
@@ -14,7 +14,7 @@ public class MainTeleop extends OpMode {
 
     @Override
     public void init() {
-        map = new Hardware(hardwareMap);
+        map = new DriveMap(hardwareMap);
     }
 
     @Override

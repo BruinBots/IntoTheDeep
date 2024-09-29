@@ -1,18 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
-public class Hardware {
+public class DriveMap {
 
-    public RevColorSensorV3 colorSensor;
     public DcMotorEx leftFrontMotor;
     public DcMotorEx rightFrontMotor;
     public DcMotorEx leftBackMotor;
     public DcMotorEx rightBackMotor;
 
-    public Hardware(HardwareMap hardwareMap) {
+    public DriveMap(HardwareMap hardwareMap) {
         leftFrontMotor = hardwareMap.get(DcMotorEx.class, "left_front");
         rightFrontMotor = hardwareMap.get(DcMotorEx.class, "right_front");
         leftBackMotor = hardwareMap.get(DcMotorEx.class, "left_back");
