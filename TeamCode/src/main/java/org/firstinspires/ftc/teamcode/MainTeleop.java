@@ -33,18 +33,5 @@ public class MainTeleop extends OpMode {
         turn = Math.copySign(Math.pow(turn, 2), turn);
 
         map.moveBotMecanum(drive, turn, strafe,  0.65); // actually move the robot
-
-
-        map.colorDistanceSensor.loop();
-
-        telemetry.addData("Red: ", map.colorDistanceSensor.red);
-        telemetry.addData("Red_Val: ", map.colorDistanceSensor.RED_VAL);
-        telemetry.addData("Green: ", map.colorDistanceSensor.green);
-        telemetry.addData("Green_Val: ", map.colorDistanceSensor.GREEN_VAL);
-        telemetry.addData("Blue: ", map.colorDistanceSensor.blue);
-        telemetry.addData("Blue_Val: ", map.colorDistanceSensor.BLUE_VAL);
-        telemetry.addData("Color: ", map.colorDistanceSensor.color);
-        telemetry.addData("Range", map.colorDistanceSensor.READING_DISTANCE);
-        telemetry.update();
     }
 }

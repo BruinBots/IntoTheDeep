@@ -12,10 +12,7 @@ public class Hardware {
     public DcMotorEx leftBackMotor;
     public DcMotorEx rightBackMotor;
 
-    ColorDistanceSensor colorDistanceSensor;
     public Hardware(HardwareMap hardwareMap) {
-        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
-        colorDistanceSensor = new ColorDistanceSensor(colorSensor);
         leftFrontMotor = hardwareMap.get(DcMotorEx.class, "left_front");
         rightFrontMotor = hardwareMap.get(DcMotorEx.class, "right_front");
         leftBackMotor = hardwareMap.get(DcMotorEx.class, "left_back");
