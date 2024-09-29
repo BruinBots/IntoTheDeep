@@ -6,16 +6,24 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Hardware {
 
-    public RevColorSensorV3 colorSensor;
+//    public RevColorSensorV3 colorSensor;
     public DcMotorEx leftFrontMotor;
     public DcMotorEx rightFrontMotor;
     public DcMotorEx leftBackMotor;
     public DcMotorEx rightBackMotor;
 
-    ColorDistanceSensor colorDistanceSensor;
+//    ColorDistanceSensor colorDistanceSensor;
+
+    public DcMotorEx viperMotor;
+    public Viper viper;
+
     public Hardware(HardwareMap hardwareMap) {
-        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
-        colorDistanceSensor = new ColorDistanceSensor(colorSensor);
+
+        // Color sensor
+//        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
+//        colorDistanceSensor = new ColorDistanceSensor(colorSensor);
+
+        // Drive motors
         leftFrontMotor = hardwareMap.get(DcMotorEx.class, "left_front");
         rightFrontMotor = hardwareMap.get(DcMotorEx.class, "right_front");
         leftBackMotor = hardwareMap.get(DcMotorEx.class, "left_back");
@@ -24,6 +32,10 @@ public class Hardware {
         // Reverse left motors
         leftFrontMotor.setDirection(DcMotorEx.Direction.REVERSE);
         leftBackMotor.setDirection(DcMotorEx.Direction.REVERSE);
+
+        // ViperSlide
+        viperMotor = hardwareMap.get(DcMotorEx.class, "viper_motor");
+        viper = new Viper(viperMotor);
     }
 
     public void moveBotMecanum(double drive, double rotate, double strafe, double scaleFactor) {
