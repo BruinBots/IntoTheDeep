@@ -33,7 +33,7 @@ public class RedNearAuto extends BaseAuto {
             prop.load(input);
             START_X = Integer.parseInt(prop.getProperty("start.x"));
             START_Y = -Integer.parseInt(prop.getProperty("start.y"));
-            PARK_X = Integer.parseInt(prop.getProperty("park.x"));
+            PARK_X = -Integer.parseInt(prop.getProperty("park.x"));
             PARK_Y = -Integer.parseInt(prop.getProperty("park.y"));
         }
         catch (IOException ex) {
