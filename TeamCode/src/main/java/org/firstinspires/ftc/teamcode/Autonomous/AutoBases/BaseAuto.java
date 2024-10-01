@@ -9,6 +9,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
+import java.util.Vector;
+
 public class BaseAuto {
     private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
@@ -31,8 +33,15 @@ public class BaseAuto {
         return new Vector2d(pose.getX(), pose.getY());
     }
 
-//    public Trajectory park(Pose2d startPose) {
-//        Trajectory traj = drive.trajectoryBuilder(startPose).lineToConstantHeading().build();
-//        return traj;
-//    }
+    public Vector2d park_v() {
+        return new Vector2d(0, 0);
+    }
+
+    public Trajectory park(Pose2d startPose) {
+        Trajectory traj = drive.trajectoryBuilder(startPose)
+                .lineToConstantHeading(park_v())
+                .build();
+        drive.followTrajectory(traj);
+        return traj;
+    }
 }
