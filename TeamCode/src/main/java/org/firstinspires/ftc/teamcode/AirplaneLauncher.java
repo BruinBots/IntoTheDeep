@@ -36,6 +36,8 @@ import static java.lang.Thread.sleep;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 @TeleOp(name="Airplane Launcher", group="Iterative OpMode")
 public class AirplaneLauncher extends OpMode
 {
@@ -55,19 +57,19 @@ public class AirplaneLauncher extends OpMode
 
     @Override
     public void loop() {
-        if ((gamepad1.dpad_up || gamepad1.left_stick_y > 0.1 || gamepad1.right_stick_y > 0.1) && bot.droneRotateServo.getPosition() < Drone.MIN_ROTATE_POS) {
-            pos += 0.005;
-        }
-        else if ((gamepad1.dpad_down || gamepad1.left_stick_y < -0.1 || gamepad1.right_stick_y < -0.1) && bot.droneRotateServo.getPosition() > Drone.MAX_ROTATE_POS)
-        {
+        if ((gamepad1.left_stick_y > 0.1) && bot.droneRotateServo.getPosition() > Drone.MIN_ROTATE_POS) {
             pos -= 0.005;
+        }
+        else if ((gamepad1.left_stick_y < -0.1) && bot.droneRotateServo.getPosition() < Drone.MAX_ROTATE_POS)
+        {
+            pos += 0.005;
         }
         bot.droneRotateServo.setPosition(pos);
 
-        if (gamepad1.dpad_left || gamepad1.left_stick_x < -0.1 || gamepad1.right_stick_x < -0.1) {
+        if (gamepad1.right_stick_x < -0.1) {
             bot.drone.setTurret(0.5 - TURRET_SPEED);
         }
-        else if (gamepad1.dpad_right || gamepad1.left_stick_x > 0.1 || gamepad1.right_stick_x > 0.1) {
+        else if (gamepad1.right_stick_x > 0.1) {
             bot.drone.setTurret(0.5 + TURRET_SPEED);
         }
         else {
@@ -75,7 +77,7 @@ public class AirplaneLauncher extends OpMode
         }
 
         // drone launcher
-        if (gamepad1.y || (gamepad1.left_bumper && gamepad1.right_bumper)) {
+        if (gamepad1.y) {
             bot.drone.launchWithRotation(pos); // 0.4
         }
         bot.drone.loop();

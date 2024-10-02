@@ -13,8 +13,8 @@ public class Drone {
     public long rotateAndLaunchDelay = 400;
     public long timeBeforeReset = 1000;
     public enum launchPoses {open, closed}
-    public static double MAX_ROTATE_POS = 0.4;
-    public static double MIN_ROTATE_POS = 0.75;
+    public static double MAX_ROTATE_POS = 0.75;
+    public static double MIN_ROTATE_POS = 0.4;
 
     Drone(Servo droneReleaseServo, Servo droneRotateServo, Servo turretServo) {
         this.droneReleaseServo = droneReleaseServo;
@@ -52,7 +52,7 @@ public class Drone {
     }
 
     public void resetPoses() {
-        setServoPos(droneRotateServo, MAX_ROTATE_POS);
+        setServoPos(droneRotateServo, MIN_ROTATE_POS);
         setServoPos(droneReleaseServo, CLOSED_POS);
     }
 
@@ -65,9 +65,9 @@ public class Drone {
             }
         }
 
-        if (droneRotateServo.getPosition() < MAX_ROTATE_POS) {
+        if (droneRotateServo.getPosition() > MAX_ROTATE_POS) {
             droneRotateServo.setPosition(MAX_ROTATE_POS);
-        } else if (droneRotateServo.getPosition() > MIN_ROTATE_POS) {
+        } else if (droneRotateServo.getPosition() < MIN_ROTATE_POS) {
             droneRotateServo.setPosition(MIN_ROTATE_POS);
         }
     }
