@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class Hardware {
 
@@ -13,6 +16,12 @@ public class Hardware {
     public DcMotorEx rightBackMotor;
 
 //    ColorDistanceSensor colorDistanceSensor;
+
+    public Servo armServo;
+    public Servo wristServo;
+    public Encoder armEncoder;
+    public Encoder wristEncoder;
+    public Arm arm;
 
     public DcMotorEx viperMotor;
     public Viper viper;
@@ -36,6 +45,13 @@ public class Hardware {
         // ViperSlide
         viperMotor = hardwareMap.get(DcMotorEx.class, "viper_motor");
         viper = new Viper(viperMotor);
+
+        // Arm
+        armServo = hardwareMap.get(Servo.class, "arm_servo");
+        wristServo = hardwareMap.get(Servo.class, "wrist_servo");
+        armEncoder = hardwareMap.get(Encoder.class, "arm_encoder");
+        wristEncoder = hardwareMap.get(Encoder.class, "wrist_encoder");
+        arm = new Arm(armServo, wristServo, armEncoder, wristEncoder);
     }
 
     public void moveBotMecanum(double drive, double rotate, double strafe, double scaleFactor) {

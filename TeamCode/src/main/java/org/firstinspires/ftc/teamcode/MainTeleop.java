@@ -12,6 +12,9 @@ public class MainTeleop extends OpMode {
     double turn = 0.0;
     double strafe = 0.0;
 
+    int armPos = 0;
+    int wristPos = 0;
+
     @Override
     public void init() {
         map = new Hardware(hardwareMap);
@@ -31,6 +34,20 @@ public class MainTeleop extends OpMode {
         strafe = Math.copySign(Math.pow(strafe, 2), strafe);
         drive = Math.copySign(Math.pow(drive, 2), drive);
         turn = Math.copySign(Math.pow(turn, 2), turn);
+
+        if (gamepad1.dpad_up) {
+            map.arm.moveArm(armPos + 1);
+        }
+        else if (gamepad1.dpad_down) {
+            map.arm.moveArm(armPos - 1);
+        }
+
+        if (gamepad1.dpad_right) {
+            map.arm.moveWrist(wristPos + 1);
+        }
+        else if (gamepad1.dpad_left) {
+            map.arm.moveWrist(wristPos - 1);
+        }
 
         map.moveBotMecanum(drive, turn, strafe,  0.65); // actually move the robot
 
