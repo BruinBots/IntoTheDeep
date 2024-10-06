@@ -17,13 +17,12 @@ public class Hardware {
 
 //    ColorDistanceSensor colorDistanceSensor;
 
-    public Servo armServo;
+    public DcMotorEx armMotor;
     public Servo wristServo;
-    public Encoder armEncoder;
-    public Encoder wristEncoder;
     public Arm arm;
 
-    public DcMotorEx viperMotor;
+    public DcMotorEx viperMotorL;
+    public DcMotorEx viperMotorR;
     public Viper viper;
 
     public Hardware(HardwareMap hardwareMap) {
@@ -43,15 +42,14 @@ public class Hardware {
         leftBackMotor.setDirection(DcMotorEx.Direction.REVERSE);
 
         // ViperSlide
-        viperMotor = hardwareMap.get(DcMotorEx.class, "viper_motor");
-        viper = new Viper(viperMotor);
+        viperMotorL = hardwareMap.get(DcMotorEx.class, "viper_motor_left");
+        viperMotorR = hardwareMap.get(DcMotorEx.class, "viper_motor_right");
+        viper = new Viper(viperMotorL, viperMotorR);
 
         // Arm
-        armServo = hardwareMap.get(Servo.class, "arm_servo");
+        armMotor = hardwareMap.get(DcMotorEx.class, "arm_motor");
         wristServo = hardwareMap.get(Servo.class, "wrist_servo");
-        armEncoder = hardwareMap.get(Encoder.class, "arm_encoder");
-        wristEncoder = hardwareMap.get(Encoder.class, "wrist_encoder");
-        arm = new Arm(armServo, wristServo, armEncoder, wristEncoder);
+        arm = new Arm(armMotor, wristServo);
     }
 
     public void moveBotMecanum(double drive, double rotate, double strafe, double scaleFactor) {

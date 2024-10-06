@@ -5,24 +5,26 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name="Main TeleOp", group = "Iterative Opmode")
 public class MainTeleop extends OpMode {
-    Hardware map;
+    Hardware bot;
 
     // drive values
     double drive = 0.0;
     double turn = 0.0;
     double strafe = 0.0;
 
+    int viperPos = 0;
     int armPos = 0;
-    int wristPos = 0;
+    double wristPos = 0;
 
     @Override
     public void init() {
-        map = new Hardware(hardwareMap);
+        bot = new Hardware(hardwareMap);
     }
 
     @Override
     public void loop() {
 
+        // Drive
         drive = gamepad1.left_stick_y - gamepad2.left_stick_y;
         strafe = gamepad2.left_stick_x - gamepad1.left_stick_x;
         turn= gamepad1.right_stick_x + gamepad2.right_stick_x;
@@ -35,33 +37,60 @@ public class MainTeleop extends OpMode {
         drive = Math.copySign(Math.pow(drive, 2), drive);
         turn = Math.copySign(Math.pow(turn, 2), turn);
 
+        // Arm
         if (gamepad1.dpad_up) {
-            map.arm.moveArm(armPos + 1);
+            armPos += Arm.ARM_SPEED;
         }
         else if (gamepad1.dpad_down) {
-            map.arm.moveArm(armPos - 1);
+            armPos -= Arm.ARM_SPEED;
         }
 
+        if (armPos > Arm.MAX_ARM_POS) {
+            armPos = Arm.MAX_ARM_POS;
+        }
+        else if (armPos < Arm.MIN_ARM_POS) {
+            armPos = Arm.MIN_ARM_POS;
+        }
+
+        // Wrist
         if (gamepad1.dpad_right) {
-            map.arm.moveWrist(wristPos + 1);
+            wristPos += Arm.WRIST_SPEED;
         }
         else if (gamepad1.dpad_left) {
-            map.arm.moveWrist(wristPos - 1);
+            wristPos -= Arm.WRIST_SPEED;
         }
 
-        map.moveBotMecanum(drive, turn, strafe,  0.65); // actually move the robot
+        if (wristPos > Arm.MAX_WRIST_POS) {
+            wristPos = Arm.MAX_WRIST_POS;
+        }
+        else if (wristPos < Arm.MIN_WRIST_POS) {
+            wristPos = Arm.MIN_WRIST_POS;
+        }
 
+        // Viper
+        if (gamepad1.right_bumper) {
+            viperPos += Viper.VIPER_SPEED;
+        }
+        else if (gamepad1.left_bumper) {
+            viperPos -= Viper.VIPER_SPEED;
+        }
 
-//        map.colorDistanceSensor.loop();
-//
-//        telemetry.addData("Red: ", map.colorDistanceSensor.red);
-//        telemetry.addData("Red_Val: ", map.colorDistanceSensor.RED_VAL);
-//        telemetry.addData("Green: ", map.colorDistanceSensor.green);
-//        telemetry.addData("Green_Val: ", map.colorDistanceSensor.GREEN_VAL);
-//        telemetry.addData("Blue: ", map.colorDistanceSensor.blue);
-//        telemetry.addData("Blue_Val: ", map.colorDistanceSensor.BLUE_VAL);
-//        telemetry.addData("Color: ", map.colorDistanceSensor.color);
-//        telemetry.addData("Range", map.colorDistanceSensor.READING_DISTANCE);
+        if (viperPos > Viper.MAX_VIPER_POS) {
+            viperPos = Viper.MAX_VIPER_POS;
+        }
+        else if (viperPos < Viper.MIN_VIPER_POS) {
+            viperPos = Viper.MIN_VIPER_POS;
+        }
+
+        // Telemetry
+        telemetry.addData("Viper Position", viperPos);
+        telemetry.addData("Arm Position", armPos);
+        telemetry.addData("Wrist Position", wristPos);
         telemetry.update();
+
+        bot.arm.moveArm(armPos); // Move arm
+        bot.arm.moveWrist(wristPos); // Move wrists
+        bot.viper.move(viperPos); // Move viper
+        bot.moveBotMecanum(drive, turn, strafe,  0.65); // actually move the robot
     }
 }

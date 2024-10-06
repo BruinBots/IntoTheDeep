@@ -11,10 +11,12 @@ public class Viper {
     public static int VIPER_SPEED = 2;
     public static double VIPER_POWER = 0.4;
 
-    private DcMotorEx motor;
+    private DcMotorEx motorL;
+    private DcMotorEx motorR;
 
-    public Viper(DcMotorEx motor) {
-        this.motor = motor;
+    public Viper(DcMotorEx motorL, DcMotorEx motorR) {
+        this.motorL = motorL;
+        this.motorR = motorR;
     }
 
     public void move(int targetPos) {
@@ -25,8 +27,16 @@ public class Viper {
             targetPos = MAX_VIPER_POS;
         }
 
-        motor.setPower(VIPER_POWER);
-        motor.setTargetPosition(targetPos);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // Set motor powers
+        motorL.setPower(VIPER_POWER);
+        motorR.setPower(VIPER_POWER);
+
+        // Set positions reversed for each motor
+        motorL.setTargetPosition(targetPos);
+        motorR.setTargetPosition(-targetPos);
+
+        // Activate motors to use encoders
+        motorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
