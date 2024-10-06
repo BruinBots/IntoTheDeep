@@ -32,6 +32,6 @@ public class MazeRunner extends OpMode {
         drive = Math.copySign(Math.pow(drive, 2), drive);
         turn = Math.copySign(Math.pow(turn, 2), turn);
 
-        map.moveBotMecanum(drive, turn, strafe,  0.65); // actually move the robot
+        map.moveBotMecanum(drive, turn, strafe,  0.35); // actually move the robot
     }
 }
