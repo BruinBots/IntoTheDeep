@@ -10,20 +10,28 @@ import org.firstinspires.ftc.teamcode.util.Encoder;
 public class Hardware {
 
 //    public RevColorSensorV3 colorSensor;
+//    ColorDistanceSensor colorDistanceSensor;
+
+    // Drive motors
     public DcMotorEx leftFrontMotor;
     public DcMotorEx rightFrontMotor;
     public DcMotorEx leftBackMotor;
     public DcMotorEx rightBackMotor;
 
-//    ColorDistanceSensor colorDistanceSensor;
-
+    // Arm system
     public DcMotorEx armMotor;
     public Servo wristServo;
     public Arm arm;
 
+    // Viper slide system
     public DcMotorEx viperMotorL;
     public DcMotorEx viperMotorR;
     public Viper viper;
+
+    // Intake system
+    public Servo intakeServoL;
+    public Servo intakeServoR;
+    public Intake intake;
 
     public Hardware(HardwareMap hardwareMap) {
 
@@ -50,6 +58,11 @@ public class Hardware {
         armMotor = hardwareMap.get(DcMotorEx.class, "arm_motor");
         wristServo = hardwareMap.get(Servo.class, "wrist_servo");
         arm = new Arm(armMotor, wristServo);
+
+        // Intake
+        intakeServoL = hardwareMap.get(Servo.class, "intake_servo_left");
+        intakeServoR = hardwareMap.get(Servo.class, "intake_servo_right");
+        intake = new Intake(intakeServoL, intakeServoR);
     }
 
     public void moveBotMecanum(double drive, double rotate, double strafe, double scaleFactor) {

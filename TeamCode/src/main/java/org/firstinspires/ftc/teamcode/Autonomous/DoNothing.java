@@ -8,8 +8,8 @@ public class DoNothing extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry.addLine("What are you doing?");
-        telemetry.addLine("Umm...Nothing");
+        telemetry.addLine("Aren't you going to do anything for autonomous?");
+        telemetry.addLine("Nope! Bye.");
         telemetry.update();
     }
 }

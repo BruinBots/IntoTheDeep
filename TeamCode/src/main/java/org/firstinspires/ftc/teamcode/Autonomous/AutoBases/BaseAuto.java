@@ -33,8 +33,13 @@ public class BaseAuto {
         return new Vector2d(pose.getX(), pose.getY());
     }
 
+    // ----- PARKING ----- //
     public Vector2d park_v() {
         return new Vector2d(0, 0);
+    }
+
+    public Trajectory park(Trajectory startTraj) {
+        return park(startTraj.end());
     }
 
     public Trajectory park(Pose2d startPose) {
@@ -42,6 +47,24 @@ public class BaseAuto {
                 .lineToConstantHeading(park_v())
                 .build();
         drive.followTrajectory(traj);
+        return traj;
+    }
+
+    // ----- BASKET ----- //
+    public Vector2d basket_v() { return new Vector2d(0, 0); }
+
+    public Trajectory basket(Trajectory startTraj) {
+        return basket(startTraj.end());
+    }
+
+    public Trajectory basket(Pose2d startPose) {
+        Trajectory traj = drive.trajectoryBuilder(startPose)
+                .lineToConstantHeading(basket_v())
+                .build();
+        drive.followTrajectory(traj);
+
+        // TODO: Place sample in basket
+
         return traj;
     }
 }

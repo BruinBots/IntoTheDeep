@@ -23,6 +23,8 @@ public class BlueFarAuto extends BaseAuto {
     public static int START_Y;
     public static int PARK_X;
     public static int PARK_Y;
+    public static int BASKET_X;
+    public static int BASKET_Y;
 
     public BlueFarAuto(HardwareMap hardwareMap, Telemetry telemetry) {
         super(hardwareMap, telemetry, startPose, true);
@@ -35,6 +37,8 @@ public class BlueFarAuto extends BaseAuto {
             START_Y = Integer.parseInt(prop.getProperty("start.y"));
             PARK_X = Integer.parseInt(prop.getProperty("park.x"));
             PARK_Y = Integer.parseInt(prop.getProperty("park.y"));
+            BASKET_X = Integer.parseInt(prop.getProperty("basket.x"));
+            BASKET_Y = Integer.parseInt(prop.getProperty("basket.y"));
         }
         catch (IOException ex) {
             ex.printStackTrace();
@@ -47,4 +51,7 @@ public class BlueFarAuto extends BaseAuto {
     public Vector2d park_v() {
         return new Vector2d(PARK_X, PARK_Y);
     }
+
+    @Override
+    public Vector2d basket_v() { return new Vector2d(BASKET_X, BASKET_Y); }
 }
