@@ -60,9 +60,9 @@ public class Hardware {
         arm = new Arm(armMotor, wristServo);
 
         // Intake
-        intakeServoL = hardwareMap.get(Servo.class, "intake_servo_left");
-        intakeServoR = hardwareMap.get(Servo.class, "intake_servo_right");
-        intake = new Intake(intakeServoL, intakeServoR);
+//        intakeServoL = hardwareMap.get(Servo.class, "intake_servo_left");
+//        intakeServoR = hardwareMap.get(Servo.class, "intake_servo_right");
+//        intake = new Intake(intakeServoL, intakeServoR);
     }
 
     public void moveBotMecanum(double drive, double rotate, double strafe, double scaleFactor) {

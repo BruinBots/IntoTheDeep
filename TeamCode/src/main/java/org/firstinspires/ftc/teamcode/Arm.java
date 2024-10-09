@@ -9,10 +9,10 @@ import org.firstinspires.ftc.teamcode.util.Encoder;
 
 @Config
 public class Arm {
-    public static int MAX_ARM_POS = 1000;
-    public static int MIN_ARM_POS = 0;
-    public static double ARM_POWER = 0.4;
-    public static int ARM_SPEED = 8;
+    public static int MAX_ARM_POS = 0;
+    public static int MIN_ARM_POS = -1000;
+    public static double ARM_POWER = 0.3;
+    public static int ARM_SPEED = 4;
 
     public static int MAX_WRIST_POS = 1;
     public static int MIN_WRIST_POS = 0;
@@ -24,6 +24,8 @@ public class Arm {
     public Arm(DcMotorEx armMotor, Servo wristServo) {
         this.armMotor = armMotor;
         this.wristServo = wristServo;
+
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void moveArm(int targetPos) {
