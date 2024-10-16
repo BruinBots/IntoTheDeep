@@ -49,7 +49,7 @@ public class CameraColorOpMode extends LinearOpMode {
                 .setTargetColorRange(ColorRange.BLUE)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
                 .setDrawContours(true)
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-0.5, 0.5, 0.5, -0.5))
+                .setRoi(ImageRegion.entireFrame())
                 .setBlurSize(5)
                 .build();
 
@@ -57,7 +57,7 @@ public class CameraColorOpMode extends LinearOpMode {
                 .setTargetColorRange(ColorRange.RED)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
                 .setDrawContours(true)
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-0.5, 0.5, 0.5, -0.5))
+                .setRoi(ImageRegion.entireFrame())
                 .setBlurSize(5)
                 .build();
 
@@ -65,7 +65,7 @@ public class CameraColorOpMode extends LinearOpMode {
                 .setTargetColorRange(ColorRange.YELLOW)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
                 .setDrawContours(true)
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-0.5, 0.5, 0.5, -0.5))
+                .setRoi(ImageRegion.entireFrame())
                 .setBlurSize(5)
                 .build();
 
