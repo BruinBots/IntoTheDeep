@@ -16,13 +16,27 @@ public class ViperOp extends OpMode {
 
     @Override
     public void loop() {
-        if (gamepad1.right_bumper) {
+        // Set slide to zero
+        if (gamepad1.a) {
+            pos = 0;
+        }
+        //Set slide to midway
+        else if (gamepad1.b){
+            pos = 1600;
+        }
+        //Set slide to max
+        else if (gamepad1.y) {
+            pos = 4200;
+        }
+        //Increase or decrease slide position
+        else if (gamepad1.right_bumper) {
             pos += Viper.VIPER_SPEED;
         }
         else if (gamepad1.left_bumper) {
             pos -= Viper.VIPER_SPEED;
         }
 
+        // Don't let the slide go past the max or min
         if (pos > Viper.MAX_VIPER_POS) {
             pos = Viper.MAX_VIPER_POS;
         }
@@ -30,7 +44,9 @@ public class ViperOp extends OpMode {
             pos = Viper.MIN_VIPER_POS;
         }
 
-        telemetry.addData("Viper Position", pos);
+        // Telemetry of slide position
+        telemetry.addData("Target Position", bot.viper.getTargetPos());
+        telemetry.addData("Actual Position", bot.viper.getActualPos());
         telemetry.update();
 
         bot.viper.move(pos);

@@ -45,4 +45,15 @@ public class Intake {
         leftServo.setPosition(leftServoVal);
         rightServo.setPosition(rightServoVal);
     }
+
+    //outake for certain time
+    public void outtakeForTime(long time) {
+        outtake();
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        stop();
+    }
 }

@@ -6,10 +6,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @Config
 public class Viper {
-    public static int MAX_VIPER_POS = 10000;
+    public static int MAX_VIPER_POS = 4200;
     public static int MIN_VIPER_POS = 0;
-    public static int VIPER_SPEED = 2;
-    public static double VIPER_POWER = 0.4;
+    public static int VIPER_SPEED = 30;
+    public static double VIPER_POWER = 0.75;
 
     private DcMotorEx motorL;
     private DcMotorEx motorR;
@@ -38,5 +38,12 @@ public class Viper {
         // Activate motors to use encoders
         motorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public int getTargetPos() {
+        return motorL.getTargetPosition();
+    }
+    public int getActualPos() {
+        return motorL.getCurrentPosition();
     }
 }

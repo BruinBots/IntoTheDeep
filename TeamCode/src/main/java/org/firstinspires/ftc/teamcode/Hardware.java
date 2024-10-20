@@ -33,6 +33,8 @@ public class Hardware {
     public Servo intakeServoR;
     public Intake intake;
 
+    public ColorDistanceSensor ColorDistanceSensor;
+
     public Hardware(HardwareMap hardwareMap) {
 
         // Color sensor
@@ -59,10 +61,11 @@ public class Hardware {
         wristServo = hardwareMap.get(Servo.class, "wrist_servo");
         arm = new Arm(armMotor, wristServo);
 
-        // Intake
-//        intakeServoL = hardwareMap.get(Servo.class, "intake_servo_left");
-//        intakeServoR = hardwareMap.get(Servo.class, "intake_servo_right");
-//        intake = new Intake(intakeServoL, intakeServoR);
+        // Intake and Color Sensor
+        ColorDistanceSensor = new ColorDistanceSensor(hardwareMap.get(RevColorSensorV3.class, "color_sensor"));
+        intakeServoL = hardwareMap.get(Servo.class, "intake_servo_left");
+        intakeServoR = hardwareMap.get(Servo.class, "intake_servo_right");
+        intake = new Intake(intakeServoL, intakeServoR);
     }
 
     public void moveBotMecanum(double drive, double rotate, double strafe, double scaleFactor) {
