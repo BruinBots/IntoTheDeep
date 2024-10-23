@@ -67,4 +67,20 @@ public class BaseAuto {
 
         return traj;
     }
+
+    // ----- SUBMERSIBLE ----- //
+    public Vector2d submersible_v() { return new Vector2d(0, 0); }
+
+    public Trajectory submersible(Trajectory startTraj) { return submersible(startTraj.end()); }
+
+    public Trajectory submersible(Pose2d startPose) {
+        Trajectory traj = drive.trajectoryBuilder(startPose)
+                .lineToConstantHeading(submersible_v())
+                .build();
+        drive.followTrajectory(traj);
+
+        // TODO: Place specimen on horizontal bar
+
+        return traj;
+    }
 }
