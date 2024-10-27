@@ -99,32 +99,33 @@ public class CameraColorOpMode extends LinearOpMode {
             telemetry.addData("preview on/off", "... Camera Stream\n");
 
             // Get blobs for each color
-            List<ColorBlobLocatorProcessor.Blob> blueBlobs = blueLocator.getBlobs();
-            List<ColorBlobLocatorProcessor.Blob> redBlobs = redLocator.getBlobs();
+//            List<ColorBlobLocatorProcessor.Blob> blueBlobs = blueLocator.getBlobs();
+//            List<ColorBlobLocatorProcessor.Blob> redBlobs = redLocator.getBlobs();
             List<ColorBlobLocatorProcessor.Blob> yellowBlobs = yellowLocator.getBlobs();
 
             // Filter blobs by size for each color
-            ColorBlobLocatorProcessor.Util.filterByArea(500, 20000, blueBlobs);
-            ColorBlobLocatorProcessor.Util.filterByArea(500, 20000, redBlobs);
+//            ColorBlobLocatorProcessor.Util.filterByArea(500, 20000, blueBlobs);
+//            ColorBlobLocatorProcessor.Util.filterByArea(500, 20000, redBlobs);
             ColorBlobLocatorProcessor.Util.filterByArea(500, 20000, yellowBlobs);
 
             telemetry.addLine(" Color  Area Density Aspect  Center");
 
             // Display blobs with color attribute
-            for (ColorBlobLocatorProcessor.Blob b : blueBlobs) {
-                RotatedRect boxFit = b.getBoxFit();
-                telemetry.addLine(String.format("Blue   %5d  %4.2f   %5.2f  (%3d,%3d)",
-                        b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
-            }
+//            for (ColorBlobLocatorProcessor.Blob b : blueBlobs) {
+//                RotatedRect boxFit = b.getBoxFit();
+//                telemetry.addLine(String.format("Blue   %5d  %4.2f   %5.2f  (%3d,%3d)",
+//                        b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
+//            }
 
-            for (ColorBlobLocatorProcessor.Blob b : redBlobs) {
-                RotatedRect boxFit = b.getBoxFit();
-                telemetry.addLine(String.format("Red    %5d  %4.2f   %5.2f  (%3d,%3d)",
-                        b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
-            }
+//            for (ColorBlobLocatorProcessor.Blob b : redBlobs) {
+//                RotatedRect boxFit = b.getBoxFit();
+//                telemetry.addLine(String.format("Red    %5d  %4.2f   %5.2f  (%3d,%3d)",
+//                        b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
+//            }
 
             for (ColorBlobLocatorProcessor.Blob b : yellowBlobs) {
                 RotatedRect boxFit = b.getBoxFit();
+                telemetry.addData("yellowBlob Width", b.getBoxFit().size.width);
                 telemetry.addLine(String.format("Yellow %5d  %4.2f   %5.2f  (%3d,%3d)",
                         b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
             }
