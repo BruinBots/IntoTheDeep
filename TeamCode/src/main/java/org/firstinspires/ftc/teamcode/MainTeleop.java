@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name="Main TeleOp", group = "Iterative Opmode")
 public class MainTeleop extends OpMode {
@@ -14,11 +15,25 @@ public class MainTeleop extends OpMode {
 
     int viperPos = 0;
     int armPos = 0;
-    double wristPos = 0;
+    double wristPos = 0.75;
+
+    boolean isPixel = false;
+    ColorDistanceSensor.Colors currentOP = (ColorDistanceSensor.Colors.red);
+    long outtakeTime = 200;
 
     @Override
     public void init() {
         bot = new Hardware(hardwareMap);
+        // reset motor encoders (remove for competition?)
+        bot.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bot.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        bot.viperMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bot.viperMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bot.viperMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bot.viperMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // bot.colorSensor.enableLed(true); DOES NOT WORK ON THIS COLOR SENSOR
     }
 
     @Override
@@ -27,7 +42,7 @@ public class MainTeleop extends OpMode {
         // Drive
         drive = gamepad1.left_stick_y - gamepad2.left_stick_y;
         strafe = gamepad2.left_stick_x - gamepad1.left_stick_x;
-        turn= gamepad1.right_stick_x + gamepad2.right_stick_x;
+        turn = gamepad1.right_stick_x + gamepad2.right_stick_x;
 
         if (drive > 1) { drive = 1; }
         if (strafe > 1) { strafe = 1; }
@@ -38,10 +53,10 @@ public class MainTeleop extends OpMode {
         turn = Math.copySign(Math.pow(turn, 2), turn);
 
         // Arm
-        if (gamepad1.dpad_up) {
+        if (gamepad1.dpad_down) {
             armPos += Arm.ARM_SPEED;
         }
-        else if (gamepad1.dpad_down) {
+        else if (gamepad1.dpad_up) {
             armPos -= Arm.ARM_SPEED;
         }
 
@@ -82,10 +97,42 @@ public class MainTeleop extends OpMode {
             viperPos = Viper.MIN_VIPER_POS;
         }
 
+        // Intake
+        bot.ColorDistanceSensor.loop();
+        if (bot.ColorDistanceSensor.READING_DISTANCE <= 1) {
+            isPixel = true;
+        }
+        else {
+            isPixel = false;
+        }
+
+        if (isPixel) {
+            // If the pixel is not the current OP color, outtake for 1 second
+            ColorDistanceSensor.Colors color = bot.ColorDistanceSensor.color;
+            if (color != currentOP && color != ColorDistanceSensor.Colors.yellow) {
+                bot.intake.outtakeForTime(outtakeTime);
+            } else {
+                bot.intake.stop();
+            }
+        }
+
+        if (gamepad1.a) {
+            bot.intake.intake();
+        }
+        else if (gamepad1.b) {
+            bot.intake.outtake();
+        }
+        else {
+            bot.intake.stop();
+        }
+
+        // color sensor
+
         // Telemetry
         telemetry.addData("Viper Position", viperPos);
         telemetry.addData("Arm Position", armPos);
         telemetry.addData("Wrist Position", wristPos);
+        telemetry.addData("Color", bot.ColorDistanceSensor.color);
         telemetry.update();
 
         bot.arm.moveArm(armPos); // Move arm

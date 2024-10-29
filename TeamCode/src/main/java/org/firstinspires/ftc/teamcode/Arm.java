@@ -9,13 +9,13 @@ import org.firstinspires.ftc.teamcode.util.Encoder;
 
 @Config
 public class Arm {
-    public static int MAX_ARM_POS = 0;
+    public static int MAX_ARM_POS = 5000;
     public static int MIN_ARM_POS = -1000;
     public static double ARM_POWER = 0.3;
     public static int ARM_SPEED = 4;
 
-    public static int MAX_WRIST_POS = 1;
-    public static int MIN_WRIST_POS = 0;
+    public static double MAX_WRIST_POS = 1;
+    public static double MIN_WRIST_POS = 0;
     public static double WRIST_SPEED = 0.008;
 
     private DcMotorEx armMotor;

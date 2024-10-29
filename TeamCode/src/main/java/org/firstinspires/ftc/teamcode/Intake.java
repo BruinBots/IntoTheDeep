@@ -50,7 +50,7 @@ public class Intake {
     public void outtakeForTime(long time) {
         outtake();
         try {
-            Thread.sleep(time);
+            Thread.sleep(time); // probably need to replace this because Thread.sleep is not good
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

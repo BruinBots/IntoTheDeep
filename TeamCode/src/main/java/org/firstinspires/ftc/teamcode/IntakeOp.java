@@ -12,7 +12,7 @@ public class IntakeOp extends OpMode {
     //Instantiate variables
     boolean isPixel = false; // Is there a pixel in the robot?
     ColorDistanceSensor.Colors currentOP = (ColorDistanceSensor.Colors.red); // Exaple (red or blue)
-    long OUTTAKE_TIME = 200; // How long to outtake after getting a bad pixel (in ms)
+    long outtakeTime = 200; // How long to outtake after getting a bad pixel (in ms)
 
     @Override
     public void init() {
@@ -43,7 +43,7 @@ public class IntakeOp extends OpMode {
             // If the pixel is not the current OP color, outtake for 1 second
             ColorDistanceSensor.Colors color = bot.ColorDistanceSensor.color;
             if (color != currentOP && color != ColorDistanceSensor.Colors.yellow) {
-                bot.intake.outtakeForTime(OUTTAKE_TIME);
+                bot.intake.outtakeForTime(outtakeTime);
             } else {
                 bot.intake.stop();
             }

@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class Hardware {
 
-//    public RevColorSensorV3 colorSensor;
-//    ColorDistanceSensor colorDistanceSensor;
+    public RevColorSensorV3 colorSensor;
+    ColorDistanceSensor colorDistanceSensor;
 
     // Drive motors
     public DcMotorEx leftFrontMotor;
@@ -38,8 +38,8 @@ public class Hardware {
     public Hardware(HardwareMap hardwareMap) {
 
         // Color sensor
-//        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
-//        colorDistanceSensor = new ColorDistanceSensor(colorSensor);
+        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
+        colorDistanceSensor = new ColorDistanceSensor(colorSensor);
 
         // Drive motors
         leftFrontMotor = hardwareMap.get(DcMotorEx.class, "left_front");
