@@ -32,7 +32,8 @@ public class MainTeleop extends OpMode {
         bot.viperMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bot.viperMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // bot.colorSensor.enableLed(true); DOES NOT WORK ON THIS COLOR SENSOR
+        // put intake servos to standby
+        bot.intake.standby();
     }
 
     @Override
@@ -97,39 +98,35 @@ public class MainTeleop extends OpMode {
         }
 
         // Intake
-        bot.ColorDistanceSensor.loop();
-        if (bot.ColorDistanceSensor.READING_DISTANCE <= 1) {
-            isPixel = true;
-        }
-        else {
-            isPixel = false;
-        }
+//        bot.ColorDistanceSensor.loop();
+//        if (bot.ColorDistanceSensor.READING_DISTANCE <= 1) {
+//            isPixel = true;
+//        }
+//        else {
+//            isPixel = false;
+//        }
 
-        if (isPixel) {
-            // If the pixel is not the current OP color, outtake for 1 second
-            ColorDistanceSensor.Colors color = bot.ColorDistanceSensor.color;
-            if (color != currentOP && color != ColorDistanceSensor.Colors.yellow) {
-                bot.intake.outtakeForTime();
-            } else {
-                bot.intake.stop();
-            }
-        }
+//        if (isPixel) {
+//            // If the pixel is not the current OP color, outtake for 1 second
+//            ColorDistanceSensor.Colors color = bot.ColorDistanceSensor.color;
+//            if (color != currentOP && color != ColorDistanceSensor.Colors.yellow) {
+//                bot.intake.outtakeForTime();
+//            } else {
+//                bot.intake.stop();
+//            }
+//        }
 
         if (gamepad1.a) {
-            bot.intake.intake();
+            bot.intake.engage();
         }
         else if (gamepad1.b) {
-            bot.intake.outtake();
-        }
-        else {
-            bot.intake.stop();
+            bot.intake.standby();
         }
 
-        bot.intake.checkTime();
-
-        // color sensor
 
         // Telemetry
+        telemetry.addData("Near Servo", bot.intake.getNearPos());
+        telemetry.addData("Far Servo", bot.intake.getFarPos());
         telemetry.addData("Viper Position", viperPos);
         telemetry.addData("Arm Position", armPos);
         telemetry.addData("Wrist Position", wristPos);
