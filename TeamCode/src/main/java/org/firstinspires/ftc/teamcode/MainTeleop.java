@@ -19,7 +19,6 @@ public class MainTeleop extends OpMode {
 
     boolean isPixel = false;
     ColorDistanceSensor.Colors currentOP = (ColorDistanceSensor.Colors.red);
-    long outtakeTime = 200;
 
     @Override
     public void init() {
@@ -110,7 +109,7 @@ public class MainTeleop extends OpMode {
             // If the pixel is not the current OP color, outtake for 1 second
             ColorDistanceSensor.Colors color = bot.ColorDistanceSensor.color;
             if (color != currentOP && color != ColorDistanceSensor.Colors.yellow) {
-                bot.intake.outtakeForTime(outtakeTime);
+                bot.intake.outtakeForTime();
             } else {
                 bot.intake.stop();
             }
@@ -125,6 +124,8 @@ public class MainTeleop extends OpMode {
         else {
             bot.intake.stop();
         }
+
+        bot.intake.checkTime();
 
         // color sensor
 

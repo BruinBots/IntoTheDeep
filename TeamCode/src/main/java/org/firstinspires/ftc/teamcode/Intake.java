@@ -10,6 +10,11 @@ public class Intake {
      */
     public static double INTAKE_SPEED = 0.5;
 
+    private boolean currentlyChecking = false;
+    private long outTakeTime;
+
+    private long timeToOuttake = 1000;
+
     private Servo leftServo;
     private Servo rightServo;
 
@@ -47,13 +52,23 @@ public class Intake {
     }
 
     //outake for certain time
-    public void outtakeForTime(long time) {
+    public void outtakeForTime() {
         outtake();
-        try {
-            Thread.sleep(time); // probably need to replace this because Thread.sleep is not good
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        outTakeTime = getCurrentTime();
+        currentlyChecking = true;
+    }
+
+    public void checkTime() {
+        if (currentlyChecking) {
+            if (getCurrentTime() >= outTakeTime + timeToOuttake) {
+                currentlyChecking = false;
+                stop();
+
+            }
         }
-        stop();
+    }
+
+    private long getCurrentTime() {
+        return System.currentTimeMillis();
     }
 }

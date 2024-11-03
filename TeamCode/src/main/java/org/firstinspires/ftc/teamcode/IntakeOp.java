@@ -43,7 +43,7 @@ public class IntakeOp extends OpMode {
             // If the pixel is not the current OP color, outtake for 1 second
             ColorDistanceSensor.Colors color = bot.ColorDistanceSensor.color;
             if (color != currentOP && color != ColorDistanceSensor.Colors.yellow) {
-                bot.intake.outtakeForTime(outtakeTime);
+                bot.intake.outtakeForTime();
             } else {
                 bot.intake.stop();
             }
