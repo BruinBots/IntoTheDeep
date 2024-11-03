@@ -35,6 +35,9 @@ public class Hardware {
 
     public ColorDistanceSensor ColorDistanceSensor;
 
+    public Servo basketServo;
+    public Basket basket;
+
     public Hardware(HardwareMap hardwareMap) {
 
         // Color sensor
@@ -66,6 +69,9 @@ public class Hardware {
         intakeServoL = hardwareMap.get(Servo.class, "intake_servo_left");
         intakeServoR = hardwareMap.get(Servo.class, "intake_servo_right");
         intake = new Intake(intakeServoL, intakeServoR);
+
+        basketServo = hardwareMap.get(Servo.class, "basket_servo");
+        basket = new Basket(basketServo);
     }
 
     public void moveBotMecanum(double drive, double rotate, double strafe, double scaleFactor) {
