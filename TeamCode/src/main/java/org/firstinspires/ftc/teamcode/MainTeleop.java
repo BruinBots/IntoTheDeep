@@ -25,12 +25,12 @@ public class MainTeleop extends OpMode {
         bot = new Hardware(hardwareMap);
         // reset motor encoders (remove for competition?)
         bot.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bot.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        bot.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         bot.viperMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bot.viperMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        bot.viperMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         bot.viperMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bot.viperMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        bot.viperMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // put intake servos to standby
         bot.intake.standby();
@@ -123,14 +123,26 @@ public class MainTeleop extends OpMode {
             bot.intake.standby();
         }
 
+        if (gamepad1.x) {
+            bot.basket.setClosed();
+        } else if (gamepad1.y) {
+            bot.basket.setOpen();
+        } else if (gamepad1.right_stick_button) {
+            bot.basket.setMiddle();
+        }
+
+        // color sensor
 
         // Telemetry
         telemetry.addData("Near Servo", bot.intake.getNearPos());
         telemetry.addData("Far Servo", bot.intake.getFarPos());
-        telemetry.addData("Viper Position", viperPos);
+        telemetry.addData("Viper Left Target", bot.viperMotorL.getTargetPosition());
+        telemetry.addData("Viper Left Current", bot.viperMotorL.getCurrentPosition());
+        telemetry.addData("Viper Right Target", bot.viperMotorR.getTargetPosition());
+        telemetry.addData("Viper Right Current", bot.viperMotorR.getCurrentPosition());
         telemetry.addData("Arm Position", armPos);
         telemetry.addData("Wrist Position", wristPos);
-        telemetry.addData("Color", bot.ColorDistanceSensor.color);
+//        telemetry.addData("Color", bot.ColorDistanceSensor.color);
         telemetry.update();
 
         bot.arm.moveArm(armPos); // Move arm

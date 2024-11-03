@@ -6,9 +6,9 @@ public class Basket {
 
     private Servo basketServo;
 
-    private double CLOSED_POS = 0;
-    private double OPEN_POS = 1;
-    private double MID_POS = 0.5;
+    private double CLOSED_POS = 0.45;
+    private double OPEN_POS = 0.7;
+    private double MID_POS = 0.6;
 
     public Basket (Servo servo) {
         basketServo = servo;

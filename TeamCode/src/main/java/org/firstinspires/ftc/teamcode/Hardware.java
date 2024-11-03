@@ -33,7 +33,7 @@ public class Hardware {
     public Servo intakeServoFar;
     public Intake intake;
 
-    public ColorDistanceSensor ColorDistanceSensor;
+//    public ColorDistanceSensor ColorDistanceSensor;
 
     public Servo basketServo;
     public Basket basket;
@@ -41,8 +41,8 @@ public class Hardware {
     public Hardware(HardwareMap hardwareMap) {
 
         // Color sensor
-        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
-        colorDistanceSensor = new ColorDistanceSensor(colorSensor);
+//        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
+//        colorDistanceSensor = new ColorDistanceSensor(colorSensor);
 
         // Drive motors
         leftFrontMotor = hardwareMap.get(DcMotorEx.class, "left_front");
@@ -65,7 +65,7 @@ public class Hardware {
         arm = new Arm(armMotor, wristServo);
 
         // Intake and Color Sensor
-        ColorDistanceSensor = new ColorDistanceSensor(hardwareMap.get(RevColorSensorV3.class, "color_sensor"));
+//        ColorDistanceSensor = new ColorDistanceSensor(hardwareMap.get(RevColorSensorV3.class, "color_sensor"));
         intakeServoNear = hardwareMap.get(Servo.class, "intake_servo_near");
         intakeServoFar = hardwareMap.get(Servo.class, "intake_servo_far");
         intake = new Intake(intakeServoNear, intakeServoFar);
