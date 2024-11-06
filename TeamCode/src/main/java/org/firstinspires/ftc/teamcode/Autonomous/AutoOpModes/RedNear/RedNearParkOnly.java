@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autonomous.AutoOpModes.RedNear;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.BaseAuto;
 import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.BlueNearAuto;
 import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.RedNearAuto;
 
@@ -12,6 +13,6 @@ public class RedNearParkOnly extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         RedNearAuto auto = new RedNearAuto(hardwareMap, telemetry);
         waitForStart();
-        auto.park(RedNearAuto.startPose);
+        auto.run(BaseAuto.AutoOperation.PARK);
     }
 }

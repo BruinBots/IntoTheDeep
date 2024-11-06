@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autonomous.AutoOpModes.RedFar;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.BaseAuto;
 import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.BlueFarAuto;
 import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.RedFarAuto;
 
@@ -13,5 +14,6 @@ public class RedFarBasketPark extends LinearOpMode {
         RedFarAuto auto = new RedFarAuto(hardwareMap, telemetry);
         waitForStart();
         auto.park(auto.basket(RedFarAuto.startPose));
+        auto.run(BaseAuto.AutoOperation.BASKET, BaseAuto.AutoOperation.PARK);
     }
 }

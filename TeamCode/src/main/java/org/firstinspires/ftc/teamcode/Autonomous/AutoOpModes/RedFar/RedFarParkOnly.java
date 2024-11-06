@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autonomous.AutoOpModes.RedFar;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.BaseAuto;
 import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.BlueNearAuto;
 import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.RedFarAuto;
 
@@ -12,6 +13,6 @@ public class RedFarParkOnly extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         RedFarAuto auto = new RedFarAuto(hardwareMap, telemetry);
         waitForStart();
-        auto.park(RedFarAuto.startPose);
+        auto.run(BaseAuto.AutoOperation.PARK);
     }
 }
