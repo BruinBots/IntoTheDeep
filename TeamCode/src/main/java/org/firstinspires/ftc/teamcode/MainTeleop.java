@@ -88,6 +88,8 @@ public class MainTeleop extends OpMode {
         }
         else if (gamepad1.left_bumper) {
             viperPos -= Viper.VIPER_SPEED;
+        } else {
+            viperPos = bot.viper.getActualPos();
         }
 
         if (viperPos > Viper.MAX_VIPER_POS) {

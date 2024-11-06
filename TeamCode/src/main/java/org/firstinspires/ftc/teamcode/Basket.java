@@ -6,7 +6,7 @@ public class Basket {
 
     private Servo basketServo;
 
-    private double CLOSED_POS = 0.45;
+    private double CLOSED_POS = 0.43;
     private double OPEN_POS = 0.7;
     private double MID_POS = 0.6;
 
