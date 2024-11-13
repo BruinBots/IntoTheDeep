@@ -1,9 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+@Config
 @TeleOp(name="Main TeleOp", group = "Iterative Opmode")
 public class MainTeleop extends OpMode {
     Hardware bot;
@@ -15,13 +22,21 @@ public class MainTeleop extends OpMode {
 
     int viperPos = 0;
     int armPos = 0;
-    double wristPos = 0.75;
 
     boolean isPixel = false;
-    ColorDistanceSensor.Colors currentOP = (ColorDistanceSensor.Colors.red);
+    private FtcDashboard dash;
+    private Telemetry dashTelemetry;
+
+    public static double wristPos = 0.5;
+    public static boolean wristArmSync = false;
+    public static boolean engageAtStart = false;
+    public static boolean colorActionEnabled = false;
+    public static ColorDistanceSensor.Colors currentOP = (ColorDistanceSensor.Colors.red);
 
     @Override
     public void init() {
+        dash = FtcDashboard.getInstance();
+        dashTelemetry = dash.getTelemetry();
         bot = new Hardware(hardwareMap);
         // reset motor encoders (remove for competition?)
         bot.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -33,7 +48,21 @@ public class MainTeleop extends OpMode {
 //        bot.viperMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // put intake servos to standby
-        bot.intake.standby();
+        if (engageAtStart) {
+            bot.intake.engage();
+        }
+        else {
+            bot.intake.standby();
+        }
+    }
+
+    public void displayMotorTelemetry(String caption, DcMotorEx motor) {
+        doTelemetry(caption, motor.getCurrentPosition() + "=>" + motor.getTargetPosition());
+    }
+
+    public void doTelemetry(String caption, Object obj) {
+        telemetry.addData(caption, obj);
+        dashTelemetry.addData(caption, obj);
     }
 
     @Override
@@ -100,21 +129,21 @@ public class MainTeleop extends OpMode {
         }
 
         // Intake
-//        bot.ColorDistanceSensor.loop();
-//        if (bot.ColorDistanceSensor.READING_DISTANCE <= 1) {
+//        bot.colorDistanceSensor.loop();
+//        if (bot.colorDistanceSensor.READING_DISTANCE <= 1) {
 //            isPixel = true;
 //        }
 //        else {
 //            isPixel = false;
 //        }
-
-//        if (isPixel) {
+//
+//        if (isPixel && colorActionEnabled) {
 //            // If the pixel is not the current OP color, outtake for 1 second
-//            ColorDistanceSensor.Colors color = bot.ColorDistanceSensor.color;
+//            ColorDistanceSensor.Colors color = bot.colorDistanceSensor.color;
 //            if (color != currentOP && color != ColorDistanceSensor.Colors.yellow) {
-//                bot.intake.outtakeForTime();
+//                bot.intake.standby();
 //            } else {
-//                bot.intake.stop();
+//                bot.intake.engage();
 //            }
 //        }
 
@@ -133,19 +162,22 @@ public class MainTeleop extends OpMode {
             bot.basket.setMiddle();
         }
 
-        // color sensor
+        if (wristArmSync) {
+            bot.arm.syncWristToArm();
+        }
 
         // Telemetry
         telemetry.addData("Near Servo", bot.intake.getNearPos());
         telemetry.addData("Far Servo", bot.intake.getFarPos());
-        telemetry.addData("Viper Left Target", bot.viperMotorL.getTargetPosition());
-        telemetry.addData("Viper Left Current", bot.viperMotorL.getCurrentPosition());
-        telemetry.addData("Viper Right Target", bot.viperMotorR.getTargetPosition());
-        telemetry.addData("Viper Right Current", bot.viperMotorR.getCurrentPosition());
-        telemetry.addData("Arm Position", armPos);
-        telemetry.addData("Wrist Position", wristPos);
-//        telemetry.addData("Color", bot.ColorDistanceSensor.color);
+        displayMotorTelemetry("Viper Motor L", bot.viperMotorL);
+        displayMotorTelemetry("Viper Motor R", bot.viperMotorR);
+        displayMotorTelemetry("Arm Motor", bot.armMotor);
+        telemetry.addData("Wrist Position", bot.wristServo.getPosition());
+//        telemetry.addData("Color", bot.colorDistanceSensor.color);
+//        telemetry.addData("Distance", bot.colorDistanceSensor.READING_DISTANCE);
+        telemetry.addData("Is Pixel", isPixel);
         telemetry.update();
+        dashTelemetry.update();
 
         bot.arm.moveArm(armPos); // Move arm
         bot.arm.moveWrist(wristPos); // Move wrists

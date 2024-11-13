@@ -28,9 +28,7 @@ public class Intake {
     }
 
 
-    public double getNearPos(){
-        return (double) nearServo.getPosition();
-    }
+    public double getNearPos() { return (double) nearServo.getPosition(); }
 
     public double getFarPos(){
         return (double) farServo.getPosition();
