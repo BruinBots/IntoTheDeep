@@ -53,8 +53,12 @@ public class Arm {
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void moveWrist(double targetPos) {
-        wristPos = targetPos;
+    public void moveWrist(double targetPos) { moveWrist(targetPos, true); }
+
+    public void moveWrist(double targetPos, boolean setPos) {
+        if (setPos) {
+            wristPos = targetPos;
+        }
 
         if (targetPos > MAX_WRIST_POS) {
             targetPos = MAX_WRIST_POS;
@@ -67,6 +71,6 @@ public class Arm {
     }
 
     public void syncWristToArm() {
-        moveWrist(wristPos + armPos* WRIST_ARM_CONSTANT);
+        moveWrist(wristPos + armPos* WRIST_ARM_CONSTANT, false);
     }
 }
