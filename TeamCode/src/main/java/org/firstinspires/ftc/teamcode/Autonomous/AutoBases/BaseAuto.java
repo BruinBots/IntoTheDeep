@@ -152,7 +152,7 @@ public class BaseAuto {
             }
 
             while (drive.isBusy()) {
-                if (mode.gamepad1.a | mode.gamepad1.b | mode.gamepad1.x || mode.gamepad1.y) {
+                if (mode.gamepad1.a || mode.gamepad1.b || mode.gamepad1.x || mode.gamepad1.y) {
                     drive.breakFollowing();
                 }
             }
