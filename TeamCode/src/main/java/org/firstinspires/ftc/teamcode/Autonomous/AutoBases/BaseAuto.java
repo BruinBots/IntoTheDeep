@@ -16,13 +16,11 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Arm;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Viper;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveCancelable;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.Vector;
 
 @Config
 public class BaseAuto {
@@ -54,7 +52,7 @@ public class BaseAuto {
 
     public static boolean peripherals_allowed = false;
 
-    private OpMode mode;
+    private final OpMode mode;
 
     public BaseAuto(HardwareMap hardwareMap, Telemetry telemetry, Pose2d startingPosition, boolean blue, boolean near, OpMode mode) {
         this.hardwareMap = hardwareMap;
@@ -123,7 +121,7 @@ public class BaseAuto {
 
     ///// ---------- RUN ---------- /////
 
-    public static enum AutoOperation {
+    public enum AutoOperation {
         PARK,
         BASKET,
         SAMPLES,
