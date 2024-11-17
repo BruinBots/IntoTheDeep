@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.RedNearAuto;
 public class RedNearParkOnly extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        RedNearAuto auto = new RedNearAuto(hardwareMap, telemetry);
+        RedNearAuto auto = new RedNearAuto(hardwareMap, telemetry, this);
         waitForStart();
         auto.run(BaseAuto.AutoOperation.PARK);
     }

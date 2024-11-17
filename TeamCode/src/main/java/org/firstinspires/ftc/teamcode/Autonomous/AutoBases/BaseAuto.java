@@ -8,6 +8,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.Arm;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Viper;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveCancelable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,10 +29,10 @@ public class BaseAuto {
     private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
     private final Hardware bot;
-    public SampleMecanumDrive drive;
+    public SampleMecanumDriveCancelable drive;
 
     public boolean blue;
-    public boolean far;
+    public boolean near;
 
     public static Pose2d startPose = new Pose2d(0, 0, 0);
 
@@ -52,11 +54,14 @@ public class BaseAuto {
 
     public static boolean peripherals_allowed = false;
 
-    public BaseAuto(HardwareMap hardwareMap, Telemetry telemetry, Pose2d startingPosition, boolean blue, boolean near) {
+    private OpMode mode;
+
+    public BaseAuto(HardwareMap hardwareMap, Telemetry telemetry, Pose2d startingPosition, boolean blue, boolean near, OpMode mode) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         this.blue = blue;
-        this.far = far;
+        this.near = near;
+        this.mode = mode;
 
         bot = new Hardware(hardwareMap);
 
@@ -89,7 +94,7 @@ public class BaseAuto {
 
         startPose = new Pose2d(START_X, START_Y, Math.toRadians(blue ? 270 : 90));
 
-        drive = new SampleMecanumDrive(hardwareMap);
+        drive = new SampleMecanumDriveCancelable(hardwareMap);
         drive.setPoseEstimate(startingPosition);
     }
 
@@ -146,6 +151,12 @@ public class BaseAuto {
                     break;
             }
 
+            while (drive.isBusy()) {
+                if (mode.gamepad1.a | mode.gamepad1.b | mode.gamepad1.x || mode.gamepad1.y) {
+                    drive.breakFollowing();
+                }
+            }
+
             if (i < count - 1) {
                 curPos = highway(curPos);
             }
@@ -167,7 +178,7 @@ public class BaseAuto {
         Trajectory traj = drive.trajectoryBuilder(startPose)
                 .lineToConstantHeading(highway_v())
                 .build();
-        drive.followTrajectory(traj);
+        drive.followTrajectoryAsync(traj);
         return traj.end();
     }
 
@@ -184,7 +195,7 @@ public class BaseAuto {
         Trajectory traj = drive.trajectoryBuilder(startPose)
                 .lineToConstantHeading(park_v())
                 .build();
-        drive.followTrajectory(traj);
+        drive.followTrajectoryAsync(traj);
         return traj.end();
     }
 
@@ -200,7 +211,7 @@ public class BaseAuto {
         Trajectory traj = drive.trajectoryBuilder(posePlusAngle(startPose, BASKET_ANGLE))
                 .lineToConstantHeading(basket_v())
                 .build();
-        drive.followTrajectory(traj);
+        drive.followTrajectoryAsync(traj);
 
         // TODO: Place sample in basket
         if (peripherals_allowed) {
@@ -229,7 +240,7 @@ public class BaseAuto {
         Trajectory traj = drive.trajectoryBuilder(posePlusAngle(startPose, SAMPLES_ANGLE))
                 .lineToConstantHeading(samples_v())
                 .build();
-        drive.followTrajectory(traj);
+        drive.followTrajectoryAsync(traj);
 
         // TODO: Pick up sample
         if (peripherals_allowed) {
@@ -266,7 +277,7 @@ public class BaseAuto {
         Trajectory traj = drive.trajectoryBuilder(posePlusAngle(startPose, SUBMERSIBLE_ANGLE))
                 .lineToConstantHeading(submersible_v())
                 .build();
-        drive.followTrajectory(traj);
+        drive.followTrajectoryAsync(traj);
 
         // TODO: Place specimen on horizontal bar
         if (peripherals_allowed) {

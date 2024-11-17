@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.RedFarAuto;
 public class RedFarParkOnly extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        RedFarAuto auto = new RedFarAuto(hardwareMap, telemetry);
+        RedFarAuto auto = new RedFarAuto(hardwareMap, telemetry, this);
         waitForStart();
         auto.run(BaseAuto.AutoOperation.PARK);
     }

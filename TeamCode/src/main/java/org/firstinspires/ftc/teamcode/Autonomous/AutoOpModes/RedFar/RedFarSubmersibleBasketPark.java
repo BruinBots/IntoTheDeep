@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.RedFarAuto;
 public class RedFarSubmersibleBasketPark extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        RedFarAuto auto = new RedFarAuto(hardwareMap, telemetry);
+        RedFarAuto auto = new RedFarAuto(hardwareMap, telemetry, this);
         waitForStart();
         auto.basket(RedFarAuto.startPose);
         auto.run(BaseAuto.AutoOperation.SUBMERSIBLE, BaseAuto.AutoOperation.SAMPLES, BaseAuto.AutoOperation.BASKET, BaseAuto.AutoOperation.PARK);

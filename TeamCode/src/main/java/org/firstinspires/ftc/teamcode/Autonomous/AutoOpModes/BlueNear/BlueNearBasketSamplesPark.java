@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.BlueNearAuto;
 public class BlueNearBasketSamplesPark extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        BlueNearAuto auto = new BlueNearAuto(hardwareMap, telemetry);
+        BlueNearAuto auto = new BlueNearAuto(hardwareMap, telemetry, this);
         waitForStart();
         auto.run(BaseAuto.AutoOperation.BASKET, BaseAuto.AutoOperation.SAMPLES, BaseAuto.AutoOperation.PARK);
     }

@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.BlueFarAuto;
 public class BlueFarBasketSamplesPark extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        BlueFarAuto auto = new BlueFarAuto(hardwareMap, telemetry);
+        BlueFarAuto auto = new BlueFarAuto(hardwareMap, telemetry, this);
         waitForStart();
         auto.run(BaseAuto.AutoOperation.BASKET, BaseAuto.AutoOperation.SAMPLES, BaseAuto.AutoOperation.PARK);
     }

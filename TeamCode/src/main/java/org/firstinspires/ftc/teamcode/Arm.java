@@ -24,14 +24,6 @@ public class Arm {
 
     public static double WRIST_ARM_CONSTANT = 0.0005;
 
-    /*
-
-    Wrist vs. Arm Protection!
-
-
-
-     */
-
     public Arm(DcMotorEx armMotor, Servo wristServo) {
         this.armMotor = armMotor;
         this.wristServo = wristServo;
@@ -71,6 +63,6 @@ public class Arm {
     }
 
     public void syncWristToArm() {
-        moveWrist(wristPos + armPos* WRIST_ARM_CONSTANT, false);
+        moveWrist(wristPos + armPos * WRIST_ARM_CONSTANT, false);
     }
 }
