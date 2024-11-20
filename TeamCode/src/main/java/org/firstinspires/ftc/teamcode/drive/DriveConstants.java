@@ -100,10 +100,10 @@ public class DriveConstants {
      * https://github.com/acmerobotics/road-runner-quickstart/issues/91
 
      */
-    public static double MAX_VEL = 12;
+    public static double MAX_VEL = 1;
     public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = Math.toRadians(358.09862195676453);
-    public static double MAX_ANG_ACCEL = Math.toRadians(358.09862195676453);
+    public static double MAX_ANG_VEL = Math.toRadians(270);
+    public static double MAX_ANG_ACCEL = Math.toRadians(90);
 
     /*
      * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
