@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Arm;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Viper;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveCancelable;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +27,7 @@ public class BaseAuto {
     private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
     private final Hardware bot;
-    public SampleMecanumDriveCancelable drive;
+    public SampleMecanumDrive drive;
 
     public boolean blue;
     public boolean near;
@@ -92,7 +92,7 @@ public class BaseAuto {
 
         startPose = new Pose2d(START_X, START_Y, Math.toRadians(blue ? 270 : 90));
 
-        drive = new SampleMecanumDriveCancelable(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(startingPosition);
     }
 
@@ -151,7 +151,7 @@ public class BaseAuto {
 
             while (drive.isBusy()) {
                 if (mode.gamepad1.a || mode.gamepad1.b || mode.gamepad1.x || mode.gamepad1.y) {
-                    drive.breakFollowing();
+//                    drive.breakFollowing();
                 }
             }
 

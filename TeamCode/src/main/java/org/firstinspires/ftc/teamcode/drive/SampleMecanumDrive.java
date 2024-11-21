@@ -45,7 +45,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
@@ -55,14 +55,16 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
+
+    public static double POWER_SCALE = 1.0;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
@@ -80,8 +82,6 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
-    public static double scaleFactor = 1;
-
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
@@ -96,11 +96,6 @@ public class SampleMecanumDrive extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        // TODO: adjust the names of the following hardware devices to match your configuration
-//        imu = hardwareMap.get(IMU.class, "imu");
-//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-//                DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
-//        imu.initialize(parameters);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "left_front");
         leftRear = hardwareMap.get(DcMotorEx.class, "left_back");
@@ -125,16 +120,14 @@ public class SampleMecanumDrive extends MecanumDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        // TODO: reverse any motors using DcMotor.setDirection()
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
 
-        // TODO: if desired, use setLocalizer() to change the localization method
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
-     
+
         trajectorySequenceRunner = new TrajectorySequenceRunner(
                 follower, HEADING_PID, batteryVoltageSensor,
                 lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
@@ -255,7 +248,7 @@ public class SampleMecanumDrive extends MecanumDrive {
             ).div(denom);
         }
 
-        setDrivePower(vel);
+        setDrivePower(vel.times(POWER_SCALE));
     }
 
     @NonNull
@@ -287,10 +280,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v*scaleFactor);
-        leftRear.setPower(v1*scaleFactor);
-        rightRear.setPower(v2*scaleFactor);
-        rightFront.setPower(v3*scaleFactor);
+        leftFront.setPower(v);
+        leftRear.setPower(v1);
+        rightRear.setPower(v2);
+        rightFront.setPower(v3);
     }
 
     @Override
@@ -300,7 +293,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return (double) 0;
+        return 0.0;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
