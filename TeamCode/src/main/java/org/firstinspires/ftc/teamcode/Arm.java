@@ -7,13 +7,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 public class Arm {
-    public static int MAX_ARM_POS = 850;
+    public static int MAX_ARM_POS = 1040;
     public static int MIN_ARM_POS = 0;
     public static double ARM_POWER = 0.3;
     public static int ARM_SPEED = 4;
 
     public static double MAX_WRIST_POS = 1;
-    public static double MIN_WRIST_POS = 0;
+    public static double MIN_WRIST_POS = 0.22;
     public static double WRIST_SPEED = 0.008;
 
     private int armPos;
@@ -64,5 +64,31 @@ public class Arm {
 
     public void syncWristToArm() {
         moveWrist(wristPos + armPos * WRIST_ARM_CONSTANT, false);
+    }
+
+    public void loop() {
+        if (wristPos > Arm.MAX_WRIST_POS) {
+            wristPos = Arm.MAX_WRIST_POS;
+        }
+        else if (wristPos < Arm.MIN_WRIST_POS) {
+            wristPos = Arm.MIN_WRIST_POS;
+        }
+
+        if (armPos > Arm.MAX_ARM_POS) {
+            armPos = Arm.MAX_ARM_POS;
+        }
+        else if (armPos < Arm.MIN_ARM_POS) {
+            armPos = Arm.MIN_ARM_POS;
+        }
+
+        // vert pos is 155
+        // move wrist to 0.95 at vert pos
+
+        // pickup pos is 850
+        // servo is 0.24
+
+        // lift pos is 713
+        // servp is 0
+        // 
     }
 }

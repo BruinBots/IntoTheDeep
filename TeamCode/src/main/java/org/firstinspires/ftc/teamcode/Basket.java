@@ -1,14 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.Servo;
 
+@Config
 public class Basket {
 
     private Servo basketServo;
 
-    private double CLOSED_POS = 0.43;
-    private double OPEN_POS = 0.7;
-    private double MID_POS = 0.6;
+    public static double CLOSED_POS = 0.43;
+    public static double OPEN_POS = 0.9;
+    public static double MID_POS = 0.6;
 
     public Basket (Servo servo) {
         basketServo = servo;

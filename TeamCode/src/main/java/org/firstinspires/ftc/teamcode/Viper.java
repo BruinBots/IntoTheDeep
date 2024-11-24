@@ -46,4 +46,12 @@ public class Viper {
     public int getActualPos() {
         return motorL.getCurrentPosition();
     }
+
+    public void loop() {
+        if (getTargetPos() > Viper.MAX_VIPER_POS) {
+            move(Viper.MAX_VIPER_POS);
+        } else if (getTargetPos() < Viper.MIN_VIPER_POS) {
+            move(Viper.MIN_VIPER_POS);
+        }
+    }
 }

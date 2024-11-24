@@ -27,7 +27,7 @@ public class MainTeleop extends OpMode {
     private FtcDashboard dash;
     private Telemetry dashTelemetry;
 
-    public static double wristPos = 0.5;
+    public static double wristPos = 1;
     public static boolean wristArmSync = false;
     public static boolean engageAtStart = false;
     public static boolean colorActionEnabled = false;
@@ -69,9 +69,9 @@ public class MainTeleop extends OpMode {
     public void loop() {
 
         // Drive
-        drive = gamepad1.left_stick_y - gamepad2.left_stick_y;
-        strafe = gamepad2.left_stick_x - gamepad1.left_stick_x;
-        turn = gamepad1.right_stick_x + gamepad2.right_stick_x;
+        drive = gamepad2.left_stick_y - gamepad1.left_stick_y;
+        strafe = gamepad1.left_stick_x - gamepad2.left_stick_x;
+        turn = gamepad2.right_stick_x + gamepad1.right_stick_x;
 
         if (drive > 1) { drive = 1; }
         if (strafe > 1) { strafe = 1; }
@@ -82,83 +82,54 @@ public class MainTeleop extends OpMode {
         turn = Math.copySign(Math.pow(turn, 2), turn);
 
         // Arm
-        if (gamepad1.dpad_down) {
-            armPos += Arm.ARM_SPEED;
-        }
-        else if (gamepad1.dpad_up) {
-            armPos -= Arm.ARM_SPEED;
-        }
-
-        if (armPos > Arm.MAX_ARM_POS) {
-            armPos = Arm.MAX_ARM_POS;
-        }
-        else if (armPos < Arm.MIN_ARM_POS) {
-            armPos = Arm.MIN_ARM_POS;
+        if (gamepad2.dpad_down) {
+            bot.intake.standby();
         }
 
         // Wrist
-        if (gamepad1.dpad_right) {
-            wristPos += Arm.WRIST_SPEED;
-        }
-        else if (gamepad1.dpad_left) {
-            wristPos -= Arm.WRIST_SPEED;
+        if (gamepad2.dpad_left) {
+            bot.intake.engage();
+        } else if (gamepad2.right_bumper) {
+            armPos += Arm.ARM_SPEED;
+        } else if (gamepad2.right_trigger > 0.5) {
+            armPos -= Arm.ARM_SPEED;
         }
 
-        if (wristPos > Arm.MAX_WRIST_POS) {
-            wristPos = Arm.MAX_WRIST_POS;
+        if (gamepad2.dpad_up) {
+            wristPos += Arm.WRIST_SPEED;
+        } else if (gamepad2.dpad_right) {
+            wristPos -= Arm.WRIST_SPEED;
         }
-        else if (wristPos < Arm.MIN_WRIST_POS) {
-            wristPos = Arm.MIN_WRIST_POS;
+        bot.arm.loop();
+
+        if (gamepad2.y) {
+            // arm position to grab sample
+        } else if (gamepad2.b) {
+            // arm position to transfer to basket
+        } else if (gamepad2.a) {
+            // arm rest position
+        } else if (gamepad2.x) {
+            // arm hanging position
         }
+
+        // 720 low bar for hang
 
         // Viper
         if (gamepad1.right_bumper) {
             viperPos += Viper.VIPER_SPEED;
         }
-        else if (gamepad1.left_bumper) {
+        else if (gamepad1.right_trigger > 0.5) {
             viperPos -= Viper.VIPER_SPEED;
         } else {
             viperPos = bot.viper.getActualPos();
         }
+        bot.viper.loop();
 
-        if (viperPos > Viper.MAX_VIPER_POS) {
-            viperPos = Viper.MAX_VIPER_POS;
-        }
-        else if (viperPos < Viper.MIN_VIPER_POS) {
-            viperPos = Viper.MIN_VIPER_POS;
-        }
-
-        // Intake
-//        bot.colorDistanceSensor.loop();
-//        if (bot.colorDistanceSensor.READING_DISTANCE <= 1) {
-//            isPixel = true;
-//        }
-//        else {
-//            isPixel = false;
-//        }
-//
-//        if (isPixel && colorActionEnabled) {
-//            // If the pixel is not the current OP color, outtake for 1 second
-//            ColorDistanceSensor.Colors color = bot.colorDistanceSensor.color;
-//            if (color != currentOP && color != ColorDistanceSensor.Colors.yellow) {
-//                bot.intake.standby();
-//            } else {
-//                bot.intake.engage();
-//            }
-//        }
-
-        if (gamepad1.a) {
-            bot.intake.engage();
-        }
-        else if (gamepad1.b) {
-            bot.intake.standby();
-        }
-
-        if (gamepad1.x) {
+        if (gamepad1.dpad_down) {
             bot.basket.setClosed();
-        } else if (gamepad1.y) {
+        } else if (gamepad1.dpad_right) {
             bot.basket.setOpen();
-        } else if (gamepad1.right_stick_button) {
+        } else if (gamepad1.dpad_left) {
             bot.basket.setMiddle();
         }
 
