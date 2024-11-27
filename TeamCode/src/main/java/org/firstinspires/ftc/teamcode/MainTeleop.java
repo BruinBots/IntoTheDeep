@@ -32,6 +32,8 @@ public class MainTeleop extends OpMode {
     public static boolean engageAtStart = false;
     public static boolean colorActionEnabled = false;
     public static ColorDistanceSensor.Colors currentOP = (ColorDistanceSensor.Colors.red);
+    public boolean viperPressed = false;
+    public boolean armPressed = false;
 
     @Override
     public void init() {
@@ -102,12 +104,17 @@ public class MainTeleop extends OpMode {
         doTelemetry("RightTrigger", gamepad2.right_trigger);
         if (gamepad2.right_bumper) {
             telemetry.addLine("Arm +");
+            armPressed = true;
             armPos += Arm.ARM_SPEED;
         } else if (gamepad2.right_trigger > 0.5) {
             telemetry.addLine("Arm -");
+            armPressed = true;
             armPos -= Arm.ARM_SPEED;
         } else {
-            armPos = bot.armMotor.getCurrentPosition();
+            if (armPressed) {
+                armPressed = false;
+                armPos = bot.armMotor.getCurrentPosition();
+            }
         }
 
         if (gamepad2.dpad_up) {
@@ -131,14 +138,19 @@ public class MainTeleop extends OpMode {
 
         // Viper
         if (gamepad1.right_bumper) {
+            viperPressed = true;
             viperPos += Viper.VIPER_SPEED;
         }
         else if (gamepad1.right_trigger > 0.5) {
+            viperPressed = true;
             viperPos -= Viper.VIPER_SPEED;
         } else {
-            viperPos = bot.viper.getActualPos();
+            if (viperPressed) {
+                viperPressed = false;
+                viperPos = bot.viper.getActualPos();
+            }
         }
-//        bot.viper.loop();
+        bot.viper.loop();
 
         if (gamepad1.dpad_down) {
             bot.basket.setClosed();

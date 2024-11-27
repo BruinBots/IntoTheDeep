@@ -9,10 +9,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 public class Arm {
-    public static int MAX_ARM_POS = 1040;
+    public static int MAX_ARM_POS = 8340;
     public static int MIN_ARM_POS = 0;
-    public static double ARM_POWER = 0.3;
-    public static int ARM_SPEED = 4;
+    public static double ARM_POWER = 1;
+    public static int ARM_SPEED = 50;
 
     private class Frame {
         int arm;
@@ -44,7 +44,7 @@ public class Arm {
     private Frame[] groundToRamp;
 
     public static double MAX_WRIST_POS = 1;
-    public static double MIN_WRIST_POS = 0.22;
+    public static double MIN_WRIST_POS = 0;
     public static double WRIST_SPEED = 0.008;
 
     private int armPos;
@@ -119,18 +119,16 @@ public class Arm {
     }
 
     public void loop() {
-        if (wristPos > Arm.MAX_WRIST_POS) {
-            wristPos = Arm.MAX_WRIST_POS;
-        }
-        else if (wristPos < Arm.MIN_WRIST_POS) {
-            wristPos = Arm.MIN_WRIST_POS;
+        if (armMotor.getTargetPosition() > MAX_ARM_POS) {
+            moveArm(Viper.MAX_VIPER_POS);
+        } else if (armMotor.getTargetPosition() < MIN_ARM_POS) {
+            moveArm(Viper.MIN_VIPER_POS);
         }
 
-        if (armPos > Arm.MAX_ARM_POS) {
-            armPos = Arm.MAX_ARM_POS;
-        }
-        else if (armPos < Arm.MIN_ARM_POS) {
-            armPos = Arm.MIN_ARM_POS;
+        if (wristServo.getPosition() > MAX_WRIST_POS) {
+            moveWrist(MAX_WRIST_POS);
+        } else if (wristServo.getPosition() < MIN_WRIST_POS) {
+            moveWrist(MIN_WRIST_POS);
         }
 
         // vert pos is 155
@@ -140,7 +138,7 @@ public class Arm {
         // servo is 0.24
 
         // lift pos is 713
-        // servp is 0
-        // 
+        // servo is 0
+
     }
 }

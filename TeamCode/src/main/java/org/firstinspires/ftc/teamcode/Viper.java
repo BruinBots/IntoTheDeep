@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @Config
 public class Viper {
-    public static int MAX_VIPER_POS = 4400;
+    public static int MAX_VIPER_POS = 6100; // changed from 312rpm motor to 223rpm and adjusted num accordingly
     public static int MIN_VIPER_POS = 0;
     public static int VIPER_SPEED = 30;
     public static double VIPER_POWER = 0.75;
