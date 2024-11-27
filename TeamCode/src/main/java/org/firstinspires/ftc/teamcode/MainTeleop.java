@@ -20,8 +20,8 @@ public class MainTeleop extends OpMode {
     double turn = 0.0;
     double strafe = 0.0;
 
-    int viperPos = 0;
-    int armPos = 0;
+    public static int viperPos = 0;
+    public static int armPos = 0;
 
     boolean isPixel = false;
     private FtcDashboard dash;
@@ -54,6 +54,12 @@ public class MainTeleop extends OpMode {
         else {
             bot.intake.standby();
         }
+
+        bot.basket.setClosed();
+
+        viperPos = 0;
+        armPos = 0;
+        wristPos = 1;
     }
 
     public void displayMotorTelemetry(String caption, DcMotorEx motor) {
@@ -89,10 +95,19 @@ public class MainTeleop extends OpMode {
         // Wrist
         if (gamepad2.dpad_left) {
             bot.intake.engage();
-        } else if (gamepad2.right_bumper) {
+        }
+
+        // Arm
+        doTelemetry("RightBumper", gamepad2.right_bumper);
+        doTelemetry("RightTrigger", gamepad2.right_trigger);
+        if (gamepad2.right_bumper) {
+            telemetry.addLine("Arm +");
             armPos += Arm.ARM_SPEED;
         } else if (gamepad2.right_trigger > 0.5) {
+            telemetry.addLine("Arm -");
             armPos -= Arm.ARM_SPEED;
+        } else {
+            armPos = bot.armMotor.getCurrentPosition();
         }
 
         if (gamepad2.dpad_up) {
@@ -123,7 +138,7 @@ public class MainTeleop extends OpMode {
         } else {
             viperPos = bot.viper.getActualPos();
         }
-        bot.viper.loop();
+//        bot.viper.loop();
 
         if (gamepad1.dpad_down) {
             bot.basket.setClosed();
@@ -137,16 +152,34 @@ public class MainTeleop extends OpMode {
             bot.arm.syncWristToArm();
         }
 
+        //        bot.colorDistanceSensor.loop();
+//        if (bot.colorDistanceSensor.READING_DISTANCE <= 1) {
+//            isPixel = true;
+//        }
+//        else {
+//            isPixel = false;
+//        }
+//
+//        if (isPixel && colorActionEnabled) {
+//            // If the pixel is not the current OP color, outtake for 1 second
+//            ColorDistanceSensor.Colors color = bot.colorDistanceSensor.color;
+//            if (color != currentOP && color != ColorDistanceSensor.Colors.yellow) {
+//                bot.intake.standby();
+//            } else {
+//                bot.intake.engage();
+//            }
+//        }
+
         // Telemetry
-        telemetry.addData("Near Servo", bot.intake.getNearPos());
-        telemetry.addData("Far Servo", bot.intake.getFarPos());
+        doTelemetry("Near Servo", bot.intake.getNearPos());
+        doTelemetry("Far Servo", bot.intake.getFarPos());
         displayMotorTelemetry("Viper Motor L", bot.viperMotorL);
         displayMotorTelemetry("Viper Motor R", bot.viperMotorR);
         displayMotorTelemetry("Arm Motor", bot.armMotor);
-        telemetry.addData("Wrist Position", bot.wristServo.getPosition());
-//        telemetry.addData("Color", bot.colorDistanceSensor.color);
-//        telemetry.addData("Distance", bot.colorDistanceSensor.READING_DISTANCE);
-        telemetry.addData("Is Pixel", isPixel);
+        doTelemetry("Wrist Position", bot.wristServo.getPosition());
+//        doTelemetry("Color", bot.colorDistanceSensor.color);
+//        doTelemetry("Distance", bot.colorDistanceSensor.READING_DISTANCE);
+        doTelemetry("Is Pixel", isPixel);
         telemetry.update();
         dashTelemetry.update();
 

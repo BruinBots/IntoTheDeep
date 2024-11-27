@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Thread.sleep;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,6 +13,35 @@ public class Arm {
     public static int MIN_ARM_POS = 0;
     public static double ARM_POWER = 0.3;
     public static int ARM_SPEED = 4;
+
+    private class Frame {
+        int arm;
+        double wrist;
+
+        public Frame(int arm, double wrist) {
+            this.arm = arm;
+            this.wrist = wrist;
+        }
+
+        public void run() {
+            moveArm(arm);
+            moveWrist(wrist);
+        }
+    }
+
+    /*
+    Arm -> Basket handoff positions:
+    Arm     Wrist
+    949     0.224 <== GROUND
+    405     0.224
+    405     0.776
+    377     0.776
+    377     0.808
+    338     0.808
+    305     0.808 <== END
+     */
+
+    private Frame[] groundToRamp;
 
     public static double MAX_WRIST_POS = 1;
     public static double MIN_WRIST_POS = 0.22;
@@ -28,7 +59,28 @@ public class Arm {
         this.armMotor = armMotor;
         this.wristServo = wristServo;
 
+        this.groundToRamp = new Frame[]{
+            new Frame(949, 0.224),
+            new Frame(405, 0.224),
+            new Frame(405, 0.776),
+            new Frame(377, 0.776),
+            new Frame(377, 0.808),
+            new Frame(338, 0.808),
+            new Frame(305, 0.808),
+        };
+
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    public void moveArmToRamp() {
+        for (Frame f: groundToRamp) {
+            f.run();
+            try {
+                sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public void moveArm(int targetPos) {
