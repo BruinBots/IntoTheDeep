@@ -46,9 +46,10 @@ public class BaseAuto {
     public static int SUBMERSIBLE_X;
     public static int SUBMERSIBLE_Y;
 
-    public static int BASKET_ANGLE;
-    public static int SAMPLES_ANGLE;
-    public static int SUBMERSIBLE_ANGLE;
+    public static double PARK_ANGLE;
+    public static double BASKET_ANGLE;
+    public static double SAMPLES_ANGLE;
+    public static double SUBMERSIBLE_ANGLE;
 
     public static boolean peripherals_allowed = false;
 
@@ -82,9 +83,10 @@ public class BaseAuto {
             SUBMERSIBLE_X = Integer.parseInt(prop.getProperty("submersible.x"));
             SUBMERSIBLE_Y = y_factor*Integer.parseInt(prop.getProperty("submersible.y"));
 
-            BASKET_ANGLE = conditionallyInvertAngle(Integer.parseInt(prop.getProperty("basket.angle")), !blue);
-            SAMPLES_ANGLE = conditionallyInvertAngle(Integer.parseInt(prop.getProperty("samples.angle")), !blue);
-            SUBMERSIBLE_ANGLE = conditionallyInvertAngle(Integer.parseInt(prop.getProperty("submersible.angle")), !blue);
+            PARK_ANGLE = Math.toRadians(conditionallyInvertAngle(Integer.parseInt(prop.getProperty("park.angle")), near));
+            BASKET_ANGLE = Math.toRadians(conditionallyInvertAngle(Integer.parseInt(prop.getProperty("basket.angle")), !blue));
+            SAMPLES_ANGLE = Math.toRadians(conditionallyInvertAngle(Integer.parseInt(prop.getProperty("samples.angle")), !blue));
+            SUBMERSIBLE_ANGLE = Math.toRadians(conditionallyInvertAngle(Integer.parseInt(prop.getProperty("submersible.angle")), !blue));
         }
         catch (IOException ex) {
             ex.printStackTrace();
@@ -113,10 +115,10 @@ public class BaseAuto {
     public int invertAngle(int angle) { return (angle+180>=360)?(angle-180):(angle+180); }
     public int conditionallyInvertAngle(int angle, boolean invert) { return invert?invertAngle(angle):angle; }
 
-    public Pose2d posePlusAngle(Trajectory traj, int angle) { return posePlusAngle(traj.end(), angle); }
+    public Pose2d posePlusAngle(Trajectory traj, double angle) { return posePlusAngle(traj.end(), angle); }
 
-    public Pose2d posePlusAngle(Pose2d pose, int angle) {
-        return pose.plus(new Pose2d(0, 0, Math.toRadians(angle)));
+    public Pose2d posePlusAngle(Pose2d pose, double angle) {
+        return pose.plus(new Pose2d(0, 0, angle - drive.getPoseEstimate().getHeading()));
     }
 
     ///// ---------- RUN ---------- /////
@@ -132,7 +134,9 @@ public class BaseAuto {
         Pose2d curPos = startPose;
         int count = ops.length;
         int i = 0;
-        curPos = highway(curPos);
+        if (ops.length > 1) {
+            curPos = highway(curPos);
+        }
         for (AutoOperation op: ops) {
             switch (op) {
                 case PARK:
@@ -190,10 +194,11 @@ public class BaseAuto {
     }
 
     public Pose2d park(Pose2d startPose) {
-        Trajectory traj = drive.trajectoryBuilder(startPose)
+        drive.turn(PARK_ANGLE - drive.getPoseEstimate().getHeading());
+        Trajectory traj = drive.trajectoryBuilder(posePlusAngle(startPose, PARK_ANGLE))
                 .lineToConstantHeading(park_v())
                 .build();
-        drive.followTrajectoryAsync(traj);
+        drive.followTrajectory(traj);
         return traj.end();
     }
 
@@ -205,11 +210,11 @@ public class BaseAuto {
     }
 
     public Pose2d basket(Pose2d startPose) {
-        drive.turn(BASKET_ANGLE);
+        drive.turn(BASKET_ANGLE - drive.getPoseEstimate().getHeading());
         Trajectory traj = drive.trajectoryBuilder(posePlusAngle(startPose, BASKET_ANGLE))
                 .lineToConstantHeading(basket_v())
                 .build();
-        drive.followTrajectoryAsync(traj);
+        drive.followTrajectory(traj);
 
         // TODO: Place sample in basket
         if (peripherals_allowed) {
@@ -234,11 +239,11 @@ public class BaseAuto {
     public Pose2d samples(Trajectory startTraj) { return samples(startTraj.end()); }
 
     public Pose2d samples(Pose2d startPose) {
-        drive.turn(SAMPLES_ANGLE);
+        drive.turn(SAMPLES_ANGLE - drive.getPoseEstimate().getHeading());
         Trajectory traj = drive.trajectoryBuilder(posePlusAngle(startPose, SAMPLES_ANGLE))
                 .lineToConstantHeading(samples_v())
                 .build();
-        drive.followTrajectoryAsync(traj);
+        drive.followTrajectory(traj);
 
         // TODO: Pick up sample
         if (peripherals_allowed) {
@@ -271,11 +276,11 @@ public class BaseAuto {
     public Pose2d submersible(Trajectory startTraj) { return submersible(startTraj.end()); }
 
     public Pose2d submersible(Pose2d startPose) {
-        drive.turn(SUBMERSIBLE_ANGLE);
+        drive.turn(SUBMERSIBLE_ANGLE - drive.getPoseEstimate().getHeading());
         Trajectory traj = drive.trajectoryBuilder(posePlusAngle(startPose, SUBMERSIBLE_ANGLE))
                 .lineToConstantHeading(submersible_v())
                 .build();
-        drive.followTrajectoryAsync(traj);
+        drive.followTrajectory(traj);
 
         // TODO: Place specimen on horizontal bar
         if (peripherals_allowed) {
