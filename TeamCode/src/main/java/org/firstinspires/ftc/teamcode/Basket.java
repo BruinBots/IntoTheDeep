@@ -8,9 +8,9 @@ public class Basket {
 
     private Servo basketServo;
 
-    public static double CLOSED_POS = 0.43;
+    public static double CLOSED_POS = 0.55;
     public static double OPEN_POS = 0.9;
-    public static double MID_POS = 0.5;
+    public static double MID_POS = 0.7;
 
     public Basket (Servo servo) {
         basketServo = servo;
@@ -20,8 +20,8 @@ public class Basket {
         basketServo.setPosition(position);
     }
 
-    public void getPosition () {
-        basketServo.getPosition();
+    public double getPosition () {
+        return basketServo.getPosition();
     }
 
     public void setClosed () {

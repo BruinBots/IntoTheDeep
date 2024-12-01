@@ -183,8 +183,7 @@ public class MainTeleop extends OpMode {
 //        }
 
         // Telemetry
-        doTelemetry("Near Servo", bot.intake.getNearPos());
-        doTelemetry("Far Servo", bot.intake.getFarPos());
+        doTelemetry("Intake", bot.intake.getPos());
         displayMotorTelemetry("Viper Motor L", bot.viperMotorL);
         displayMotorTelemetry("Viper Motor R", bot.viperMotorR);
         displayMotorTelemetry("Arm Motor", bot.armMotor);
@@ -192,6 +191,7 @@ public class MainTeleop extends OpMode {
 //        doTelemetry("Color", bot.colorDistanceSensor.color);
 //        doTelemetry("Distance", bot.colorDistanceSensor.READING_DISTANCE);
         doTelemetry("Is Pixel", isPixel);
+        doTelemetry("Basket Pos", bot.basket.getPosition());
         telemetry.update();
         dashTelemetry.update();
 

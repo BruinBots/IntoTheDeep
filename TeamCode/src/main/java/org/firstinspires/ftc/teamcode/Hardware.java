@@ -29,8 +29,7 @@ public class Hardware {
     public Viper viper;
 
     // Intake system
-    public Servo intakeServoNear;
-    public Servo intakeServoFar;
+    public Servo intakeServo;
     public Intake intake;
 
 //    public ColorDistanceSensor ColorDistanceSensor;
@@ -66,9 +65,8 @@ public class Hardware {
 
         // Intake and Color Sensor
 //        ColorDistanceSensor = new ColorDistanceSensor(hardwareMap.get(RevColorSensorV3.class, "color_sensor"));
-        intakeServoNear = hardwareMap.get(Servo.class, "intake_servo_near");
-        intakeServoFar = hardwareMap.get(Servo.class, "intake_servo_far");
-        intake = new Intake(intakeServoNear, intakeServoFar);
+        intakeServo = hardwareMap.get(Servo.class, "intake_servo_near");
+        intake = new Intake(intakeServo);
 
         basketServo = hardwareMap.get(Servo.class, "basket_servo");
         basket = new Basket(basketServo);
