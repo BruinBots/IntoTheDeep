@@ -127,21 +127,17 @@ public class MainTeleop extends OpMode {
         if (gamepad2.y) {
             // arm position to grab sample
             bot.frames.beforeGrab();
-            armPos = 7297;
-            wristPos = 0.279;
         } else if (gamepad2.b) {
             // arm position to transfer to basket
             bot.frames.clawToBasket();
-            armPos = 2359;
-            wristPos = 0.936;
         } else if (gamepad2.a) {
             // arm rest position
             bot.frames.afterGrab();
-            armPos = 3362;
-            wristPos = 0.264;
         } else if (gamepad2.x) {
             // arm hanging position
         }
+
+        bot.frames.loop();
 
         // 720 low bar for hang
 
