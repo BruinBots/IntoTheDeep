@@ -36,6 +36,7 @@ public class Hardware {
 
     public Servo basketServo;
     public Basket basket;
+    public Frames frames;
 
     public Hardware(HardwareMap hardwareMap) {
 
@@ -70,8 +71,10 @@ public class Hardware {
 
         basketServo = hardwareMap.get(Servo.class, "basket_servo");
         basket = new Basket(basketServo);
-    }
 
+        frames = new Frames(this);
+    }
+;
     public void moveBotMecanum(double drive, double rotate, double strafe, double scaleFactor) {
 
 //        drive = rampUp(drive); // use S-curve to ramp up drive gradually

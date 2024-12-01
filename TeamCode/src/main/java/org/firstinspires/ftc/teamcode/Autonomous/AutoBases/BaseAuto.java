@@ -64,8 +64,8 @@ public class BaseAuto {
 
         bot = new Hardware(hardwareMap);
 
-        int x_factor = blue ? 1 : -1;
-        int y_factor = near ? 1 : -1;
+        int x_factor = near ? 1 : -1;
+        int y_factor = blue ? 1 : -1;
 
         AssetManager assetManager = AppUtil.getDefContext().getAssets();
         try (InputStream input = assetManager.open("coordinates.properties")) {
@@ -115,10 +115,20 @@ public class BaseAuto {
     public int invertAngle(int angle) { return (angle+180>=360)?(angle-180):(angle+180); }
     public int conditionallyInvertAngle(int angle, boolean invert) { return invert?invertAngle(angle):angle; }
 
-    public Pose2d posePlusAngle(Trajectory traj, double angle) { return posePlusAngle(traj.end(), angle); }
+//    public Pose2d posePlusAngle(Trajectory traj, double angle) { return posePlusAngle(traj.end(), angle); }
+//
+//    public Pose2d posePlusAngle(Pose2d pose, double angle) {
+//        return pose.plus(new Pose2d(0, 0, angle - drive.getPoseEstimate().getHeading()));
+//    }
 
-    public Pose2d posePlusAngle(Pose2d pose, double angle) {
-        return pose.plus(new Pose2d(0, 0, angle - drive.getPoseEstimate().getHeading()));
+    public Pose2d turn(double targetAngle, Pose2d startPose) {
+        drive.turn(targetAngle - drive.getPoseEstimate().getHeading());
+        return new Pose2d(startPose.getX(), startPose.getY(), targetAngle);
+    }
+
+    public Pose2d turnRelative(double deltaAngle, Pose2d startPose) {
+        drive.turn(deltaAngle);
+        return startPose.plus(new Pose2d(0, 0, deltaAngle));
     }
 
     ///// ---------- RUN ---------- /////
@@ -134,7 +144,7 @@ public class BaseAuto {
         Pose2d curPos = startPose;
         int count = ops.length;
         int i = 0;
-        if (ops.length > 1) {
+        if (ops.length > 1 && ops[0] != AutoOperation.PARK) {
             curPos = highway(curPos);
         }
         for (AutoOperation op: ops) {
@@ -153,11 +163,11 @@ public class BaseAuto {
                     break;
             }
 
-            while (drive.isBusy()) {
-                if (mode.gamepad1.a || mode.gamepad1.b || mode.gamepad1.x || mode.gamepad1.y) {
+//            while (drive.isBusy()) {
+//                if (mode.gamepad1.a || mode.gamepad1.b || mode.gamepad1.x || mode.gamepad1.y) {
 //                    drive.breakFollowing();
-                }
-            }
+//                }
+//            }
 
             if (i < count - 1) {
                 curPos = highway(curPos);
@@ -194,12 +204,17 @@ public class BaseAuto {
     }
 
     public Pose2d park(Pose2d startPose) {
-        drive.turn(PARK_ANGLE - drive.getPoseEstimate().getHeading());
-        Trajectory traj = drive.trajectoryBuilder(posePlusAngle(startPose, PARK_ANGLE))
+        Trajectory traj1 = drive.trajectoryBuilder(startPose)
+                .forward(3)
+                .build();
+        drive.followTrajectory(traj1);
+        startPose = traj1.end();
+        startPose = turn(PARK_ANGLE, startPose);
+        Trajectory traj2 = drive.trajectoryBuilder(startPose)
                 .lineToConstantHeading(park_v())
                 .build();
-        drive.followTrajectory(traj);
-        return traj.end();
+        drive.followTrajectory(traj2);
+        return traj2.end();
     }
 
     // ----- BASKET ----- //
@@ -210,25 +225,43 @@ public class BaseAuto {
     }
 
     public Pose2d basket(Pose2d startPose) {
-        drive.turn(BASKET_ANGLE - drive.getPoseEstimate().getHeading());
-        Trajectory traj = drive.trajectoryBuilder(posePlusAngle(startPose, BASKET_ANGLE))
+        startPose = turn(BASKET_ANGLE, startPose);
+        Trajectory traj = drive.trajectoryBuilder(startPose)
                 .lineToConstantHeading(basket_v())
+                .addDisplacementMarker(() -> {
+                    if (peripherals_allowed) {
+                        // Lift viper slides
+                        bot.viper.move(Viper.MAX_VIPER_POS);
+                    }
+                })
+                .addTemporalMarker(0.5, () -> {
+                    if (peripherals_allowed) {
+                        // Drop pixel
+                        bot.basket.setOpen();
+                    }
+                })
+                .addTemporalMarker(0.5, () -> {
+                    if (peripherals_allowed) {
+                        // Drop pixel
+                        bot.basket.setOpen();
+                    }
+                })
+                .addTemporalMarker(0.5, () -> {
+                    if (peripherals_allowed) {
+                        bot.basket.setClosed();
+                    }
+                })
+                .addTemporalMarker(0.5, () -> {
+                    if (peripherals_allowed) {
+                        // Lower viper slides
+                        bot.viper.move(Viper.MIN_VIPER_POS);
+                    }
+                })
                 .build();
         drive.followTrajectory(traj);
 
         // TODO: Place sample in basket
-        if (peripherals_allowed) {
-            // Lift viper slides
-            bot.viper.move(Viper.MAX_VIPER_POS);
-            wait(0.5);
-            // Drop pixel
-            bot.basket.setOpen();
-            wait(0.5);
-            bot.basket.setClosed();
-            wait(0.5);
-            // Lower viper slides
-            bot.viper.move(Viper.MIN_VIPER_POS);
-        }
+
 
         return traj.end();
     }
@@ -239,33 +272,41 @@ public class BaseAuto {
     public Pose2d samples(Trajectory startTraj) { return samples(startTraj.end()); }
 
     public Pose2d samples(Pose2d startPose) {
-        drive.turn(SAMPLES_ANGLE - drive.getPoseEstimate().getHeading());
-        Trajectory traj = drive.trajectoryBuilder(posePlusAngle(startPose, SAMPLES_ANGLE))
+        startPose = turn(SAMPLES_ANGLE, startPose);
+        Trajectory traj = drive.trajectoryBuilder(startPose)
                 .lineToConstantHeading(samples_v())
+                .addDisplacementMarker(() -> {
+                    if (peripherals_allowed) {
+                        // Lower arm
+                        bot.frames.beforeGrab();
+                    }
+                })
+                .addTemporalMarker(0.5, () -> {
+                    if (peripherals_allowed) {
+                        bot.frames.afterGrab();
+                    }
+                })
+//                        // Pick up sample
+//                        bot.intake.engage();
+//                        wait(0.5);
+//                        // Retract arm
+//                        bot.arm.moveArm(Arm.MIN_ARM_POS);
+//                        bot.arm.moveWrist(Arm.MIN_WRIST_POS);
+//                        wait(0.5);
+//                        // Lower viper
+//                        bot.viper.move(Viper.MIN_VIPER_POS);
+//                        bot.basket.setOpen();
+//                        // Handoff
+//                        bot.intake.standby();
+//                        wait(1);
+//                        bot.basket.setClosed();
+//                    }
+//                })
                 .build();
         drive.followTrajectory(traj);
 
         // TODO: Pick up sample
-        if (peripherals_allowed) {
-            // Lower arm
-            bot.arm.moveWrist(Arm.MAX_WRIST_POS);
-            bot.arm.moveArm(Arm.MAX_ARM_POS);
-            wait(0.5);
-            // Pick up sample
-            bot.intake.engage();
-            wait(0.5);
-            // Retract arm
-            bot.arm.moveArm(Arm.MIN_ARM_POS);
-            bot.arm.moveWrist(Arm.MIN_WRIST_POS);
-            wait(0.5);
-            // Lower viper
-            bot.viper.move(Viper.MIN_VIPER_POS);
-            bot.basket.setOpen();
-            // Handoff
-            bot.intake.standby();
-            wait(1);
-            bot.basket.setClosed();
-        }
+
 
         return traj.end();
     }
@@ -276,30 +317,33 @@ public class BaseAuto {
     public Pose2d submersible(Trajectory startTraj) { return submersible(startTraj.end()); }
 
     public Pose2d submersible(Pose2d startPose) {
-        drive.turn(SUBMERSIBLE_ANGLE - drive.getPoseEstimate().getHeading());
-        Trajectory traj = drive.trajectoryBuilder(posePlusAngle(startPose, SUBMERSIBLE_ANGLE))
+        startPose = turn(SUBMERSIBLE_ANGLE, startPose);
+        Trajectory traj = drive.trajectoryBuilder(startPose)
                 .lineToConstantHeading(submersible_v())
+                .addDisplacementMarker(() -> {
+                    if (peripherals_allowed) {
+                        // Lift viper
+                        bot.viper.move(Viper.MAX_VIPER_POS);
+                        wait(1);
+                        // Basket to middle position
+                        bot.basket.setMiddle();
+                        wait(0.5);
+                        // Slowly lower viper
+                        bot.viper.move(Viper.MAX_VIPER_POS-1000);
+                        wait(2);
+                        // Open basket
+                        bot.basket.setOpen();
+                        wait(0.5);
+                        // Lower viper
+                        bot.viper.move(Viper.MIN_VIPER_POS);
+                        wait(1);
+                    }
+                })
                 .build();
         drive.followTrajectory(traj);
 
         // TODO: Place specimen on horizontal bar
-        if (peripherals_allowed) {
-            // Lift viper
-            bot.viper.move(Viper.MAX_VIPER_POS);
-            wait(1);
-            // Basket to middle position
-            bot.basket.setMiddle();
-            wait(0.5);
-            // Slowly lower viper
-            bot.viper.move(Viper.MAX_VIPER_POS-1000);
-            wait(2);
-            // Open basket
-            bot.basket.setOpen();
-            wait(0.5);
-            // Lower viper
-            bot.viper.move(Viper.MIN_VIPER_POS);
-            wait(1);
-        }
+
         return traj.end();
     }
 }
