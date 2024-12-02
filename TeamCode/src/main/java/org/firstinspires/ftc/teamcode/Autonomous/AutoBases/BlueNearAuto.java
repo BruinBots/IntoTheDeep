@@ -9,6 +9,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class BlueNearAuto extends BaseAuto {
     public BlueNearAuto(HardwareMap hardwareMap, Telemetry telemetry, OpMode mode) {
-        super(hardwareMap, telemetry, startPose, true, true, mode);
+        super(hardwareMap, telemetry, true, true, mode);
     }
 }

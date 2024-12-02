@@ -9,6 +9,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class RedFarAuto extends BaseAuto {
     public RedFarAuto(HardwareMap hardwareMap, Telemetry telemetry, OpMode mode) {
-        super(hardwareMap, telemetry, startPose, false, false, mode);
+        super(hardwareMap, telemetry, false, false, mode);
     }
 }

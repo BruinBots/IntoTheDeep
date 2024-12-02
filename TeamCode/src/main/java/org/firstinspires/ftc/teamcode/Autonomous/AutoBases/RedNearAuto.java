@@ -9,6 +9,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class RedNearAuto extends BaseAuto {
     public RedNearAuto(HardwareMap hardwareMap, Telemetry telemetry, OpMode mode) {
-        super(hardwareMap, telemetry, startPose, false, true, mode);
+        super(hardwareMap, telemetry, false, true, mode);
     }
 }

@@ -34,6 +34,7 @@ public class MainTeleop extends OpMode {
     public static ColorDistanceSensor.Colors currentOP = (ColorDistanceSensor.Colors.red);
     public boolean viperPressed = false;
     public boolean armPressed = false;
+    public boolean firstLoop = true;
 
     @Override
     public void init() {
@@ -49,19 +50,11 @@ public class MainTeleop extends OpMode {
         bot.viperMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        bot.viperMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // put intake servos to standby
-        if (engageAtStart) {
-            bot.intake.engage();
-        }
-        else {
-            bot.intake.standby();
-        }
-
-        bot.basket.setClosed();
-
         viperPos = 0;
         armPos = 0;
         wristPos = 1;
+
+        firstLoop = true;
     }
 
     public void displayMotorTelemetry(String caption, DcMotorEx motor) {
@@ -75,6 +68,19 @@ public class MainTeleop extends OpMode {
 
     @Override
     public void loop() {
+
+        if (firstLoop) {
+            // put intake servos to standby
+            if (engageAtStart) {
+                bot.intake.engage();
+            }
+            else {
+                bot.intake.standby();
+            }
+
+            bot.basket.setClosed();
+        }
+        firstLoop = false;
 
         // Drive
         drive = gamepad2.left_stick_y - gamepad1.left_stick_y;
@@ -135,6 +141,7 @@ public class MainTeleop extends OpMode {
             bot.frames.afterGrab();
         } else if (gamepad2.x) {
             // arm hanging position
+            bot.frames.peck();
         }
 
         bot.frames.loop();

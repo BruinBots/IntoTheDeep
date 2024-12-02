@@ -55,7 +55,7 @@ public class BaseAuto {
 
     private final OpMode mode;
 
-    public BaseAuto(HardwareMap hardwareMap, Telemetry telemetry, Pose2d startingPosition, boolean blue, boolean near, OpMode mode) {
+    public BaseAuto(HardwareMap hardwareMap, Telemetry telemetry, boolean blue, boolean near, OpMode mode) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         this.blue = blue;
@@ -83,7 +83,7 @@ public class BaseAuto {
             SUBMERSIBLE_X = Integer.parseInt(prop.getProperty("submersible.x"));
             SUBMERSIBLE_Y = y_factor*Integer.parseInt(prop.getProperty("submersible.y"));
 
-            PARK_ANGLE = Math.toRadians(conditionallyInvertAngle(Integer.parseInt(prop.getProperty("park.angle")), near));
+            PARK_ANGLE = Math.toRadians(conditionallyInvertAngle(Integer.parseInt(prop.getProperty("park.angle")), false));
             BASKET_ANGLE = Math.toRadians(conditionallyInvertAngle(Integer.parseInt(prop.getProperty("basket.angle")), !blue));
             SAMPLES_ANGLE = Math.toRadians(conditionallyInvertAngle(Integer.parseInt(prop.getProperty("samples.angle")), !blue));
             SUBMERSIBLE_ANGLE = Math.toRadians(conditionallyInvertAngle(Integer.parseInt(prop.getProperty("submersible.angle")), !blue));
@@ -95,7 +95,7 @@ public class BaseAuto {
         startPose = new Pose2d(START_X, START_Y, Math.toRadians(blue ? 270 : 90));
 
         drive = new SampleMecanumDrive(hardwareMap);
-        drive.setPoseEstimate(startingPosition);
+        drive.setPoseEstimate(startPose);
     }
 
     public static Vector2d pose2vector(Pose2d pose) {
