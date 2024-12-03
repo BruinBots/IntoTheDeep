@@ -119,8 +119,8 @@ public class BaseAuto {
     public double closestAngle(double targetAngle) {
         double deltaAngle = targetAngle - drive.getPoseEstimate().getHeading();
 
-        double plusAngle = targetAngle - (drive.getPoseEstimate().getHeading() + Math.toRadians(360));
-        double minusAngle = targetAngle - (drive.getPoseEstimate().getHeading() - Math.toRadians(360));
+        double plusAngle = (targetAngle + 360) - drive.getPoseEstimate().getHeading();
+        double minusAngle = (targetAngle - 360) - drive.getPoseEstimate().getHeading();
 
         return Math.min(Math.abs(deltaAngle), Math.min(Math.abs(plusAngle), Math.abs(minusAngle)));
     }
@@ -135,7 +135,9 @@ public class BaseAuto {
     }
 
     public Pose2d turn(double targetAngle, Pose2d startPose) {
-        drive.turn(closestAngle(targetAngle));
+//       double deltaAngle = closestAngle(targetAngle);
+//       return turnRelative(deltaAngle, startPose);
+        drive.turn(targetAngle - drive.getPoseEstimate().getHeading());
         return new Pose2d(startPose.getX(), startPose.getY(), targetAngle);
     }
 

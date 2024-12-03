@@ -15,7 +15,36 @@ public class Frames {
                 startTime = System.currentTimeMillis();
             }
 
-            return System.currentTimeMillis() - startTime >= waitTime;
+            boolean cont = System.currentTimeMillis() - startTime >= waitTime;
+
+            if (cont) {
+                startTime = -1;
+            }
+
+            return cont;
+        }
+    }
+
+    private class ViperFrame extends Frame {
+        private int viper;
+        private int delay;
+
+        public ViperFrame(int viper, int delay) {
+            this.viper = viper;
+            this.delay = delay;
+        }
+
+        public ViperFrame(int viper) {
+            this.viper = viper;
+            this.delay = 500;
+        }
+
+        public boolean run() {
+            bot.viper.move(viper);
+
+            MainTeleop.viperPos = viper;
+
+            return waitUntilTime(delay) && (Math.abs(bot.viperMotorL.getTargetPosition() - bot.viperMotorL.getCurrentPosition()) <= 15) && (Math.abs(bot.viperMotorR.getTargetPosition() - bot.viperMotorR.getCurrentPosition()) <= 15);
         }
     }
 
@@ -144,6 +173,18 @@ public class Frames {
       new ArmWristFrame(3362, 0.264),
     };
 
+    public Frame[] zeroBasketFrames = new Frame[] {
+        new ViperFrame(0),
+    };
+
+    public Frame[] bottomBasketFrames = new Frame[] {
+        new ViperFrame(1600),
+    };
+
+    public Frame[] topBasketFrames = new Frame[] {
+        new ViperFrame(3200),
+    };
+
     public Frames(Hardware bot) {
         this.bot = bot;
     }
@@ -193,4 +234,7 @@ public class Frames {
     public void peck() { runFrames(peckFrames); }
     public void clawToBasket() { runFrames(clawToBasketFrames); }
     public void afterGrab() { runFrames(afterGrabFrames); }
+    public void zeroBasket() { runFrames(zeroBasketFrames); }
+    public void bottomBasket() { runFrames(bottomBasketFrames); }
+    public void topBasket() { runFrames(topBasketFrames); }
 }
