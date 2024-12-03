@@ -47,6 +47,7 @@ public class BaseAuto {
     public static int SUBMERSIBLE_Y;
 
     public static double PARK_ANGLE;
+    public static double BASKET_PREANGLE;
     public static double BASKET_ANGLE;
     public static double SAMPLES_ANGLE;
     public static double SUBMERSIBLE_ANGLE;
@@ -115,14 +116,26 @@ public class BaseAuto {
     public int invertAngle(int angle) { return (angle+180>=360)?(angle-180):(angle+180); }
     public int conditionallyInvertAngle(int angle, boolean invert) { return invert?invertAngle(angle):angle; }
 
-//    public Pose2d posePlusAngle(Trajectory traj, double angle) { return posePlusAngle(traj.end(), angle); }
-//
-//    public Pose2d posePlusAngle(Pose2d pose, double angle) {
-//        return pose.plus(new Pose2d(0, 0, angle - drive.getPoseEstimate().getHeading()));
-//    }
+    public double closestAngle(double targetAngle) {
+        double deltaAngle = targetAngle - drive.getPoseEstimate().getHeading();
+
+        double plusAngle = targetAngle - (drive.getPoseEstimate().getHeading() + Math.toRadians(360));
+        double minusAngle = targetAngle - (drive.getPoseEstimate().getHeading() - Math.toRadians(360));
+
+        return Math.min(Math.abs(deltaAngle), Math.min(Math.abs(plusAngle), Math.abs(minusAngle)));
+    }
+
+    public double angleToCoords(double x2, double y2) {
+        double x1 = drive.getPoseEstimate().getX();
+        double y1 = drive.getPoseEstimate().getY();
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+        double tan = dy / dx;
+        return Math.atan(tan);
+    }
 
     public Pose2d turn(double targetAngle, Pose2d startPose) {
-        drive.turn(targetAngle - drive.getPoseEstimate().getHeading());
+        drive.turn(closestAngle(targetAngle));
         return new Pose2d(startPose.getX(), startPose.getY(), targetAngle);
     }
 
@@ -144,7 +157,7 @@ public class BaseAuto {
         Pose2d curPos = startPose;
         int count = ops.length;
         int i = 0;
-        if (ops.length > 1 && ops[0] != AutoOperation.PARK) {
+        if (ops.length > 1) { //  && ops[0] != AutoOperation.PARK
             curPos = highway(curPos);
         }
         for (AutoOperation op: ops) {
@@ -225,45 +238,26 @@ public class BaseAuto {
     }
 
     public Pose2d basket(Pose2d startPose) {
-        startPose = turn(BASKET_ANGLE, startPose);
-        Trajectory traj = drive.trajectoryBuilder(startPose)
+        Trajectory traj1 = drive.trajectoryBuilder(startPose)
+                .forward(3)
+                .build();
+        drive.followTrajectory(traj1);
+        startPose = traj1.end();
+        startPose = turn(angleToCoords(BASKET_X, BASKET_Y), startPose);
+        Trajectory traj2 = drive.trajectoryBuilder(startPose)
                 .lineToConstantHeading(basket_v())
                 .addDisplacementMarker(() -> {
-                    if (peripherals_allowed) {
-                        // Lift viper slides
-                        bot.viper.move(Viper.MAX_VIPER_POS);
-                    }
-                })
-                .addTemporalMarker(0.5, () -> {
-                    if (peripherals_allowed) {
-                        // Drop pixel
-                        bot.basket.setOpen();
-                    }
-                })
-                .addTemporalMarker(0.5, () -> {
-                    if (peripherals_allowed) {
-                        // Drop pixel
-                        bot.basket.setOpen();
-                    }
-                })
-                .addTemporalMarker(0.5, () -> {
-                    if (peripherals_allowed) {
-                        bot.basket.setClosed();
-                    }
-                })
-                .addTemporalMarker(0.5, () -> {
-                    if (peripherals_allowed) {
-                        // Lower viper slides
-                        bot.viper.move(Viper.MIN_VIPER_POS);
-                    }
+//                    bot.frames.basketFrames();
                 })
                 .build();
-        drive.followTrajectory(traj);
+        drive.followTrajectory(traj2);
+        startPose = turn(BASKET_ANGLE, traj2.end());
 
-        // TODO: Place sample in basket
+        while (bot.frames.isBusy()) {
+            bot.frames.loop();
+        }
 
-
-        return traj.end();
+        return startPose;
     }
 
     // ----- SAMPLES ----- //

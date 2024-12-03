@@ -64,14 +64,7 @@ public class MainTeleop extends OpMode {
 
     @Override
     public void start() {
-        if (engageAtStart) {
-            bot.intake.engage();
-        }
-        else {
-            bot.intake.standby();
-        }
-
-        bot.basket.setClosed();
+        bot.init(true);
 
         viperPos = 0;
         armPos = 0;

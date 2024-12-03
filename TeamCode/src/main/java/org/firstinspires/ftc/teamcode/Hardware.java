@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.MainTeleop.engageAtStart;
+
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -100,5 +102,17 @@ public class Hardware {
         rightFrontMotor.setPower(wheelSpeeds[1] * scaleFactor);
         leftBackMotor.setPower(wheelSpeeds[2] * scaleFactor);
         rightBackMotor.setPower(wheelSpeeds[3] * scaleFactor);
+    }
+
+    public void init(boolean teleop) {
+        if (teleop) {
+            if (engageAtStart) {
+                intake.engage();
+            } else {
+                intake.standby();
+            }
+        }
+
+        basket.setClosed();
     }
 }

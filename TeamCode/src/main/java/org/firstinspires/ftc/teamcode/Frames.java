@@ -153,9 +153,14 @@ public class Frames {
             bot.arm.moveArm(bot.armMotor.getCurrentPosition()); // Stop moving arm by commanding it to move to its current position
             curFrames = new Frame[] {};
             curIdx = 0;
+            return;
         }
         curFrames = frames;
         curIdx = 0;
+    }
+
+    public boolean isBusy() {
+        return curFrames.length > 0;
     }
 
     public void loop() {
