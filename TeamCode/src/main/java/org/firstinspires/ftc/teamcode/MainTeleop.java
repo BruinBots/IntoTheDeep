@@ -74,6 +74,8 @@ public class MainTeleop extends OpMode {
     @Override
     public void loop() {
 
+        controlMap.updateControllers();
+
         // Drive
         drive = gamepad2.left_stick_y - gamepad1.left_stick_y;
         strafe = gamepad1.left_stick_x - gamepad2.left_stick_x;
