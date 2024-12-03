@@ -14,8 +14,11 @@ public class MeepMeepTesting {
     public static double turnRelative(double curAngle, double targetAngle) {
         double deltaAngle = targetAngle - curAngle;
 
-        double plusAngle = targetAngle - (curAngle + 360);
-        double minusAngle = targetAngle - (curAngle - 360);
+//        double plusAngle = targetAngle - (curAngle + 360);
+//        double minusAngle = targetAngle - (curAngle - 360);
+
+        double plusAngle = (targetAngle + 360) - curAngle;
+        double minusAngle = (targetAngle - 360) - curAngle;
 
         return Math.toRadians(Math.min(Math.abs(deltaAngle), Math.min(Math.abs(plusAngle), Math.abs(minusAngle))));
     }

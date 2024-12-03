@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -88,17 +87,17 @@ public class MainTeleop extends OpMode {
         turn = Math.copySign(Math.pow(turn, 2), turn);
 
         // Claw
-        if (controlMap.OpenClaw) {
+        if (controlMap.OpenClaw()) {
             bot.intake.standby();
-        } else if (controlMap.CloseClaw) {
+        } else if (controlMap.CloseClaw()) {
             bot.intake.engage();
         }
 
         // Arm
-        if (controlMap.ArmUp) {
+        if (controlMap.ArmUp()) {
             armPressed = true;
             armPos += Arm.ARM_SPEED;
-        } else if (controlMap.ArmDown) {
+        } else if (controlMap.ArmDown()) {
             armPressed = true;
             armPos -= Arm.ARM_SPEED;
         } else {
@@ -109,53 +108,57 @@ public class MainTeleop extends OpMode {
         }
 
         // Wrist
-        if (controlMap.RotateWristToMailbox) {
+        if (controlMap.RotateWristToMailbox()) {
             wristPos += Arm.WRIST_SPEED;
-        } else if (controlMap.RotateWristOppositeMailbox) {
+        } else if (controlMap.RotateWristOppositeMailbox()) {
             wristPos -= Arm.WRIST_SPEED;
         }
         bot.arm.loop();
 
         // Arm Hotkeys
-        if (controlMap.ArmPickingPosition) {
+        if (controlMap.ArmPickingPosition()) {
             // arm position to grab sample
             bot.frames.beforeGrab();
-        } else if (controlMap.ArmMailboxPosition) {
+        } else if (controlMap.ArmMailboxPosition()) {
             // arm position to transfer to basket
             bot.frames.clawToBasket();
-        } else if (controlMap.ArmRestPosition) {
+        } else if (controlMap.ArmRestPosition()) {
             // arm rest position
-            bot.frames.afterGrab();
-        } else if (controlMap.ArmHangingPosition) {
+//            bot.frames.afterGrab();
+            bot.frames.topBasket();
+        } else if (controlMap.ArmPecking()) {
             // arm hanging position
             bot.frames.peck();
         }
         bot.frames.loop();
 
         // Slide Hotkeys
-        if (controlMap.BottomSlide) {
+        if (controlMap.BottomSlide()) {
             // Move slide to 0
-        } else if (controlMap.BottomBasket) {
+            bot.frames.zeroBasket();
+        } else if (controlMap.BottomBasket()) {
             // Move slide to bottom basket
-        } else if (controlMap.TopBasket) {
+            bot.frames.bottomBasket();
+        } else if (controlMap.TopBasket()) {
             // Move slide to top basket
-        } else if (controlMap.TopPole) {
+            bot.frames.topBasket();
+        } else if (controlMap.TopPole()) {
             // Move slide to top pole
         }
 
         // Speed Settings
-        if (controlMap.FastSpeed) {
+        if (controlMap.FastSpeed()) {
             // Set Speed to Fast Speed
-        } else if (controlMap.SlowSpeed) {
+        } else if (controlMap.SlowSpeed()) {
             // Set Speed to Slow Speed
         }
 
         // Slide
-        if (controlMap.SlideUp) {
+        if (controlMap.SlideUp()) {
             viperPressed = true;
             viperPos += Viper.VIPER_SPEED;
         }
-        else if (controlMap.SlideDown) {
+        else if (controlMap.SlideDown()) {
             viperPressed = true;
             viperPos -= Viper.VIPER_SPEED;
         } else {
@@ -167,11 +170,11 @@ public class MainTeleop extends OpMode {
         bot.viper.loop();
 
         // Mailbox
-        if (controlMap.MailBoxClose) {
+        if (controlMap.MailBoxClose()) {
             bot.basket.setClosed();
-        } else if (controlMap.MailBoxOpen) {
+        } else if (controlMap.MailBoxOpen()) {
             bot.basket.setOpen();
-        } else if (controlMap.MailBoxMiddle) {
+        } else if (controlMap.MailBoxMiddle()) {
             bot.basket.setMiddle();
         }
 
