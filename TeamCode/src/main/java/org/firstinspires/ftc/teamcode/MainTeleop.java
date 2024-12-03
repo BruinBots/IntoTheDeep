@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @TeleOp(name="Main TeleOp", group = "Iterative Opmode")
 public class MainTeleop extends OpMode {
     Hardware bot;
+    ControlMap controlMap;
 
     // drive values
     double drive = 0.0;
@@ -41,6 +42,7 @@ public class MainTeleop extends OpMode {
         dash = FtcDashboard.getInstance();
         dashTelemetry = dash.getTelemetry();
         bot = new Hardware(hardwareMap);
+        controlMap = new ControlMap(gamepad1, gamepad2);
         // reset motor encoders (remove for competition?)
         bot.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        bot.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -49,12 +51,6 @@ public class MainTeleop extends OpMode {
 //        bot.viperMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         bot.viperMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        bot.viperMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        viperPos = 0;
-        armPos = 0;
-        wristPos = 1;
-
-        firstLoop = true;
     }
 
     public void displayMotorTelemetry(String caption, DcMotorEx motor) {
@@ -67,20 +63,23 @@ public class MainTeleop extends OpMode {
     }
 
     @Override
-    public void loop() {
-
-        if (firstLoop) {
-            // put intake servos to standby
-            if (engageAtStart) {
-                bot.intake.engage();
-            }
-            else {
-                bot.intake.standby();
-            }
-
-            bot.basket.setClosed();
+    public void start() {
+        if (engageAtStart) {
+            bot.intake.engage();
         }
-        firstLoop = false;
+        else {
+            bot.intake.standby();
+        }
+
+        bot.basket.setClosed();
+
+        viperPos = 0;
+        armPos = 0;
+        wristPos = 1;
+    }
+
+    @Override
+    public void loop() {
 
         // Drive
         drive = gamepad2.left_stick_y - gamepad1.left_stick_y;
@@ -96,17 +95,17 @@ public class MainTeleop extends OpMode {
         turn = Math.copySign(Math.pow(turn, 2), turn);
 
         // Claw
-        if (ControlMap.OpenClaw) {
+        if (controlMap.OpenClaw) {
             bot.intake.standby();
-        } else if (ControlMap.CloseClaw) {
+        } else if (controlMap.CloseClaw) {
             bot.intake.engage();
         }
 
         // Arm
-        if (ControlMap.ArmUp) {
+        if (controlMap.ArmUp) {
             armPressed = true;
             armPos += Arm.ARM_SPEED;
-        } else if (ControlMap.ArmDown) {
+        } else if (controlMap.ArmDown) {
             armPressed = true;
             armPos -= Arm.ARM_SPEED;
         } else {
@@ -117,53 +116,53 @@ public class MainTeleop extends OpMode {
         }
 
         // Wrist
-        if (ControlMap.RotateWristToMailbox) {
+        if (controlMap.RotateWristToMailbox) {
             wristPos += Arm.WRIST_SPEED;
-        } else if (ControlMap.RotateWristOppositeMailbox) {
+        } else if (controlMap.RotateWristOppositeMailbox) {
             wristPos -= Arm.WRIST_SPEED;
         }
         bot.arm.loop();
 
         // Arm Hotkeys
-        if (ControlMap.ArmPickingPosition) {
+        if (controlMap.ArmPickingPosition) {
             // arm position to grab sample
             bot.frames.beforeGrab();
-        } else if (ControlMap.ArmMailboxPosition) {
+        } else if (controlMap.ArmMailboxPosition) {
             // arm position to transfer to basket
             bot.frames.clawToBasket();
-        } else if (ControlMap.ArmRestPosition) {
+        } else if (controlMap.ArmRestPosition) {
             // arm rest position
             bot.frames.afterGrab();
-        } else if (ControlMap.ArmHangingPosition) {
+        } else if (controlMap.ArmHangingPosition) {
             // arm hanging position
             bot.frames.peck();
         }
         bot.frames.loop();
 
         // Slide Hotkeys
-        if (ControlMap.BottomSlide) {
+        if (controlMap.BottomSlide) {
             // Move slide to 0
-        } else if (ControlMap.BottomBasket) {
+        } else if (controlMap.BottomBasket) {
             // Move slide to bottom basket
-        } else if (ControlMap.TopBasket) {
+        } else if (controlMap.TopBasket) {
             // Move slide to top basket
-        } else if (ControlMap.TopPole) {
+        } else if (controlMap.TopPole) {
             // Move slide to top pole
         }
 
         // Speed Settings
-        if (ControlMap.FastSpeed) {
+        if (controlMap.FastSpeed) {
             // Set Speed to Fast Speed
-        } else if (ControlMap.SlowSpeed) {
+        } else if (controlMap.SlowSpeed) {
             // Set Speed to Slow Speed
         }
 
         // Slide
-        if (ControlMap.SlideUp) {
+        if (controlMap.SlideUp) {
             viperPressed = true;
             viperPos += Viper.VIPER_SPEED;
         }
-        else if (ControlMap.SlideDown) {
+        else if (controlMap.SlideDown) {
             viperPressed = true;
             viperPos -= Viper.VIPER_SPEED;
         } else {
@@ -175,11 +174,11 @@ public class MainTeleop extends OpMode {
         bot.viper.loop();
 
         // Mailbox
-        if (ControlMap.MailBoxClose) {
+        if (controlMap.MailBoxClose) {
             bot.basket.setClosed();
-        } else if (ControlMap.MailBoxOpen) {
+        } else if (controlMap.MailBoxOpen) {
             bot.basket.setOpen();
-        } else if (ControlMap.MailBoxMiddle) {
+        } else if (controlMap.MailBoxMiddle) {
             bot.basket.setMiddle();
         }
 
