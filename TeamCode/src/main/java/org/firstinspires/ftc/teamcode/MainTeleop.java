@@ -95,25 +95,18 @@ public class MainTeleop extends OpMode {
         drive = Math.copySign(Math.pow(drive, 2), drive);
         turn = Math.copySign(Math.pow(turn, 2), turn);
 
-        // Arm
-        if (gamepad2.dpad_down) {
+        // Claw
+        if (ControlMap.OpenClaw) {
             bot.intake.standby();
-        }
-
-        // Wrist
-        if (gamepad2.dpad_left) {
+        } else if (ControlMap.CloseClaw) {
             bot.intake.engage();
         }
 
         // Arm
-        doTelemetry("RightBumper", gamepad2.right_bumper);
-        doTelemetry("RightTrigger", gamepad2.right_trigger);
-        if (gamepad2.right_bumper) {
-            telemetry.addLine("Arm +");
+        if (ControlMap.ArmUp) {
             armPressed = true;
             armPos += Arm.ARM_SPEED;
-        } else if (gamepad2.right_trigger > 0.5) {
-            telemetry.addLine("Arm -");
+        } else if (ControlMap.ArmDown) {
             armPressed = true;
             armPos -= Arm.ARM_SPEED;
         } else {
@@ -123,37 +116,54 @@ public class MainTeleop extends OpMode {
             }
         }
 
-        if (gamepad2.dpad_up) {
+        // Wrist
+        if (ControlMap.RotateWristToMailbox) {
             wristPos += Arm.WRIST_SPEED;
-        } else if (gamepad2.dpad_right) {
+        } else if (ControlMap.RotateWristOppositeMailbox) {
             wristPos -= Arm.WRIST_SPEED;
         }
         bot.arm.loop();
 
-        if (gamepad2.y) {
+        // Arm Hotkeys
+        if (ControlMap.ArmPickingPosition) {
             // arm position to grab sample
             bot.frames.beforeGrab();
-        } else if (gamepad2.b) {
+        } else if (ControlMap.ArmMailboxPosition) {
             // arm position to transfer to basket
             bot.frames.clawToBasket();
-        } else if (gamepad2.a) {
+        } else if (ControlMap.ArmRestPosition) {
             // arm rest position
             bot.frames.afterGrab();
-        } else if (gamepad2.x) {
+        } else if (ControlMap.ArmHangingPosition) {
             // arm hanging position
             bot.frames.peck();
         }
-
         bot.frames.loop();
 
-        // 720 low bar for hang
+        // Slide Hotkeys
+        if (ControlMap.BottomSlide) {
+            // Move slide to 0
+        } else if (ControlMap.BottomBasket) {
+            // Move slide to bottom basket
+        } else if (ControlMap.TopBasket) {
+            // Move slide to top basket
+        } else if (ControlMap.TopPole) {
+            // Move slide to top pole
+        }
 
-        // Viper
-        if (gamepad1.right_bumper) {
+        // Speed Settings
+        if (ControlMap.FastSpeed) {
+            // Set Speed to Fast Speed
+        } else if (ControlMap.SlowSpeed) {
+            // Set Speed to Slow Speed
+        }
+
+        // Slide
+        if (ControlMap.SlideUp) {
             viperPressed = true;
             viperPos += Viper.VIPER_SPEED;
         }
-        else if (gamepad1.right_trigger > 0.5) {
+        else if (ControlMap.SlideDown) {
             viperPressed = true;
             viperPos -= Viper.VIPER_SPEED;
         } else {
@@ -164,11 +174,12 @@ public class MainTeleop extends OpMode {
         }
         bot.viper.loop();
 
-        if (gamepad1.dpad_down) {
+        // Mailbox
+        if (ControlMap.MailBoxClose) {
             bot.basket.setClosed();
-        } else if (gamepad1.dpad_right) {
+        } else if (ControlMap.MailBoxOpen) {
             bot.basket.setOpen();
-        } else if (gamepad1.dpad_left) {
+        } else if (ControlMap.MailBoxMiddle) {
             bot.basket.setMiddle();
         }
 
