@@ -18,9 +18,9 @@ public class ControlMap {
     }
 
     // MAILBOX
-    public boolean MailBoxClose() { return gamepad1.dpad_down || gamepad1.dpad_right; }
+    public boolean MailBoxClose() { return gamepad1.dpad_down || gamepad1.dpad_right || gamepad1.dpad_left; }
     public boolean MailBoxMiddle() { return gamepad1.left_trigger > 0.5; }
-    public boolean MailBoxOpen() { return gamepad1.right_trigger > 0.5; }
+    public boolean MailBoxOpen() { return gamepad1.dpad_up;}
 
 
     // VIPER SLIDE
@@ -32,26 +32,26 @@ public class ControlMap {
     public boolean TopPole() { return gamepad1.b; }
 
     // SPEED SETTINGS
-    public boolean FastSpeed() { return gamepad1.left_stick_button || gamepad2.left_trigger > 0.5; }
-    public boolean SlowSpeed() { return gamepad1.right_stick_button || gamepad2.left_bumper; }
+    public boolean FastSpeed() { return gamepad1.left_stick_button || gamepad2.right_trigger > 0.5; }
+    public boolean SlowSpeed() { return gamepad1.right_stick_button || gamepad2.left_trigger > 0.5; }
 
     // WRIST
-    public boolean RotateWristToMailbox() { return gamepad2.dpad_right; }
+    public boolean RotateWristToMailbox() { return gamepad2.dpad_down; }
     public boolean RotateWristOppositeMailbox() { return gamepad2.dpad_up; }
 
     // CLAW
     public boolean OpenClaw() { return gamepad2.dpad_left; }
-    public boolean CloseClaw() { return gamepad2.dpad_down; }
+    public boolean CloseClaw() { return gamepad2.dpad_right; }
 
     // ARM
-    public boolean ArmDown() { return gamepad2.right_trigger > 0.5; }
+    public boolean ArmDown() { return gamepad2.left_bumper; }
     public boolean ArmUp() { return gamepad2.right_bumper; }
 
     // MAGIC BUTTONS (Frames)
-    public boolean ArmPickingPosition() { return gamepad2.y; }
+    public boolean ArmPickingPosition() { return gamepad2.x; }
     public boolean ArmMailboxPosition() { return gamepad2.b; }
     public boolean ArmRestPosition() { return gamepad2.a; }
-    public boolean ArmPecking() { return gamepad2.x; }
+    public boolean ArmPecking() { return gamepad2.y; }
     public boolean OpenArm() { return false; }
     public boolean CloseArm() { return false; }
 }

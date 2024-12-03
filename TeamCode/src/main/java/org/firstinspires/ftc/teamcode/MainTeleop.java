@@ -124,8 +124,7 @@ public class MainTeleop extends OpMode {
             bot.frames.clawToBasket();
         } else if (controlMap.ArmRestPosition()) {
             // arm rest position
-//            bot.frames.afterGrab();
-            bot.frames.topBasket();
+            bot.frames.afterGrab();
         } else if (controlMap.ArmPecking()) {
             // arm hanging position
             bot.frames.peck();
