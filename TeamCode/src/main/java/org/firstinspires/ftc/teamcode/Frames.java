@@ -51,18 +51,25 @@ public class Frames {
     private class ArmWristFrame extends Frame {
         private int arm;
         private double wrist;
-        private int delay;
+        private int delay = 500;
+        private int tolerance = 5;
 
         public ArmWristFrame(int arm, double wrist) {
             this.arm = arm;
             this.wrist = wrist;
-            this.delay = 500;
         }
 
         public ArmWristFrame(int arm, double wrist, int delay) {
             this.arm = arm;
             this.wrist = wrist;
             this.delay = delay;
+        }
+
+        public ArmWristFrame(int arm, double wrist, int delay, int tolerance) {
+            this.arm = arm;
+            this.wrist = wrist;
+            this.delay = delay;
+            this.tolerance = tolerance;
         }
 
         public boolean run() {
@@ -72,7 +79,7 @@ public class Frames {
             MainTeleop.armPos = arm;
             MainTeleop.wristPos = wrist;
 
-            return waitUntilTime(delay) && (Math.abs(bot.armMotor.getTargetPosition() - bot.armMotor.getCurrentPosition()) <= 5);
+            return waitUntilTime(delay) && (Math.abs(bot.armMotor.getTargetPosition() - bot.armMotor.getCurrentPosition()) <= tolerance);
         }
     }
 
@@ -152,19 +159,22 @@ public class Frames {
 
     public Frame[] peckFrames = new Frame[] {
       new ArmWristSanityFrame(6709, 0.22, 1000, 0.2),
-      new ArmWristFrame(7392, 0.22, 500),
+      new ArmWristFrame(7089, 0.22, 500),
       new ClawEngageFrame(),
       new ArmWristFrame(6709, 0.22),
     };
 
     public Frame[] clawToBasketFrames = new Frame[] {
-      new ArmWristSanityFrame(3562, 0.26, 5500, 0.3),
-        new ArmWristFrame(3362, 0.22),
-        new ArmWristFrame(3362, 0.81),
+      new ArmWristSanityFrame(4220, 0.22, 5500, 0.3),
+        new ArmWristFrame(4220, 0.22),
+        new ArmWristFrame(4220, 0.78, 1000),
+        new ArmWristFrame(3640, 0.78),
+        new ArmWristFrame(3640, 0.78, 1000),
         new BasketMidFrame(),
-        new ArmWristFrame(2341, 0.81),
+        new ArmWristFrame(2870, 0.78, 750),
+        new ArmWristFrame(2870, 0.82, 750),
         new ClawStandbyFrame(),
-        new ArmWristFrame(2341, 0.9)
+        new ArmWristFrame(2870, 0.86, 750),
     };
 
     public Frame[] afterGrabFrames = new Frame[] {
@@ -186,10 +196,25 @@ public class Frames {
 
     public Frame[] uncurlFrames = new Frame[] {
         new ArmWristSanityFrame(0, 1, 1000, 0.2),
-        new ArmWristFrame(2025, 1),
-        new ArmWristFrame(2025, 0.87),
-        new ArmWristFrame(3576, 0.87),
-        new ArmWristFrame(3576, 0.22),
+        new ArmWristFrame(1478, 1, 0, 50),
+        new ArmWristFrame(1478, 0.96, 250),
+        new ArmWristFrame(2177, 0.96, 0, 50),
+        new ArmWristFrame(2177, 0.92, 250),
+        new ArmWristFrame(2748, 0.92, 0, 50),
+        new ArmWristFrame(2748, 0.86, 250),
+        new ArmWristFrame(3506, 0.86, 0, 50),
+        new ArmWristFrame(3506, 0.2, 250),
+    };
+
+    public Frame[] curlFrames = new Frame[] {
+        new ArmWristSanityFrame(3506, 0.2, 1000, 0.2),
+        new ArmWristFrame(4000, 0.2, 1000),
+        new ArmWristFrame(4000, 0.85, 1500),
+        new ArmWristFrame(2920, 0.85, 0, 50),
+        new ArmWristFrame(2920, 0.91, 250),
+        new ArmWristFrame(2040, 0.91, 0, 50),
+        new ArmWristFrame(2040, 1, 250),
+        new ArmWristFrame(20, 1, 0, 50),
     };
 
     public Frames(Hardware bot) {
@@ -198,14 +223,22 @@ public class Frames {
 
     public void runFrames(Frame[] frames) {
         if (curFrames == frames) {
-            bot.arm.moveArm(bot.armMotor.getCurrentPosition()); // Stop moving arm by commanding it to move to its current position
-            MainTeleop.armPos = bot.armMotor.getCurrentPosition();
-            bot.viper.move(bot.viperMotorL.getCurrentPosition()); // Stop moving vipers
-            MainTeleop.viperPos = bot.viperMotorL.getCurrentPosition();
+            boolean cancel = true;
+            if (curFrames.length > 0) {
+                if (System.currentTimeMillis() - curFrames[curIdx].startTime <= 400) {
+                    cancel = false;
+                }
+            }
+            if (cancel) {
+                bot.arm.moveArm(bot.armMotor.getCurrentPosition()); // Stop moving arm by commanding it to move to its current position
+                MainTeleop.armPos = bot.armMotor.getCurrentPosition();
+                bot.viper.move(bot.viperMotorL.getCurrentPosition()); // Stop moving vipers
+                MainTeleop.viperPos = bot.viperMotorL.getCurrentPosition();
 
-            curFrames = new Frame[] {};
-            curIdx = 0;
-            return;
+                curFrames = new Frame[]{};
+                curIdx = 0;
+                return;
+            }
         }
         curFrames = frames;
         curIdx = 0;
@@ -249,4 +282,5 @@ public class Frames {
     public void bottomBasket() { runFrames(bottomBasketFrames); }
     public void topBasket() { runFrames(topBasketFrames); }
     public void uncurlArm() { runFrames(uncurlFrames); }
+    public void curlArm() { runFrames(curlFrames); }
 }

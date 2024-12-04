@@ -10,7 +10,7 @@ public class Basket {
 
     public static double CLOSED_POS = 0.55;
     public static double OPEN_POS = 0.9;
-    public static double MID_POS = 0.7;
+    public static double MID_POS = 0.75;
 
     public Basket (Servo servo) {
         basketServo = servo;

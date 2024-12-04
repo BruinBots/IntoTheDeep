@@ -155,6 +155,8 @@ public class MainTeleop extends OpMode {
 
         if (controlMap.OpenArm()) {
             bot.frames.uncurlArm();
+        } else if (controlMap.CloseArm()) {
+            bot.frames.curlArm();
         }
 
         // Speed Settings
