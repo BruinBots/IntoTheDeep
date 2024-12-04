@@ -32,8 +32,8 @@ public class ControlMap {
     public boolean TopPole() { return gamepad1.b; }
 
     // SPEED SETTINGS
-    public boolean FastSpeed() { return gamepad1.left_stick_button || gamepad2.right_trigger > 0.5; }
-    public boolean SlowSpeed() { return gamepad1.right_stick_button || gamepad2.left_trigger > 0.5; }
+    public boolean FastSpeed() { return gamepad1.left_stick_button || gamepad2.left_stick_button; }
+    public boolean SlowSpeed() { return gamepad1.right_stick_button || gamepad2.right_stick_button; }
 
     // WRIST
     public boolean RotateWristToMailbox() { return gamepad2.dpad_down; }
@@ -47,11 +47,17 @@ public class ControlMap {
     public boolean ArmDown() { return gamepad2.left_bumper; }
     public boolean ArmUp() { return gamepad2.right_bumper; }
 
+    public boolean Xtra0() { return !(Xtra1() || Xtra2()); }
+    public boolean Xtra1() { return gamepad2.left_trigger > 0.5 && !Xtra2(); }
+    public boolean Xtra2() { return gamepad2.right_trigger > 0.5 && !Xtra1(); }
+    public boolean Xtra3() { return Xtra1() && Xtra2(); }
+
+
     // MAGIC BUTTONS (Frames)
-    public boolean ArmPickingPosition() { return gamepad2.x; }
-    public boolean ArmMailboxPosition() { return gamepad2.b; }
-    public boolean ArmRestPosition() { return gamepad2.a; }
-    public boolean ArmPecking() { return gamepad2.y; }
-    public boolean OpenArm() { return false; }
-    public boolean CloseArm() { return false; }
+    public boolean ArmPickingPosition() { return gamepad2.x && Xtra0(); }
+    public boolean ArmMailboxPosition() { return gamepad2.b && Xtra0(); }
+    public boolean ArmRestPosition() { return gamepad2.a && Xtra0(); }
+    public boolean ArmPecking() { return gamepad2.y && Xtra0(); }
+    public boolean OpenArm() { return gamepad2.x && Xtra1(); }
+    public boolean CloseArm() { return gamepad2.b && Xtra1(); }
 }

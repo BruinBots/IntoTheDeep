@@ -146,31 +146,30 @@ public class Frames {
     private int curIdx = 0;
 
     public Frame[] beforeGrabFrames = new Frame[] {
-      new ArmWristSanityFrame(6850, 0.279, 5500, 0.3),
-      new ArmWristFrame(6850, 0.247),
+      new ArmWristSanityFrame(6709, 0.22, 5500, 0.3),
+      new ArmWristFrame(6709, 0.22),
     };
 
     public Frame[] peckFrames = new Frame[] {
-      new ArmWristSanityFrame(6850, 0.247, 1000, 0.2),
-      new ArmWristFrame(7343, 0.247, 1000),
+      new ArmWristSanityFrame(6709, 0.22, 1000, 0.2),
+      new ArmWristFrame(7392, 0.22, 500),
       new ClawEngageFrame(),
-      new ArmWristFrame(6850, 0.247),
+      new ArmWristFrame(6709, 0.22),
     };
 
     public Frame[] clawToBasketFrames = new Frame[] {
-      new ArmWristSanityFrame(3562, 0.264, 5500, 0.3),
-      new ArmWristFrame(3562, 0.264),
-      new ArmWristFrame(4304, 0.816, 3500),
-      new ArmWristFrame(2862, 0.816),
-      new ArmWristFrame(2359, 0.816),
-      new BasketMidFrame(),
-      new ClawStandbyFrame(),
-      new ArmWristFrame(2459, 0.936),
+      new ArmWristSanityFrame(3562, 0.26, 5500, 0.3),
+        new ArmWristFrame(3362, 0.22),
+        new ArmWristFrame(3362, 0.81),
+        new BasketMidFrame(),
+        new ArmWristFrame(2341, 0.81),
+        new ClawStandbyFrame(),
+        new ArmWristFrame(2341, 0.9)
     };
 
     public Frame[] afterGrabFrames = new Frame[] {
-      new ArmWristSanityFrame(3362, 0.264, 5500, 0.3),
-      new ArmWristFrame(3362, 0.264),
+      new ArmWristSanityFrame(3362, 0.22, 5500, 0.3),
+      new ArmWristFrame(3362, 0.22),
     };
 
     public Frame[] zeroBasketFrames = new Frame[] {
@@ -185,6 +184,14 @@ public class Frames {
         new ViperFrame(3200),
     };
 
+    public Frame[] uncurlFrames = new Frame[] {
+        new ArmWristSanityFrame(0, 1, 1000, 0.2),
+        new ArmWristFrame(2025, 1),
+        new ArmWristFrame(2025, 0.87),
+        new ArmWristFrame(3576, 0.87),
+        new ArmWristFrame(3576, 0.22),
+    };
+
     public Frames(Hardware bot) {
         this.bot = bot;
     }
@@ -192,6 +199,10 @@ public class Frames {
     public void runFrames(Frame[] frames) {
         if (curFrames == frames) {
             bot.arm.moveArm(bot.armMotor.getCurrentPosition()); // Stop moving arm by commanding it to move to its current position
+            MainTeleop.armPos = bot.armMotor.getCurrentPosition();
+            bot.viper.move(bot.viperMotorL.getCurrentPosition()); // Stop moving vipers
+            MainTeleop.viperPos = bot.viperMotorL.getCurrentPosition();
+
             curFrames = new Frame[] {};
             curIdx = 0;
             return;
@@ -237,4 +248,5 @@ public class Frames {
     public void zeroBasket() { runFrames(zeroBasketFrames); }
     public void bottomBasket() { runFrames(bottomBasketFrames); }
     public void topBasket() { runFrames(topBasketFrames); }
+    public void uncurlArm() { runFrames(uncurlFrames); }
 }

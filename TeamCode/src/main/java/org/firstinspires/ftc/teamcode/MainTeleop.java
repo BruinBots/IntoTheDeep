@@ -113,6 +113,14 @@ public class MainTeleop extends OpMode {
         } else if (controlMap.RotateWristOppositeMailbox()) {
             wristPos -= Arm.WRIST_SPEED;
         }
+
+        if (wristPos > Arm.MAX_WRIST_POS) {
+            wristPos = Arm.MAX_WRIST_POS;
+        }
+        else if (wristPos < Arm.MIN_WRIST_POS) {
+            wristPos = Arm.MIN_WRIST_POS;
+        }
+
         bot.arm.loop();
 
         // Arm Hotkeys
@@ -143,6 +151,10 @@ public class MainTeleop extends OpMode {
             bot.frames.topBasket();
         } else if (controlMap.TopPole()) {
             // Move slide to top pole
+        }
+
+        if (controlMap.OpenArm()) {
+            bot.frames.uncurlArm();
         }
 
         // Speed Settings
