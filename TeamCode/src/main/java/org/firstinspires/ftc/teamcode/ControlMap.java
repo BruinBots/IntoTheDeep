@@ -47,10 +47,10 @@ public class ControlMap {
     public boolean ArmDown() { return gamepad2.left_bumper; }
     public boolean ArmUp() { return gamepad2.right_bumper; }
 
+
     public boolean Xtra0() { return !(Xtra1() || Xtra2()); }
-    public boolean Xtra1() { return gamepad2.left_trigger > 0.5 && !Xtra2(); }
-    public boolean Xtra2() { return gamepad2.right_trigger > 0.5 && !Xtra1(); }
-    public boolean Xtra3() { return Xtra1() && Xtra2(); }
+    public boolean Xtra1() { return gamepad2.left_trigger > 0.5; }
+    public boolean Xtra2() { return gamepad2.right_trigger > 0.5; }
 
 
     // MAGIC BUTTONS (Frames)

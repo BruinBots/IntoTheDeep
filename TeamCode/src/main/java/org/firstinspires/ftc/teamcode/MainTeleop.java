@@ -212,6 +212,9 @@ public class MainTeleop extends OpMode {
 //        }
 
         // Telemetry
+        doTelemetry("Xtra0", controlMap.Xtra0());
+        doTelemetry("Xtra1", controlMap.Xtra1());
+        doTelemetry("Xtra2", controlMap.Xtra2());
         doTelemetry("Intake", bot.intake.getPos());
         displayMotorTelemetry("Viper Motor L", bot.viperMotorL);
         displayMotorTelemetry("Viper Motor R", bot.viperMotorR);
