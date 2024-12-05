@@ -27,16 +27,16 @@ public class Frames {
 
     private class ViperFrame extends Frame {
         private int viper;
-        private int delay;
+        private int tolerance;
 
-        public ViperFrame(int viper, int delay) {
+        public ViperFrame(int viper, int tolerance) {
             this.viper = viper;
-            this.delay = delay;
+            this.tolerance = tolerance;
         }
 
         public ViperFrame(int viper) {
             this.viper = viper;
-            this.delay = 500;
+            this.tolerance = 15;
         }
 
         public boolean run() {
@@ -44,7 +44,7 @@ public class Frames {
 
             MainTeleop.viperPos = viper;
 
-            return waitUntilTime(delay) && (Math.abs(bot.viperMotorL.getTargetPosition() - bot.viperMotorL.getCurrentPosition()) <= 15) && (Math.abs(bot.viperMotorR.getTargetPosition() - bot.viperMotorR.getCurrentPosition()) <= 15);
+            return waitUntilTime(500) && (Math.abs(bot.viperMotorL.getTargetPosition() - bot.viperMotorL.getCurrentPosition()) <= tolerance) && (Math.abs(bot.viperMotorR.getTargetPosition() - bot.viperMotorR.getCurrentPosition()) <= tolerance);
         }
     }
 
@@ -88,8 +88,28 @@ public class Frames {
         public boolean run() {
             bot.basket.setMiddle();
 
-            return waitUntilTime(500);
+            return waitUntilTime(250);
         }
+    }
+
+    private class BasketOpenFrame extends Frame {
+
+        public boolean run() {
+            bot.basket.setOpen();
+
+            return waitUntilTime(250);
+        }
+
+    }
+
+    private class BasketCloseFrame extends Frame {
+
+        public boolean run() {
+            bot.basket.setClosed();
+
+            return waitUntilTime(250);
+        }
+
     }
 
     private class ClawStandbyFrame extends Frame {
@@ -133,6 +153,36 @@ public class Frames {
         }
     }
 
+    public class ArmMinMaxFrame extends Frame {
+        private int max;
+        private int min;
+
+        public ArmMinMaxFrame(int min, int max) {
+            this.min = min;
+            this.max = max;
+        }
+
+        public boolean run() { return true; }
+
+        public boolean sanity() {
+            int curArm = bot.armMotor.getCurrentPosition();
+
+            return curArm >= min && curArm <= max;
+        }
+    }
+
+    public class WaitFrame extends Frame {
+        private int ms;
+
+        public WaitFrame(int ms) {
+            this.ms = ms;
+        }
+
+        public boolean run() {
+            return waitUntilTime(ms);
+        }
+    }
+
     /*
     Arm -> Basket handoff positions:
     Arm     Wrist
@@ -170,29 +220,32 @@ public class Frames {
         new ArmWristFrame(4220, 0.22),
         new ArmWristFrame(4220, 0.78, 1000),
         new ArmWristFrame(3640, 0.78),
-        new ArmWristFrame(3640, 0.78, 1000),
+        new ArmWristFrame(3640, 0.78),
         new BasketMidFrame(),
-        new ArmWristFrame(2870, 0.78, 750),
-        new ArmWristFrame(2870, 0.82, 750),
+        new ArmWristFrame(2870, 0.78),
+        new ArmWristFrame(2650, 0.84),
         new ClawStandbyFrame(),
-        new ArmWristFrame(2870, 0.86, 750),
+        new ArmWristFrame(2650, 0.86, 1000),
+        new BasketCloseFrame(),
     };
 
-    public Frame[] afterGrabFrames = new Frame[] {
-      new ArmWristSanityFrame(3362, 0.22, 5500, 0.3),
+    public Frame[] standbyFrames = new Frame[] {
+      new ArmMinMaxFrame(3476, 99999),
       new ArmWristFrame(3362, 0.22),
     };
 
     public Frame[] zeroBasketFrames = new Frame[] {
-        new ViperFrame(0),
+        new ViperFrame(0, 100),
     };
 
     public Frame[] bottomBasketFrames = new Frame[] {
         new ViperFrame(1600),
+        new BasketOpenFrame(),
     };
 
     public Frame[] topBasketFrames = new Frame[] {
         new ViperFrame(6100),
+        new BasketOpenFrame(),
     };
 
     public Frame[] uncurlFrames = new Frame[] {
@@ -215,7 +268,11 @@ public class Frames {
         new ArmWristFrame(2920, 0.91, 250),
         new ArmWristFrame(2040, 0.91, 0, 50),
         new ArmWristFrame(2040, 1, 250),
-        new ArmWristFrame(20, 1, 0, 50),
+        new ArmWristFrame(800, 1, 0, 50),
+    };
+
+    public Frame[] liftFrames = new Frame[] {
+        new ArmWristFrame(800, 1)
     };
 
     public Frames(Hardware bot) {
@@ -227,9 +284,7 @@ public class Frames {
             return;
         }
 
-        if (lastTime < 0) {
-            lastTime = System.currentTimeMillis();
-        }
+        lastTime = System.currentTimeMillis();
 
         if (curFrames == frames) {
             bot.arm.moveArm(bot.armMotor.getCurrentPosition()); // Stop moving arm by commanding it to move to its current position
@@ -275,13 +330,16 @@ public class Frames {
         }
     }
 
+    public void wait(int ms) { runFrames(new Frame[] { new WaitFrame(ms) }); }
+
     public void beforeGrab() { runFrames(beforeGrabFrames); }
     public void peck() { runFrames(peckFrames); }
     public void clawToBasket() { runFrames(clawToBasketFrames); }
-    public void afterGrab() { runFrames(afterGrabFrames); }
+    public void afterGrab() { runFrames(standbyFrames); }
     public void zeroBasket() { runFrames(zeroBasketFrames); }
     public void bottomBasket() { runFrames(bottomBasketFrames); }
     public void topBasket() { runFrames(topBasketFrames); }
     public void uncurlArm() { runFrames(uncurlFrames); }
     public void curlArm() { runFrames(curlFrames); }
+    public void lift() { runFrames(liftFrames); }
 }

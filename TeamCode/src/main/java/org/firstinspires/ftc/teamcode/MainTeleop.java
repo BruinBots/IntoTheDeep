@@ -73,6 +73,8 @@ public class MainTeleop extends OpMode {
         armPos = 0;
         wristPos = 1;
         DRIVE_SPEED = FAST_DRIVE_SPEED;
+
+        bot.frames.lift();
     }
 
     @Override

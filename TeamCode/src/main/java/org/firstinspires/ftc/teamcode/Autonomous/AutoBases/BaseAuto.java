@@ -168,6 +168,14 @@ public class BaseAuto {
     }
 
     public void run(AutoOperation... ops) {
+        bot.init(false);
+        bot.basket.setClosed();
+        bot.frames.lift();
+
+        while (bot.frames.isBusy()) {
+            bot.frames.loop();
+        }
+
         Pose2d curPos = startPose;
         int count = ops.length;
         int i = 0;
@@ -178,16 +186,12 @@ public class BaseAuto {
             switch (op) {
                 case PARK:
                     curPos = park(curPos);
-                    break;
                 case BASKET:
                     curPos = basket(curPos);
-                    break;
                 case SAMPLES:
                     curPos = samples(curPos);
-                    break;
                 case SUBMERSIBLE:
                     curPos = submersible(curPos);
-                    break;
             }
 
 //            while (drive.isBusy()) {
@@ -204,6 +208,12 @@ public class BaseAuto {
         }
     }
 
+    public void doFrames() {
+        while (bot.frames.isBusy()) {
+            bot.frames.loop();
+        }
+    }
+
     // ----- HIGHWAY ----- //
     public double get_x() { return drive.getPoseEstimate().getX(); }
 
@@ -214,11 +224,14 @@ public class BaseAuto {
     }
 
     public Pose2d highway(Pose2d startPose) {
-        Trajectory traj = drive.trajectoryBuilder(startPose)
-                .lineToConstantHeading(highway_v())
-                .build();
-        drive.followTrajectoryAsync(traj);
-        return traj.end();
+        if (drive.getPoseEstimate().getY() == HIGHWAY_Y) {
+            Trajectory traj = drive.trajectoryBuilder(startPose)
+                    .lineToConstantHeading(highway_v())
+                    .build();
+            drive.followTrajectory(traj);
+            return traj.end();
+        }
+        return startPose;
     }
 
     // ----- PARKING ----- //
@@ -261,15 +274,19 @@ public class BaseAuto {
         Trajectory traj2 = drive.trajectoryBuilder(startPose)
                 .lineToConstantHeading(basket_v())
                 .addDisplacementMarker(() -> {
-//                    bot.frames.basketFrames();
+                    bot.frames.topBasket();
                 })
                 .build();
         drive.followTrajectory(traj2);
+
         startPose = turn(BASKET_ANGLE, traj2.end());
 
-        while (bot.frames.isBusy()) {
-            bot.frames.loop();
-        }
+        doFrames(); // Wait to deposit in basket
+        bot.frames.wait(500);
+        doFrames();
+        bot.basket.setClosed(); // Close basket
+        bot.frames.zeroBasket(); // Lower viper slides
+        doFrames(); // Wait to lower viper
 
         return startPose;
     }
