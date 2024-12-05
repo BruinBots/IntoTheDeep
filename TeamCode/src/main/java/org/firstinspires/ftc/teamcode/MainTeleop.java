@@ -36,6 +36,10 @@ public class MainTeleop extends OpMode {
     public boolean armPressed = false;
     public boolean firstLoop = true;
 
+    public double DRIVE_SPEED;
+    public double FAST_DRIVE_SPEED = 0.65; // original speed
+    public double SLOW_DRIVE_SPEED = 0.30; // half fast speed
+
     @Override
     public void init() {
         dash = FtcDashboard.getInstance();
@@ -68,6 +72,7 @@ public class MainTeleop extends OpMode {
         viperPos = 0;
         armPos = 0;
         wristPos = 1;
+        DRIVE_SPEED = FAST_DRIVE_SPEED;
     }
 
     @Override
@@ -162,8 +167,10 @@ public class MainTeleop extends OpMode {
         // Speed Settings
         if (controlMap.FastSpeed()) {
             // Set Speed to Fast Speed
+            DRIVE_SPEED = FAST_DRIVE_SPEED;
         } else if (controlMap.SlowSpeed()) {
             // Set Speed to Slow Speed
+            DRIVE_SPEED = SLOW_DRIVE_SPEED;
         }
 
         // Slide
@@ -232,6 +239,6 @@ public class MainTeleop extends OpMode {
         bot.arm.moveArm(armPos); // Move arm
         bot.arm.moveWrist(wristPos); // Move wrists
         bot.viper.move(viperPos); // Move viper
-        bot.moveBotMecanum(drive, turn, strafe,  0.65); // actually move the robot
+        bot.moveBotMecanum(drive, turn, strafe,  DRIVE_SPEED); // actually move the robot
     }
 }

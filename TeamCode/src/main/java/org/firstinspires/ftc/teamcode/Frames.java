@@ -192,7 +192,7 @@ public class Frames {
     };
 
     public Frame[] topBasketFrames = new Frame[] {
-        new ViperFrame(3200),
+        new ViperFrame(6100),
     };
 
     public Frame[] uncurlFrames = new Frame[] {
