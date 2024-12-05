@@ -117,12 +117,19 @@ public class BaseAuto {
     public int conditionallyInvertAngle(int angle, boolean invert) { return invert?invertAngle(angle):angle; }
 
     public double closestAngle(double targetAngle) {
-        double deltaAngle = targetAngle - drive.getPoseEstimate().getHeading();
+        double angle = targetAngle - drive.getPoseEstimate().getHeading();
 
-        double plusAngle = (targetAngle + 360) - drive.getPoseEstimate().getHeading();
-        double minusAngle = (targetAngle - 360) - drive.getPoseEstimate().getHeading();
+        if (angle > Math.PI) {
+            return closestAngle(angle - 2*Math.PI);
+        }
+        else if (angle < -Math.PI) {
+            return closestAngle(angle + 2*Math.PI);
+        }
+        return angle;
+    }
 
-        return Math.min(Math.abs(deltaAngle), Math.min(Math.abs(plusAngle), Math.abs(minusAngle)));
+    public boolean isClosestAngle(double targetAngle) {
+        return (targetAngle - drive.getPoseEstimate().getHeading()) == closestAngle(targetAngle);
     }
 
     public double angleToCoords(double x2, double y2) {
@@ -137,8 +144,13 @@ public class BaseAuto {
     public Pose2d turn(double targetAngle, Pose2d startPose) {
 //       double deltaAngle = closestAngle(targetAngle);
 //       return turnRelative(deltaAngle, startPose);
-        drive.turn(targetAngle - drive.getPoseEstimate().getHeading());
-        return new Pose2d(startPose.getX(), startPose.getY(), targetAngle);
+        if (isClosestAngle(targetAngle)) {
+            drive.turn(targetAngle - drive.getPoseEstimate().getHeading());
+            return new Pose2d(startPose.getX(), startPose.getY(), targetAngle);
+        }
+        double deltaAngle = closestAngle(targetAngle);
+        drive.turn(deltaAngle);
+        return startPose.plus(new Pose2d(0, 0, deltaAngle));
     }
 
     public Pose2d turnRelative(double deltaAngle, Pose2d startPose) {
