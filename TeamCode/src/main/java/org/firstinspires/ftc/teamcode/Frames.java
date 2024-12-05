@@ -151,6 +151,7 @@ public class Frames {
     private Hardware bot;
     private Frame[] curFrames = new Frame[] {};
     private int curIdx = 0;
+    private double lastTime = -1;
 
     public Frame[] beforeGrabFrames = new Frame[] {
       new ArmWristSanityFrame(6709, 0.22, 5500, 0.3),
@@ -222,23 +223,23 @@ public class Frames {
     }
 
     public void runFrames(Frame[] frames) {
-        if (curFrames == frames) {
-            boolean cancel = true;
-            if (curFrames.length > 0) {
-                if (System.currentTimeMillis() - curFrames[curIdx].startTime <= 400) {
-                    cancel = false;
-                }
-            }
-            if (cancel) {
-                bot.arm.moveArm(bot.armMotor.getCurrentPosition()); // Stop moving arm by commanding it to move to its current position
-                MainTeleop.armPos = bot.armMotor.getCurrentPosition();
-                bot.viper.move(bot.viperMotorL.getCurrentPosition()); // Stop moving vipers
-                MainTeleop.viperPos = bot.viperMotorL.getCurrentPosition();
+        if (System.currentTimeMillis() - lastTime <= 500) {
+            return;
+        }
 
-                curFrames = new Frame[]{};
-                curIdx = 0;
-                return;
-            }
+        if (lastTime < 0) {
+            lastTime = System.currentTimeMillis();
+        }
+
+        if (curFrames == frames) {
+            bot.arm.moveArm(bot.armMotor.getCurrentPosition()); // Stop moving arm by commanding it to move to its current position
+            MainTeleop.armPos = bot.armMotor.getCurrentPosition();
+            bot.viper.move(bot.viperMotorL.getCurrentPosition()); // Stop moving vipers
+            MainTeleop.viperPos = bot.viperMotorL.getCurrentPosition();
+
+            curFrames = new Frame[]{};
+            curIdx = 0;
+            return;
         }
         curFrames = frames;
         curIdx = 0;
