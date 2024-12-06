@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.MainTeleop.engageAtStart;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -105,14 +106,30 @@ public class Hardware {
     }
 
     public void init(boolean teleop) {
+        basket.setClosed();
+
+        // reset motor encoders (remove for competition?)
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        bot.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        viperMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        bot.viperMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        viperMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        bot.viperMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         if (teleop) {
             if (engageAtStart) {
                 intake.engage();
             } else {
                 intake.standby();
             }
+
+//            MainTeleop.viperPos = viperMotorL.getTargetPosition();
+//            MainTeleop.armPos = armMotor.getTargetPosition();
+            return;
         }
 
-        basket.setClosed();
+        viper.move(0);
+        arm.moveArm(0);
     }
 }

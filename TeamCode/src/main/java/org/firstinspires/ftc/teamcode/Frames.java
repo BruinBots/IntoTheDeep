@@ -210,7 +210,7 @@ public class Frames {
 
     public Frame[] peckFrames = new Frame[] {
       new ArmWristSanityFrame(6709, 0.22, 1000, 0.2),
-      new ArmWristFrame(7089, 0.22, 500),
+      new ArmWristFrame(7189, 0.22, 500),
       new ClawEngageFrame(),
       new ArmWristFrame(6709, 0.22),
     };
@@ -239,7 +239,7 @@ public class Frames {
     };
 
     public Frame[] bottomBasketFrames = new Frame[] {
-        new ViperFrame(1600),
+        new ViperFrame(3630),
         new BasketOpenFrame(),
     };
 
@@ -272,7 +272,11 @@ public class Frames {
     };
 
     public Frame[] liftFrames = new Frame[] {
-        new ArmWristFrame(800, 1)
+        new ArmWristFrame(400, 1)
+    };
+
+    public Frame[] zeroArmFrames = new Frame[] {
+            new ArmWristFrame(0, 1)
     };
 
     public Frames(Hardware bot) {
@@ -342,4 +346,5 @@ public class Frames {
     public void uncurlArm() { runFrames(uncurlFrames); }
     public void curlArm() { runFrames(curlFrames); }
     public void lift() { runFrames(liftFrames); }
+    public void zeroArm() { runFrames(zeroArmFrames); }
 }

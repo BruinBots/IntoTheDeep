@@ -46,14 +46,6 @@ public class MainTeleop extends OpMode {
         dashTelemetry = dash.getTelemetry();
         bot = new Hardware(hardwareMap);
         controlMap = new ControlMap(gamepad1, gamepad2);
-        // reset motor encoders (remove for competition?)
-        bot.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        bot.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        bot.viperMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        bot.viperMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        bot.viperMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        bot.viperMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void displayMotorTelemetry(String caption, DcMotorEx motor) {
@@ -67,12 +59,14 @@ public class MainTeleop extends OpMode {
 
     @Override
     public void start() {
-        bot.init(true);
 
         viperPos = 0;
         armPos = 0;
         wristPos = 1;
         DRIVE_SPEED = FAST_DRIVE_SPEED;
+
+        bot.init(true);
+
 
         bot.frames.lift();
     }

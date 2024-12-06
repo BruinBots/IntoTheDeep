@@ -13,7 +13,6 @@ public class RedFarBasketPark extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         RedFarAuto auto = new RedFarAuto(hardwareMap, telemetry, this);
         waitForStart();
-        auto.park(auto.basket(RedFarAuto.startPose));
         auto.run(BaseAuto.AutoOperation.BASKET, BaseAuto.AutoOperation.PARK);
     }
 }

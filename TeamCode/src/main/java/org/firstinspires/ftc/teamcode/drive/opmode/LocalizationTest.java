@@ -21,6 +21,7 @@ public class LocalizationTest extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        drive.setPoseEstimate(new Pose2d(-34, -60, Math.toRadians(90)));
 
         waitForStart();
 
@@ -34,7 +35,6 @@ public class LocalizationTest extends LinearOpMode {
             );
 
             drive.update();
-
             Pose2d poseEstimate = drive.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());

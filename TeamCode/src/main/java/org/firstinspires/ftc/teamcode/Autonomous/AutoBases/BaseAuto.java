@@ -179,10 +179,7 @@ public class BaseAuto {
         bot.init(false);
         bot.basket.setClosed();
         bot.frames.lift();
-
-        while (bot.frames.isBusy()) {
-            bot.frames.loop();
-        }
+        doFrames();
 
         Pose2d curPos = startPose;
         int count = ops.length;
@@ -191,15 +188,17 @@ public class BaseAuto {
             curPos = highway(curPos);
         }
         for (AutoOperation op: ops) {
-            switch (op) {
-                case PARK:
-                    curPos = park(curPos);
-                case BASKET:
-                    curPos = basket(curPos);
-                case SAMPLES:
-                    curPos = samples(curPos);
-                case SUBMERSIBLE:
-                    curPos = submersible(curPos);
+            if (op == AutoOperation.PARK) {
+                curPos = park(curPos);
+            }
+            else if (op == AutoOperation.BASKET) {
+                curPos = basket(curPos);
+            }
+            else if (op == AutoOperation.SAMPLES) {
+                curPos = samples(curPos);
+            }
+            else if (op == AutoOperation.SUBMERSIBLE) {
+                curPos = submersible(curPos);
             }
 
 //            while (drive.isBusy()) {
@@ -214,6 +213,9 @@ public class BaseAuto {
 
             i ++;
         }
+
+        bot.frames.zeroArm();
+        doFrames();
     }
 
     public void displayMotorTelemetry(String caption, DcMotorEx motor) {
@@ -233,6 +235,7 @@ public class BaseAuto {
             displayMotorTelemetry("Viper Motor R", bot.viperMotorR);
             doTelemetry("Wrist", bot.wristServo.getPosition());
             telemetry.update();
+            dashTelemetry.update();
         }
     }
 
@@ -267,7 +270,7 @@ public class BaseAuto {
 
     public Pose2d park(Pose2d startPose) {
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                .forward(3)
+                .forward(6)
                 .build();
         drive.followTrajectory(traj1);
         startPose = traj1.end();
@@ -288,21 +291,25 @@ public class BaseAuto {
 
     public Pose2d basket(Pose2d startPose) {
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                .forward(3)
+                .forward(6)
                 .build();
         drive.followTrajectory(traj1);
         startPose = traj1.end();
         startPose = turn(angleToCoords(BASKET_X, BASKET_Y), startPose);
         Trajectory traj2 = drive.trajectoryBuilder(startPose)
                 .lineToConstantHeading(basket_v())
-                .addDisplacementMarker(() -> {
-                    bot.frames.topBasket();
-                })
                 .build();
         drive.followTrajectory(traj2);
+        startPose = traj2.end();
+        startPose = turn(BASKET_ANGLE, startPose);
 
-        startPose = turn(BASKET_ANGLE, traj2.end());
+//        Trajectory traj3 = drive.trajectoryBuilder(startPose)
+//                .forward(0)
+//                .build();
+//        drive.followTrajectory(traj3);
+//        startPose = traj3.end();
 
+        bot.frames.topBasket();
         doFrames(); // Wait to deposit in basket
         bot.frames.wait(500);
         doFrames();

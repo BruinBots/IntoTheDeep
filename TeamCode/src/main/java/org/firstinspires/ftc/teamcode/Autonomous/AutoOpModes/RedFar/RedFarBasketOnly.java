@@ -13,7 +13,6 @@ public class RedFarBasketOnly extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         RedFarAuto auto = new RedFarAuto(hardwareMap, telemetry, this);
         waitForStart();
-        auto.basket(RedFarAuto.startPose);
         auto.run(BaseAuto.AutoOperation.BASKET);
     }
 }
