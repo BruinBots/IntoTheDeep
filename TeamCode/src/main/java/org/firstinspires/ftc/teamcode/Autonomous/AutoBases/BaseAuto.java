@@ -4,11 +4,13 @@ import static java.lang.Thread.sleep;
 
 import android.content.res.AssetManager;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -55,10 +57,16 @@ public class BaseAuto {
     public static boolean peripherals_allowed = false;
 
     private final OpMode mode;
+    private Telemetry dashTelemetry;
+    private FtcDashboard dash;
 
     public BaseAuto(HardwareMap hardwareMap, Telemetry telemetry, boolean blue, boolean near, OpMode mode) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
+
+        dash = FtcDashboard.getInstance();
+        dashTelemetry = dash.getTelemetry();
+
         this.blue = blue;
         this.near = near;
         this.mode = mode;
@@ -208,9 +216,23 @@ public class BaseAuto {
         }
     }
 
+    public void displayMotorTelemetry(String caption, DcMotorEx motor) {
+        doTelemetry(caption, motor.getCurrentPosition() + "=>" + motor.getTargetPosition());
+    }
+
+    public void doTelemetry(String caption, Object obj) {
+        telemetry.addData(caption, obj);
+        dashTelemetry.addData(caption, obj);
+    }
+
     public void doFrames() {
         while (bot.frames.isBusy()) {
             bot.frames.loop();
+            displayMotorTelemetry("Arm Motor", bot.armMotor);
+            displayMotorTelemetry("Viper Motor L", bot.viperMotorL);
+            displayMotorTelemetry("Viper Motor R", bot.viperMotorR);
+            doTelemetry("Wrist", bot.wristServo.getPosition());
+            telemetry.update();
         }
     }
 
