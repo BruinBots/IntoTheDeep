@@ -20,6 +20,5 @@ public class DoNothing extends LinearOpMode {
         telemetry.addLine("3. Good luck!");
         telemetry.addLine("If this is too confusing, there's always TeleOp to make up for lost time...");
         telemetry.update();
-        sleep(10000);
     }
 }

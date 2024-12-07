@@ -204,28 +204,28 @@ public class Frames {
     private double lastTime = -1;
 
     public Frame[] beforeGrabFrames = new Frame[] {
-      new ArmWristSanityFrame(6709, 0.22, 5500, 0.3),
-      new ArmWristFrame(6709, 0.22),
+      new ArmWristSanityFrame(6590, 0.22, 5500, 0.3),
+      new ArmWristFrame(6590, 0.22),
     };
 
     public Frame[] peckFrames = new Frame[] {
-      new ArmWristSanityFrame(6709, 0.22, 1000, 0.2),
+      new ArmWristSanityFrame(6590, 0.22, 1000, 0.2),
       new ArmWristFrame(7189, 0.22, 500),
       new ClawEngageFrame(),
-      new ArmWristFrame(6709, 0.22),
+      new ArmWristFrame(6590, 0.22),
     };
 
     public Frame[] clawToBasketFrames = new Frame[] {
       new ArmWristSanityFrame(4220, 0.22, 5500, 0.3),
-        new ArmWristFrame(4220, 0.22),
-        new ArmWristFrame(4220, 0.78, 1000),
-        new ArmWristFrame(3640, 0.78),
-        new ArmWristFrame(3640, 0.78),
+        new ArmWristFrame(4220, 0.22, 250),
+        new ArmWristFrame(4220, 0.78, 250),
+        new ArmWristFrame(3640, 0.78, 100, 100),
         new BasketMidFrame(),
-        new ArmWristFrame(2870, 0.78),
-        new ArmWristFrame(2650, 0.84),
+        new ArmWristFrame(2870, 0.82, 100, 100),
+        new ArmWristFrame(2650, 0.84, 100, 100),
         new ClawStandbyFrame(),
-        new ArmWristFrame(2650, 0.86, 1000),
+        new ArmWristFrame(2650, 0.8, 250),
+        new ArmWristFrame(2650, 0.86, 250),
         new BasketCloseFrame(),
     };
 
@@ -235,7 +235,7 @@ public class Frames {
     };
 
     public Frame[] zeroBasketFrames = new Frame[] {
-        new ViperFrame(0, 100),
+        new ViperFrame(0, 1000),
     };
 
     public Frame[] bottomBasketFrames = new Frame[] {
@@ -250,25 +250,25 @@ public class Frames {
 
     public Frame[] uncurlFrames = new Frame[] {
         new ArmWristSanityFrame(0, 1, 1000, 0.2),
-        new ArmWristFrame(1478, 1, 0, 50),
-        new ArmWristFrame(1478, 0.96, 250),
-        new ArmWristFrame(2177, 0.96, 0, 50),
-        new ArmWristFrame(2177, 0.92, 250),
-        new ArmWristFrame(2748, 0.92, 0, 50),
-        new ArmWristFrame(2748, 0.86, 250),
-        new ArmWristFrame(3506, 0.86, 0, 50),
-        new ArmWristFrame(3506, 0.2, 250),
+        new ArmWristFrame(1478, 1, 0, 500),
+        new ArmWristFrame(1478, 0.96, 100, 500),
+        new ArmWristFrame(2177, 0.96, 0, 500),
+        new ArmWristFrame(2177, 0.92, 100, 500),
+        new ArmWristFrame(2748, 0.92, 0, 500),
+        new ArmWristFrame(2748, 0.86, 100, 500),
+        new ArmWristFrame(3506, 0.86, 0, 500),
+        new ArmWristFrame(3506, 0.2, 100, 500),
     };
 
     public Frame[] curlFrames = new Frame[] {
         new ArmWristSanityFrame(3506, 0.2, 1000, 0.2),
-        new ArmWristFrame(4000, 0.2, 1000),
-        new ArmWristFrame(4000, 0.85, 1500),
-        new ArmWristFrame(2920, 0.85, 0, 50),
-        new ArmWristFrame(2920, 0.91, 250),
-        new ArmWristFrame(2040, 0.91, 0, 50),
-        new ArmWristFrame(2040, 1, 250),
-        new ArmWristFrame(800, 1, 0, 50),
+        new ArmWristFrame(4000, 0.2, 250),
+        new ArmWristFrame(4000, 0.85, 1000),
+        new ArmWristFrame(2920, 0.85, 0, 500),
+        new ArmWristFrame(2920, 0.91, 100, 500),
+        new ArmWristFrame(2040, 0.91, 0, 500),
+        new ArmWristFrame(2040, 1, 100, 500),
+        new ArmWristFrame(400, 1, 0, 500),
     };
 
     public Frame[] liftFrames = new Frame[] {

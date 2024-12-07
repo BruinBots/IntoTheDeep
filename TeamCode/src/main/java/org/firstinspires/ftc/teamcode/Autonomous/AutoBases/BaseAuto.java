@@ -184,12 +184,12 @@ public class BaseAuto {
         Pose2d curPos = startPose;
         int count = ops.length;
         int i = 0;
-        if (ops.length > 1) { //  && ops[0] != AutoOperation.PARK
-            curPos = highway(curPos);
-        }
+//        if (ops.length > 1) { //  && ops[0] != AutoOperation.PARK
+//            curPos = highway(curPos);
+//        }
         for (AutoOperation op: ops) {
             if (op == AutoOperation.PARK) {
-                curPos = park(curPos);
+                curPos = park(curPos, ops.length == 1);
             }
             else if (op == AutoOperation.BASKET) {
                 curPos = basket(curPos);
@@ -207,9 +207,9 @@ public class BaseAuto {
 //                }
 //            }
 
-            if (i < count - 1) {
-                curPos = highway(curPos);
-            }
+//            if (i < count - 1) {
+//                curPos = highway(curPos);
+//            }
 
             i ++;
         }
@@ -249,12 +249,12 @@ public class BaseAuto {
     }
 
     public Pose2d highway(Pose2d startPose) {
-        if (drive.getPoseEstimate().getY() == HIGHWAY_Y) {
+        if (drive.getPoseEstimate().getY() != HIGHWAY_Y) {
             Trajectory traj = drive.trajectoryBuilder(startPose)
                     .lineToConstantHeading(highway_v())
                     .build();
             drive.followTrajectory(traj);
-            return traj.end();
+            startPose = traj.end();
         }
         return startPose;
     }
@@ -265,15 +265,17 @@ public class BaseAuto {
     }
 
     public Pose2d park(Trajectory startTraj) {
-        return park(startTraj.end());
+        return park(startTraj.end(), false);
     }
 
-    public Pose2d park(Pose2d startPose) {
-        Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                .forward(6)
-                .build();
-        drive.followTrajectory(traj1);
-        startPose = traj1.end();
+    public Pose2d park(Pose2d startPose, boolean standalone) {
+        if (standalone) {
+            Trajectory traj1 = drive.trajectoryBuilder(startPose)
+                    .forward(6)
+                    .build();
+            drive.followTrajectory(traj1);
+            startPose = traj1.end();
+        }
         startPose = turn(PARK_ANGLE, startPose);
         Trajectory traj2 = drive.trajectoryBuilder(startPose)
                 .lineToConstantHeading(park_v())
@@ -303,19 +305,21 @@ public class BaseAuto {
         startPose = traj2.end();
         startPose = turn(BASKET_ANGLE, startPose);
 
-//        Trajectory traj3 = drive.trajectoryBuilder(startPose)
-//                .forward(0)
-//                .build();
-//        drive.followTrajectory(traj3);
-//        startPose = traj3.end();
+        if (peripherals_allowed) {
+            bot.frames.topBasket();
+            doFrames(); // Wait to deposit in basket
+            bot.frames.wait(500);
+            doFrames();
+            bot.basket.setClosed(); // Close basket
+            bot.frames.zeroBasket(); // Lower viper slides
+            doFrames(); // Wait to lower viper
+        }
 
-        bot.frames.topBasket();
-        doFrames(); // Wait to deposit in basket
-        bot.frames.wait(500);
-        doFrames();
-        bot.basket.setClosed(); // Close basket
-        bot.frames.zeroBasket(); // Lower viper slides
-        doFrames(); // Wait to lower viper
+        Trajectory traj3 = drive.trajectoryBuilder(startPose)
+                .back(6)
+                .build();
+        drive.followTrajectory(traj3);
+        startPose = traj3.end();
 
         return startPose;
     }

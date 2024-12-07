@@ -26,6 +26,7 @@ public class ControlMap {
     // VIPER SLIDE
     public boolean SlideDown() { return gamepad1.left_bumper; }
     public boolean SlideUp() { return gamepad1.right_bumper; }
+    public boolean UpdateSlide() { return gamepad1.right_trigger > 0.5; }
     public boolean BottomBasket() { return gamepad1.a; }
     public boolean TopBasket() { return gamepad1.x; }
     public boolean BottomSlide() { return gamepad1.y; }
