@@ -80,13 +80,19 @@ public class BaseAuto {
         try (InputStream input = assetManager.open("coordinates.properties")) {
             Properties prop = new Properties();
             prop.load(input);
-            START_X = x_factor*Integer.parseInt(prop.getProperty("start.x"));
+            START_X = x_factor*Integer.parseInt(prop.getProperty(near ? "start.near.x" : "start.far.x"));
             START_Y = y_factor*Integer.parseInt(prop.getProperty("start.y"));
+            if (blue) {
+                START_X = -START_X;
+            }
             HIGHWAY_Y = y_factor*Integer.parseInt(prop.getProperty("highway.y"));
-            PARK_X = Integer.parseInt(prop.getProperty("park.x"));
+            PARK_X = x_factor*Integer.parseInt(prop.getProperty("park.x"));
             PARK_Y = y_factor*Integer.parseInt(prop.getProperty("park.y"));
-            BASKET_X = Integer.parseInt(prop.getProperty("basket.x"));
+            BASKET_X = x_factor*Integer.parseInt(prop.getProperty("basket.x"));
             BASKET_Y = y_factor*Integer.parseInt(prop.getProperty("basket.y"));
+//            if (blue) {
+//                BASKET_X = -BASKET_X;
+//            }
             SAMPLES_X = x_factor*Integer.parseInt(prop.getProperty("samples.x"));
             SAMPLES_Y = y_factor*Integer.parseInt(prop.getProperty("samples.y"));
             SUBMERSIBLE_X = Integer.parseInt(prop.getProperty("submersible.x"));
@@ -192,7 +198,7 @@ public class BaseAuto {
                 curPos = park(curPos, ops.length == 1);
             }
             else if (op == AutoOperation.BASKET) {
-                curPos = basket(curPos);
+                curPos = basket(curPos, ops.length == 1);
             }
             else if (op == AutoOperation.SAMPLES) {
                 curPos = samples(curPos);
@@ -288,10 +294,10 @@ public class BaseAuto {
     public Vector2d basket_v() { return new Vector2d(BASKET_X, BASKET_Y); }
 
     public Pose2d basket(Trajectory startTraj) {
-        return basket(startTraj.end());
+        return basket(startTraj.end(), true);
     }
 
-    public Pose2d basket(Pose2d startPose) {
+    public Pose2d basket(Pose2d startPose, boolean standalone) {
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 .forward(6)
                 .build();
@@ -315,11 +321,13 @@ public class BaseAuto {
             doFrames(); // Wait to lower viper
         }
 
-        Trajectory traj3 = drive.trajectoryBuilder(startPose)
-                .back(6)
-                .build();
-        drive.followTrajectory(traj3);
-        startPose = traj3.end();
+        if (!standalone) {
+            Trajectory traj3 = drive.trajectoryBuilder(startPose)
+                    .back(6)
+                    .build();
+            drive.followTrajectory(traj3);
+            startPose = traj3.end();
+        }
 
         return startPose;
     }

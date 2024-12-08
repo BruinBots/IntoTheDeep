@@ -204,29 +204,38 @@ public class Frames {
     private double lastTime = -1;
 
     public Frame[] beforeGrabFrames = new Frame[] {
-      new ArmWristSanityFrame(6590, 0.22, 5500, 0.3),
-      new ArmWristFrame(6590, 0.22),
+      new ArmWristSanityFrame(5930, 0.22, 5500, 0.3),
+      new ArmWristFrame(5930, 0.22),
     };
 
     public Frame[] peckFrames = new Frame[] {
-      new ArmWristSanityFrame(6590, 0.22, 1000, 0.2),
-      new ArmWristFrame(7189, 0.22, 500),
+      new ArmWristSanityFrame(5930, 0.22, 1000, 0.2),
+      new ArmWristFrame(7239, 0.22, 500),
       new ClawEngageFrame(),
-      new ArmWristFrame(6590, 0.22),
+      new ArmWristFrame(5930, 0.22),
+    };
+
+    public Frame[] specimenFrames = new Frame[] {
+        new ArmWristSanityFrame(5930, 0.22, 1000, 0.2),
+        new ArmWristFrame(5930, 0.11),
+        new ClawEngageFrame(),
+        new ArmWristFrame(5000, 0.11),
     };
 
     public Frame[] clawToBasketFrames = new Frame[] {
-      new ArmWristSanityFrame(4220, 0.22, 5500, 0.3),
+        new ArmWristSanityFrame(4220, 0.22, 5500, 0.3),
         new ArmWristFrame(4220, 0.22, 250),
-        new ArmWristFrame(4220, 0.78, 250),
-        new ArmWristFrame(3640, 0.78, 100, 100),
+        new ArmWristFrame(4220, 0.79, 250),
+        new ArmWristFrame(3640, 0.79, 100, 100),
         new BasketMidFrame(),
-        new ArmWristFrame(2870, 0.82, 100, 100),
+        new ArmWristFrame(2870, 0.79, 100, 100),
         new ArmWristFrame(2650, 0.84, 100, 100),
         new ClawStandbyFrame(),
         new ArmWristFrame(2650, 0.8, 250),
         new ArmWristFrame(2650, 0.86, 250),
-        new BasketCloseFrame(),
+        new ArmWristFrame(2650, 0.8, 250),
+        new ArmWristFrame(2650, 0.86, 250),
+//        new BasketCloseFrame(),
     };
 
     public Frame[] standbyFrames = new Frame[] {

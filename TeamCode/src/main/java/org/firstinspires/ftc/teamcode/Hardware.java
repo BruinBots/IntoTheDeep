@@ -35,6 +35,8 @@ public class Hardware {
     public Servo intakeServo;
     public Intake intake;
 
+    public static boolean motorsInitialized = false;
+
 //    public ColorDistanceSensor ColorDistanceSensor;
 
     public Servo basketServo;
@@ -108,14 +110,12 @@ public class Hardware {
     public void init(boolean teleop) {
         basket.setClosed();
 
-        // reset motor encoders (remove for competition?)
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        bot.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        viperMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        bot.viperMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        viperMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        bot.viperMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (!Hardware.motorsInitialized) {
+            armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            viperMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            viperMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            Hardware.motorsInitialized = true;
+        }
 
         if (teleop) {
             if (engageAtStart) {
@@ -123,13 +123,10 @@ public class Hardware {
             } else {
                 intake.standby();
             }
-
-//            MainTeleop.viperPos = viperMotorL.getTargetPosition();
-//            MainTeleop.armPos = armMotor.getTargetPosition();
             return;
         }
 
-        viper.move(0);
-        arm.moveArm(0);
+//        viper.move(0);
+//        arm.moveArm(0);
     }
 }

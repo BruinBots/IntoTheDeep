@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Intake {
     private Servo servo;
     public static double STANDBY = 0;
-    public static double ENGAGE = 0.15;
+    public static double ENGAGE = 0.18;
 
     public Intake(Servo servo) {
         this.servo = servo;
