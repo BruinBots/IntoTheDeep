@@ -240,12 +240,16 @@ public class Frames {
 
     public Frame[] bottomBasketFrames = new Frame[] {
         new ViperFrame(3630),
-        new BasketOpenFrame(),
+//        new BasketOpenFrame(),
     };
 
     public Frame[] topBasketFrames = new Frame[] {
         new ViperFrame(6100),
         new BasketOpenFrame(),
+    };
+
+    public Frame[] topPoleFrames = new Frame[] {
+        new ViperFrame(3050) // top pole pos
     };
 
     public Frame[] uncurlFrames = new Frame[] {
@@ -343,6 +347,7 @@ public class Frames {
     public void zeroBasket() { runFrames(zeroBasketFrames); }
     public void bottomBasket() { runFrames(bottomBasketFrames); }
     public void topBasket() { runFrames(topBasketFrames); }
+    public void topPole() { runFrames(topPoleFrames); }
     public void uncurlArm() { runFrames(uncurlFrames); }
     public void curlArm() { runFrames(curlFrames); }
     public void lift() { runFrames(liftFrames); }

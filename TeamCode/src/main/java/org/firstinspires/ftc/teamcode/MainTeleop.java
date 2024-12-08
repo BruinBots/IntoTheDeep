@@ -160,6 +160,7 @@ public class MainTeleop extends OpMode {
             bot.frames.topBasket();
         } else if (controlMap.TopPole()) {
             // Move slide to top pole
+            bot.frames.topPole();
         }
 
         if (controlMap.OpenArm()) {
