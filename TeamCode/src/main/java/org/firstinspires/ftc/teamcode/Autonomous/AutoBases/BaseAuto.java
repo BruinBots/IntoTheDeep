@@ -54,7 +54,7 @@ public class BaseAuto {
     public static double SAMPLES_ANGLE;
     public static double SUBMERSIBLE_ANGLE;
 
-    public static boolean peripherals_allowed = false;
+    public static boolean peripherals_allowed = true;
 
     private final OpMode mode;
     private Telemetry dashTelemetry;
