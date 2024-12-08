@@ -245,7 +245,7 @@ public class Frames {
 
     public Frame[] topBasketFrames = new Frame[] {
         new ViperFrame(6100),
-//        new BasketOpenFrame(),
+        new BasketOpenFrame(),
     };
 
     public Frame[] topPoleFrames = new Frame[] {
