@@ -20,6 +20,10 @@ public class Viper {
     }
 
     public void move(int targetPos) {
+        move(targetPos, false);
+    }
+
+    public void move(int targetPos, boolean left) {
         // if viper pos is greater or less than max/min then set to max/min
         if (targetPos < MIN_VIPER_POS) {
             targetPos = MIN_VIPER_POS;
@@ -29,15 +33,21 @@ public class Viper {
 
         // Set motor powers
         motorL.setPower(VIPER_POWER);
-        motorR.setPower(VIPER_POWER);
+        if (!left) {
+            motorR.setPower(VIPER_POWER);
+        }
 
         // Set positions reversed for each motor
         motorL.setTargetPosition(targetPos);
-        motorR.setTargetPosition(-targetPos);
+        if (!left) {
+            motorR.setTargetPosition(-targetPos);
+        }
 
         // Activate motors to use encoders
         motorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (!left) {
+            motorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 
     public int getTargetPos() {

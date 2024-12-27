@@ -96,9 +96,7 @@ public class MainTeleop extends OpMode {
 
         if (controlMap.UpdateSlide()) {
             bot.viperMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        bot.viperMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             bot.viperMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        bot.viperMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             viperPos = 0;
         }
 
