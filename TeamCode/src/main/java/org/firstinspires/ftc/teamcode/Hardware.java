@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.MainTeleop.engageAtStart;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,6 +15,9 @@ public class Hardware {
 
     public RevColorSensorV3 colorSensor;
     ColorDistanceSensor colorDistanceSensor;
+
+    public ModernRoboticsI2cRangeSensor distanceSensor;
+    DistanceSensorTest distanceSensorTest;
 
     // Drive motors
     public DcMotorEx leftFrontMotor;
@@ -38,6 +42,7 @@ public class Hardware {
     public static boolean motorsInitialized = false;
 
 //    public ColorDistanceSensor ColorDistanceSensor;
+    public DistanceSensorTest DistanceSensorTest;
 
     public Servo basketServo;
     public Basket basket;
@@ -48,6 +53,10 @@ public class Hardware {
         // Color sensor
 //        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
 //        colorDistanceSensor = new ColorDistanceSensor(colorSensor);
+
+        // Distance sensor
+        distanceSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "distance_sensor");
+        distanceSensorTest = new DistanceSensorTest(distanceSensor);
 
         // Drive motors
         leftFrontMotor = hardwareMap.get(DcMotorEx.class, "left_front");

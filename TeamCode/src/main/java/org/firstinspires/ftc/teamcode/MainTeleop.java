@@ -31,7 +31,7 @@ public class MainTeleop extends OpMode {
     public static boolean wristArmSync = false;
     public static boolean engageAtStart = false;
     public static boolean colorActionEnabled = false;
-    public static ColorDistanceSensor.Colors currentOP = (ColorDistanceSensor.Colors.red);
+//    public static ColorDistanceSensor.Colors currentOP = (ColorDistanceSensor.Colors.red);
     public boolean viperPressed = false;
     public boolean armPressed = false;
     public boolean firstLoop = true;
@@ -204,6 +204,9 @@ public class MainTeleop extends OpMode {
         if (wristArmSync) {
             bot.arm.syncWristToArm();
         }
+
+        bot.distanceSensorTest.loop();
+        doTelemetry("Distance", bot.distanceSensorTest.READING_DISTANCE);
 
         //        bot.colorDistanceSensor.loop();
 //        if (bot.colorDistanceSensor.READING_DISTANCE <= 1) {
