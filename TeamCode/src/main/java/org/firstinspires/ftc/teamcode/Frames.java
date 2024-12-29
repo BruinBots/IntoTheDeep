@@ -42,7 +42,7 @@ public class Frames {
         public boolean run() {
             bot.viper.move(viper);
 
-            MainTeleop.viperPos = viper;
+//            MainTeleop.viperPos = viper;
 
             return waitUntilTime(500) && (Math.abs(bot.viperMotorL.getTargetPosition() - bot.viperMotorL.getCurrentPosition()) <= tolerance) && (Math.abs(bot.viperMotorR.getTargetPosition() - bot.viperMotorR.getCurrentPosition()) <= tolerance);
         }
@@ -86,7 +86,7 @@ public class Frames {
     private class BasketMidFrame extends Frame {
 
         public boolean run() {
-            bot.basket.setMiddle();
+//            bot.basket.setMiddle();
 
             return waitUntilTime(250);
         }
@@ -307,7 +307,7 @@ public class Frames {
             bot.arm.moveArm(bot.armMotor.getCurrentPosition()); // Stop moving arm by commanding it to move to its current position
             MainTeleop.armPos = bot.armMotor.getCurrentPosition();
             bot.viper.move(bot.viperMotorL.getCurrentPosition()); // Stop moving vipers
-            MainTeleop.viperPos = bot.viperMotorL.getCurrentPosition();
+//            MainTeleop.viperPos = bot.viperMotorL.getCurrentPosition();
 
             curFrames = new Frame[]{};
             curIdx = 0;

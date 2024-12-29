@@ -20,7 +20,6 @@ public class MainTeleop extends OpMode {
     double turn = 0.0;
     double strafe = 0.0;
 
-    public static int viperPos = 0;
     public static int armPos = 0;
 
     boolean isPixel = false;
@@ -33,8 +32,8 @@ public class MainTeleop extends OpMode {
     public static boolean colorActionEnabled = false;
 //    public static ColorDistanceSensor.Colors currentOP = (ColorDistanceSensor.Colors.red);
     public boolean viperPressed = false;
+    public boolean viperLeftPressed = false;
     public boolean armPressed = false;
-    public boolean firstLoop = true;
 
     public double DRIVE_SPEED;
     public double FAST_DRIVE_SPEED = 0.65; // original speed
@@ -59,8 +58,7 @@ public class MainTeleop extends OpMode {
 
     @Override
     public void start() {
-
-        viperPos = 0;
+        bot.viper.resetEncoders();
         armPos = 0;
         wristPos = 1;
         DRIVE_SPEED = FAST_DRIVE_SPEED;
@@ -94,10 +92,11 @@ public class MainTeleop extends OpMode {
             bot.intake.engage();
         }
 
-        if (controlMap.UpdateSlide()) {
-            bot.viperMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            bot.viperMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            viperPos = 0;
+        // Basket
+        if (controlMap.BasketOpen()) {
+            bot.basket.setOpen();
+        } else if (controlMap.BasketClosed()) {
+            bot.basket.setClosed();
         }
 
         // Arm
@@ -177,29 +176,38 @@ public class MainTeleop extends OpMode {
         }
 
         // Slide
-        if (controlMap.SlideUp()) {
-            viperPressed = true;
-            viperPos += Viper.VIPER_SPEED;
+        if (controlMap.UpdateSlide()) {
+            bot.viper.resetEncoders();
         }
-        else if (controlMap.SlideDown()) {
-            viperPressed = true;
-            viperPos -= Viper.VIPER_SPEED;
+
+//        if (controlMap.SlideUp()) {
+//            viperPressed = true;
+//            bot.viper.moveUp(Viper.Sides.BOTH);
+//        }
+//        else if (controlMap.SlideDown()) {
+//            viperPressed = true;
+//            bot.viper.moveDown(Viper.Sides.BOTH);
+//        } else {
+//            if (viperPressed) {
+//                viperPressed = false;
+//                bot.viper.move(bot.viper.getTargetPos(Viper.Sides.BOTH), Viper.Sides.BOTH);
+//            }
+//        }
+
+        if (controlMap.LeftSlideUp()) {
+            viperLeftPressed = true;
+            bot.viper.moveUp(Viper.Sides.LEFT);
+        }
+        else if (controlMap.LeftSlideDown()) {
+            viperLeftPressed = true;
+            bot.viper.moveDown(Viper.Sides.LEFT);
         } else {
-            if (viperPressed) {
-                viperPressed = false;
-                viperPos = bot.viper.getActualPos();
+            if (viperLeftPressed) {
+                viperLeftPressed = false;
+                bot.viper.move(bot.viper.getTargetPos(Viper.Sides.LEFT), Viper.Sides.LEFT);
             }
         }
-        bot.viper.loop();
-
-        // Mailbox
-        if (controlMap.MailBoxClose()) {
-            bot.basket.setClosed();
-        } else if (controlMap.MailBoxOpen()) {
-            bot.basket.setOpen();
-        } else if (controlMap.MailBoxMiddle()) {
-            bot.basket.setMiddle();
-        }
+//        bot.viper.loop();
 
         if (wristArmSync) {
             bot.arm.syncWristToArm();
@@ -244,7 +252,6 @@ public class MainTeleop extends OpMode {
 
         bot.arm.moveArm(armPos); // Move arm
         bot.arm.moveWrist(wristPos); // Move wrists
-        bot.viper.move(viperPos); // Move viper
         bot.moveBotMecanum(drive, turn, strafe,  DRIVE_SPEED); // actually move the robot
     }
 }

@@ -45,8 +45,8 @@ public class ViperOp extends OpMode {
         }
 
         // Telemetry of slide position
-        telemetry.addData("Target Position", bot.viper.getTargetPos());
-        telemetry.addData("Actual Position", bot.viper.getActualPos());
+//        telemetry.addData("Target Position", bot.viper.getTargetPos());
+//        telemetry.addData("Actual Position", bot.viper.getActualPos());
         telemetry.update();
 
         bot.viper.move(pos);

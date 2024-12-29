@@ -17,12 +17,6 @@ public class ControlMap {
         this.gamepad2 = gamepad2;
     }
 
-    // MAILBOX
-    public boolean MailBoxClose() { return gamepad1.dpad_down || gamepad1.dpad_right || gamepad1.dpad_left; }
-    public boolean MailBoxMiddle() { return gamepad1.left_trigger > 0.5; }
-    public boolean MailBoxOpen() { return gamepad1.dpad_up;}
-
-
     // VIPER SLIDE
     public boolean SlideDown() { return gamepad1.left_bumper; }
     public boolean SlideUp() { return gamepad1.right_bumper; }
@@ -31,6 +25,10 @@ public class ControlMap {
     public boolean TopBasket() { return gamepad1.x; }
     public boolean BottomSlide() { return gamepad1.y; }
     public boolean TopPole() { return gamepad1.b; }
+    public boolean LeftSlideUp() { return gamepad1.dpad_up; }
+    public boolean LeftSlideDown() { return gamepad1.dpad_down; }
+    public boolean BasketClosed() { return gamepad1.dpad_right; }
+    public boolean BasketOpen() { return gamepad1.dpad_left; }
 
     // SPEED SETTINGS
     public boolean FastSpeed() { return gamepad1.left_stick_button || gamepad2.left_stick_button; }
