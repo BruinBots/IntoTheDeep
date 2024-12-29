@@ -38,9 +38,6 @@ public class Vision extends LinearOpMode {
                 telemetry.addData("id", tag.id);
                 telemetry.update();
             }
-
         }
     }
-
-
 }

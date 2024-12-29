@@ -14,16 +14,22 @@ public class Viper {
     private DcMotorEx motorL;
     private DcMotorEx motorR;
 
+    public enum Position {
+        LEFT,
+        RIGHT,
+        BOTH
+    }
+
     public Viper(DcMotorEx motorL, DcMotorEx motorR) {
         this.motorL = motorL;
         this.motorR = motorR;
     }
 
     public void move(int targetPos) {
-        move(targetPos, false);
+        move(targetPos, Position.BOTH);
     }
 
-    public void move(int targetPos, boolean left) {
+    public void move(int targetPos, Position side) {
         // if viper pos is greater or less than max/min then set to max/min
         if (targetPos < MIN_VIPER_POS) {
             targetPos = MIN_VIPER_POS;
@@ -31,21 +37,27 @@ public class Viper {
             targetPos = MAX_VIPER_POS;
         }
 
-        // Set motor powers
-        motorL.setPower(VIPER_POWER);
-        if (!left) {
+        // set power of motors
+        if (side == Position.LEFT || side == Position.BOTH) {
+            motorL.setPower(VIPER_POWER);
+        }
+        if (side == Position.RIGHT || side == Position.BOTH) {
             motorR.setPower(VIPER_POWER);
         }
 
-        // Set positions reversed for each motor
-        motorL.setTargetPosition(targetPos);
-        if (!left) {
+        // set position of motors
+        if (side == Position.LEFT || side == Position.BOTH) {
+            motorL.setTargetPosition(targetPos);
+        }
+        if (side == Position.RIGHT || side == Position.BOTH) {
             motorR.setTargetPosition(-targetPos);
         }
 
-        // Activate motors to use encoders
-        motorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        if (!left) {
+        // make motors run to position
+        if (side == Position.LEFT || side == Position.BOTH) {
+            motorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        if (side == Position.RIGHT || side == Position.BOTH) {
             motorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
@@ -53,6 +65,7 @@ public class Viper {
     public int getTargetPos() {
         return motorL.getTargetPosition();
     }
+
     public int getActualPos() {
         return motorL.getCurrentPosition();
     }
