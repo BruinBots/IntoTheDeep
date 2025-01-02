@@ -32,7 +32,7 @@ public class ColorDistanceSensor {
     public void getValues() {
         READING_COLORS = colorSensor.getNormalizedColors();
         READING_DISTANCE = colorSensor.getDistance(DistanceUnit.CM);
-        red =  READING_COLORS.red;
+        red = READING_COLORS.red;
         green = READING_COLORS.green;
         blue = READING_COLORS.blue;
 

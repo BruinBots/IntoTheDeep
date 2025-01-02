@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Thread.sleep;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -47,7 +45,9 @@ public class Arm {
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void moveWrist(double targetPos) { moveWrist(targetPos, true); }
+    public void moveWrist(double targetPos) {
+        moveWrist(targetPos, true);
+    }
 
     public void moveWrist(double targetPos, boolean setPos) {
         if (setPos) {
@@ -56,8 +56,7 @@ public class Arm {
 
         if (targetPos > MAX_WRIST_POS) {
             targetPos = MAX_WRIST_POS;
-        }
-        else if (targetPos < MIN_WRIST_POS) {
+        } else if (targetPos < MIN_WRIST_POS) {
             targetPos = MIN_WRIST_POS;
         }
 
@@ -70,9 +69,9 @@ public class Arm {
 
     public void loop() {
         if (armMotor.getTargetPosition() > MAX_ARM_POS) {
-            moveArm(Viper.MAX_VIPER_POS);
+            moveArm(MAX_ARM_POS);
         } else if (armMotor.getTargetPosition() < MIN_ARM_POS) {
-            moveArm(Viper.MIN_VIPER_POS);
+            moveArm(MIN_ARM_POS);
         }
 
         if (wristServo.getPosition() > MAX_WRIST_POS) {

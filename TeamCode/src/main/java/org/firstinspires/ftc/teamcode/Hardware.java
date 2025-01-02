@@ -41,7 +41,7 @@ public class Hardware {
 
     public static boolean motorsInitialized = false;
 
-//    public ColorDistanceSensor ColorDistanceSensor;
+    //    public ColorDistanceSensor ColorDistanceSensor;
     public DistanceSensorTest DistanceSensorTest;
 
     public Servo basketServo;
@@ -88,7 +88,7 @@ public class Hardware {
 
         frames = new Frames(this);
     }
-;
+
     public void moveBotMecanum(double drive, double rotate, double strafe, double scaleFactor) {
 
 //        drive = rampUp(drive); // use S-curve to ramp up drive gradually

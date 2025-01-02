@@ -10,7 +10,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-@Autonomous(name="AprilTag Test")
+@Autonomous(name = "AprilTag Test")
 public class Vision extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -26,7 +26,7 @@ public class Vision extends LinearOpMode {
                 .setCameraResolution(new Size(640, 480))
                 .build();
         waitForStart();
-        while (!isStopRequested() && opModeIsActive()){
+        while (!isStopRequested() && opModeIsActive()) {
             if (tagProcessor.getDetections().size() > 0) {
                 AprilTagDetection tag = tagProcessor.getDetections().get(0);
                 telemetry.addData("x", tag.ftcPose.x);

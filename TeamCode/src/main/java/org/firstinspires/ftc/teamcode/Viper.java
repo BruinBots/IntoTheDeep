@@ -6,10 +6,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @Config
 public class Viper {
-    public static int MAX_VIPER_POS = 6100; // changed from 312rpm motor to 223rpm and adjusted num accordingly
-    public static int MIN_VIPER_POS = 0;
-    public static int VIPER_SPEED = 30;
-    public static double VIPER_POWER = 1;
+    private static int MAX_VIPER_POS = 6100; // changed from 312rpm motor to 223rpm and adjusted num accordingly
+    private static int MIN_VIPER_POS = 0;
+    private static int VIPER_SPEED = 30;
+    private static double VIPER_POWER = 1;
 
     private DcMotorEx motorL;
     private DcMotorEx motorR;
@@ -25,12 +25,12 @@ public class Viper {
         this.motorR = motorR;
     }
 
-    public void moveUp(Sides side){
-        move(getTargetPos(side) + VIPER_SPEED, side);
+    public void moveUp(Sides side) {
+        move(getTargetPosition(side) + VIPER_SPEED, side);
     }
 
-    public void moveDown(Sides side){
-        move(getTargetPos(side) - VIPER_SPEED, side);
+    public void moveDown(Sides side) {
+        move(getTargetPosition(side) - VIPER_SPEED, side);
     }
 
     public void move(int targetPos) {
@@ -70,7 +70,7 @@ public class Viper {
         }
     }
 
-    public int getTargetPos(Sides side) {
+    public int getTargetPosition(Sides side) {
         if (side == Sides.LEFT) {
             return motorL.getTargetPosition();
         } else if (side == Sides.RIGHT) {
@@ -80,7 +80,7 @@ public class Viper {
         }
     }
 
-    public int getActualPos(Sides side) {
+    public int getActualPosition(Sides side) {
         if (side == Sides.LEFT) {
             return motorL.getCurrentPosition();
         } else if (side == Sides.RIGHT) {
@@ -90,17 +90,9 @@ public class Viper {
         }
     }
 
-    public void resetEncoders(){
+    public void resetEncoders() {
         motorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         move(0);
     }
-
-//    public void loop() {
-//        if (getTargetPos() > Viper.MAX_VIPER_POS) {
-//            move(Viper.MAX_VIPER_POS);
-//        } else if (getTargetPos() < Viper.MIN_VIPER_POS) {
-//            move(Viper.MIN_VIPER_POS);
-//        }
-//    }
 }

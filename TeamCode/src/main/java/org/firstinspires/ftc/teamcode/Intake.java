@@ -6,22 +6,24 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 public class Intake {
     private Servo servo;
-    public static double STANDBY = 0;
-    public static double ENGAGE = 0.18;
+    private static double STANDBY = 0;
+    private static double ENGAGE = 0.18;
 
     public Intake(Servo servo) {
         this.servo = servo;
     }
 
-    public void engage(){
+    public void engage() {
         servo.setPosition(ENGAGE);
     }
 
-    public void standby(){
+    public void standby() {
         servo.setPosition(STANDBY);
     }
 
 
-    public double getPos() { return (double) servo.getPosition(); }
+    public double getPosistion() {
+        return (double) servo.getPosition();
+    }
 
 }

@@ -11,19 +11,19 @@ public class Basket {
     public static double CLOSED_POS = 0.35;
     public static double OPEN_POS = 0;
 
-    public Basket (Servo servo) {
+    public Basket(Servo servo) {
         basketServo = servo;
     }
 
-    private void setPosition (double position) {
+    private void setPosition(double position) {
         basketServo.setPosition(position);
     }
 
-    public double getPosition () {
+    public double getPosition() {
         return basketServo.getPosition();
     }
 
-    public void setClosed () {
+    public void setClosed() {
         setPosition(CLOSED_POS);
     }
 
