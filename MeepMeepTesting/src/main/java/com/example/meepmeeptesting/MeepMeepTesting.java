@@ -33,8 +33,8 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
-        double chamberTime = 0.5;
-        double wallTime = 0.25;
+        double chamberTime = 4;
+        double wallTime = 3;
 
         double firstTurn = turnRelative(Math.toRadians(90), turnToCoords(10, -54, 0, -32));
         double secondTurn = turnRelative(Math.toRadians(270), turnToCoords(0, -38, 48, -56));
@@ -44,7 +44,7 @@ public class MeepMeepTesting {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setColorScheme(new ColorSchemeRedDark())
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(45, 45*4, Math.toRadians(270), Math.toRadians(270*4), 15)
+                .setConstraints(30, 60, Math.toRadians(270), Math.toRadians(270*2), 15)
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(10, -60, Math.toRadians(270)))
                         .back(6)
                         .turn(firstTurn)
@@ -67,24 +67,6 @@ public class MeepMeepTesting {
                         .waitSeconds(chamberTime)
                         // SPECIMEN -> HIGH CHAMBER
                         .forward(10)
-                        .turn(Math.toRadians(90))
-                        .lineToConstantHeading(new Vector2d(36, -42))
-                        .turn(Math.toRadians(90))
-                        .lineToConstantHeading(new Vector2d(36, 0))
-                        .turn(Math.toRadians(-90))
-                        .lineToConstantHeading(new Vector2d(42, 0))
-                        .turn(Math.toRadians(-90))
-                        .forward(48)
-                        .back(48)
-                        .turn(Math.toRadians(90))
-                        .lineToConstantHeading(new Vector2d(52, 0))
-                        .turn(Math.toRadians(-90))
-                        .forward(48)
-                        .back(48)
-                        .turn(Math.toRadians(90))
-                        .lineToConstantHeading(new Vector2d(62, 0))
-                        .turn(Math.toRadians(-90))
-                        .forward(48)
                         .build());
 
 
