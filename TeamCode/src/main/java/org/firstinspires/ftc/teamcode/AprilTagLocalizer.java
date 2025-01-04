@@ -47,20 +47,20 @@ public class AprilTagLocalizer extends LinearOpMode {
         double tagY = coordinates[1];
 
         if (id == 11 || id == 16) {
-            double cameraPosX = tagX + y;
-            double cameraPosY = tagY - x;
+            double cameraPosX = tagX + y + 7;
+            double cameraPosY = tagY - x - 3.5;
             return new double[]{cameraPosX, cameraPosY};
         } else if (id == 12) {
-            double cameraPosX = -x;
-            double cameraPosY = tagY - x;
+            double cameraPosX = -x - 3.5;
+            double cameraPosY = tagY - y - 7;
             return new double[]{cameraPosX, cameraPosY};
         } else if (id == 13 || id == 14) {
-            double cameraPosX = tagX - y;
-            double cameraPosY = tagY + x;
+            double cameraPosX = tagX - y - 7;
+            double cameraPosY = tagY + x + 3.5;
             return new double[]{cameraPosX, cameraPosY};
         } else if (id == 15) {
-            double cameraPosX = x;
-            double cameraPosY = tagY + y;
+            double cameraPosX = x + 3.5;
+            double cameraPosY = tagY + y + 7;
             return new double[]{cameraPosX, cameraPosY};
         }
         return null;
