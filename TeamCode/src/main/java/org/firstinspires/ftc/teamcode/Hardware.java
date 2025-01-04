@@ -132,7 +132,6 @@ public class Hardware {
             } else {
                 intake.standby();
             }
-            return;
         }
 
 //        viper.move(0);
