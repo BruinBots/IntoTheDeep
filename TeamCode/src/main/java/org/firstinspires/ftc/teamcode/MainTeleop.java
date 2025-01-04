@@ -180,6 +180,7 @@ public class MainTeleop extends OpMode {
         if (controlMap.UpdateSlide()) {
             bot.viper.resetEncoders();
         }
+        
 
 //        if (controlMap.SlideUp()) {
 //            viperPressed = true;
@@ -232,6 +233,7 @@ public class MainTeleop extends OpMode {
 //                bot.intake.engage();
 //            }
 //        }
+
 
         // Telemetry
         doTelemetry("Xtra0", controlMap.Xtra0());

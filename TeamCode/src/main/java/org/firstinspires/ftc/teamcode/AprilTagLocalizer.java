@@ -88,6 +88,7 @@ public class AprilTagLocalizer extends LinearOpMode {
                 double[] coords = convertToRR(tag.id, tag.ftcPose.x, tag.ftcPose.y);
                 telemetry.addData("Calculated X Position", coords[0]);
                 telemetry.addData("Calculated Y Position", coords[1]);
+                telemetry.update();
             }
         }
     }

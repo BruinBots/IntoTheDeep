@@ -8,7 +8,7 @@ public class Basket {
 
     private Servo basketServo;
 
-    public static double CLOSED_POS = 0.35;
+    public static double CLOSED_POS = 0.3;
     public static double OPEN_POS = 0;
 
     public Basket(Servo servo) {
