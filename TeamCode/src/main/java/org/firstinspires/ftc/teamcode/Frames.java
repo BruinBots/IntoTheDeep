@@ -45,11 +45,11 @@ public class Frames {
         }
 
         public boolean run() {
-            bot.viper.move(viper);
+            bot.viper.move(viper, Viper.Sides.LEFT);
 
 //            MainTeleop.viperPos = viper;
 
-            return waitUntilTime(500) && (Math.abs(bot.viperMotorL.getTargetPosition() - bot.viperMotorL.getCurrentPosition()) <= tolerance) && (Math.abs(bot.viperMotorR.getTargetPosition() - bot.viperMotorR.getCurrentPosition()) <= tolerance);
+            return waitUntilTime(500) && (Math.abs(bot.viperMotorL.getTargetPosition() - bot.viperMotorL.getCurrentPosition()) <= tolerance);
         }
     }
 
@@ -270,6 +270,16 @@ public class Frames {
             new ViperFrame(3050) // top pole pos
     };
 
+    public Frame[] topSpecimenFrames = new Frame[] {
+            new ViperFrame(1950, 5),
+            new BasketOpenFrame(),
+    };
+
+    public Frame[] afterWallFrames = new Frame[] {
+            new WaitFrame(500),
+            new ViperFrame(1500, 5),
+    };
+
     public Frame[] uncurlFrames = new Frame[]{
             new ArmWristSanityFrame(0, 1, 1000, 0.2),
             new ArmWristFrame(1478, 1, 0, 500),
@@ -298,7 +308,7 @@ public class Frames {
     };
 
     public Frame[] zeroArmFrames = new Frame[]{
-            new ArmWristFrame(0, 1)
+            new ArmWristFrame(0, 1, 250, 5)
     };
 
     public Frames(Hardware bot) {
@@ -393,6 +403,8 @@ public class Frames {
         runFrames(topPoleFrames);
     }
 
+    public void topSpecimen() { runFrames(topSpecimenFrames); }
+
     public void uncurlArm() {
         runFrames(uncurlFrames);
     }
@@ -408,4 +420,6 @@ public class Frames {
     public void zeroArm() {
         runFrames(zeroArmFrames);
     }
+
+    public void afterWall() { runFrames(afterWallFrames); }
 }

@@ -55,7 +55,7 @@ public class AprilReader {
         return null;
     }
 
-    public double[] convertToRR(int id, double x, double y) {
+    public double[] convertToRR(int id, double x, double y, double yaw) {
         double[] coordinates = getAprilTagCoordinates(id);
         double tagX = coordinates[0];
         double tagY = coordinates[1];
@@ -63,19 +63,19 @@ public class AprilReader {
         if (id == 11 || id == 16) {
             double cameraPosX = tagX + y + 7;
             double cameraPosY = tagY - x - 3.5;
-            return new double[]{cameraPosX, cameraPosY};
+            return new double[]{cameraPosX, cameraPosY, yaw};
         } else if (id == 12) {
             double cameraPosX = -x - 3.5;
             double cameraPosY = tagY - y - 7;
-            return new double[]{cameraPosX, cameraPosY};
+            return new double[]{cameraPosX, cameraPosY, yaw};
         } else if (id == 13 || id == 14) {
             double cameraPosX = tagX - y - 7;
             double cameraPosY = tagY + x + 3.5;
-            return new double[]{cameraPosX, cameraPosY};
+            return new double[]{cameraPosX, cameraPosY, yaw};
         } else if (id == 15) {
             double cameraPosX = x + 3.5;
             double cameraPosY = tagY + y + 7;
-            return new double[]{cameraPosX, cameraPosY};
+            return new double[]{cameraPosX, cameraPosY, yaw};
         }
         return null;
     }
@@ -83,7 +83,7 @@ public class AprilReader {
     public double[] read() {
         if (!tagProcessor.getDetections().isEmpty()) {
             AprilTagDetection tag = tagProcessor.getDetections().get(0);
-            double[] coords = convertToRR(tag.id, tag.ftcPose.x, tag.ftcPose.y);
+            double[] coords = convertToRR(tag.id, tag.ftcPose.x, tag.ftcPose.y, tag.ftcPose.yaw);
             return coords;
         }
         return new double[]{};
