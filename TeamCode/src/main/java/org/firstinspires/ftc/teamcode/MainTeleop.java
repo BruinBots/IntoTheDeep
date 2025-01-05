@@ -28,8 +28,8 @@ public class MainTeleop extends OpMode {
     public static boolean engageAtStart = false;
     public static boolean colorActionEnabled = false;
     //    public static ColorDistanceSensor.Colors currentOP = (ColorDistanceSensor.Colors.red);
-    public boolean viperPressed = false;
     public boolean viperLeftPressed = false;
+    public boolean bothViperPressed = false;
     public boolean armPressed = false;
     public double DRIVE_SPEED;
     public double FAST_DRIVE_SPEED = 0.65; // original speed
@@ -205,7 +205,29 @@ public class MainTeleop extends OpMode {
         } else {
             if (viperLeftPressed) {
                 viperLeftPressed = false;
-                bot.viper.move(bot.viper.getTargetPosition(Viper.Sides.LEFT), Viper.Sides.LEFT);
+                bot.viper.move(bot.viper.getActualPosition(Viper.Sides.LEFT), Viper.Sides.LEFT);
+            }
+        }
+
+        if (controlMap.BothSlidesUp()) {
+            bothViperPressed = true;
+            bot.viper.moveUp(Viper.Sides.BOTH);
+        } else {
+            if (bothViperPressed) {
+                bothViperPressed = false;
+                bot.viper.move(bot.viper.getActualPosition(Viper.Sides.LEFT), Viper.Sides.LEFT);
+                bot.viper.move(bot.viper.getActualPosition(Viper.Sides.RIGHT), Viper.Sides.RIGHT);
+            }
+        }
+
+        if (controlMap.BothSlidesDown()) {
+            bothViperPressed = true;
+            bot.viper.moveDown(Viper.Sides.BOTH);
+        } else {
+            if (bothViperPressed) {
+                bothViperPressed = false;
+                bot.viper.move(bot.viper.getActualPosition(Viper.Sides.LEFT), Viper.Sides.LEFT);
+                bot.viper.move(bot.viper.getActualPosition(Viper.Sides.RIGHT), Viper.Sides.RIGHT);
             }
         }
 

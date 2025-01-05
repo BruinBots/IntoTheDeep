@@ -26,11 +26,40 @@ public class Viper {
     }
 
     public void moveUp(Sides side) {
-        move(getTargetPosition(side) + VIPER_SPEED, side);
+        if (side == Sides.BOTH) {
+            int motorLPos = motorL.getCurrentPosition();
+            int motorRPos = motorR.getCurrentPosition();
+
+            if (Math.abs(motorLPos - motorRPos) <= 5) {
+                moveUp(Sides.LEFT);
+                moveUp(Sides.RIGHT);
+            } else if (motorLPos > motorRPos) {
+                moveUp(Sides.LEFT);
+            } else {
+                moveUp(Sides.RIGHT);
+            }
+
+        } else {
+            move(getTargetPosition(side) + VIPER_SPEED, side);
+        }
     }
 
     public void moveDown(Sides side) {
-        move(getTargetPosition(side) - VIPER_SPEED, side);
+        if (side == Sides.BOTH) {
+            int motorLPos = motorL.getCurrentPosition();
+            int motorRPos = motorR.getCurrentPosition();
+
+            if (Math.abs(motorLPos - motorRPos) <= 5) {
+                moveDown(Sides.LEFT);
+                moveDown(Sides.RIGHT);
+            } else if (motorLPos > motorRPos) {
+                moveDown(Sides.LEFT);
+            } else {
+                moveDown(Sides.RIGHT);
+            }
+        } else {
+            move(getTargetPosition(side) - VIPER_SPEED, side);
+        }
     }
 
     public void move(int targetPos) {
