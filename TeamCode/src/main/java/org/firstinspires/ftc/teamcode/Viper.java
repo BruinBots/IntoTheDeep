@@ -27,16 +27,15 @@ public class Viper {
 
     public void moveUp(Sides side) {
         if (side == Sides.BOTH) {
-            int motorLPos = motorL.getCurrentPosition();
-            int motorRPos = motorR.getCurrentPosition();
+            int motorLPos = Math.abs(getActualPosition(Sides.LEFT));
+            int motorRPos = Math.abs(getActualPosition(Sides.RIGHT));
 
-            if (Math.abs(motorLPos - motorRPos) <= 5) {
-                moveUp(Sides.LEFT);
-                moveUp(Sides.RIGHT);
-            } else if (motorLPos > motorRPos) {
-                moveUp(Sides.LEFT);
+            if (Math.abs(motorLPos - motorRPos) <= 100) {
+                move(getTargetPosition(Sides.BOTH) + VIPER_SPEED, Sides.LEFT);
+            } else if (motorLPos < motorRPos) {
+                move(motorRPos, Sides.LEFT);
             } else {
-                moveUp(Sides.RIGHT);
+                move(motorLPos, Sides.RIGHT);
             }
 
         } else {
@@ -46,17 +45,17 @@ public class Viper {
 
     public void moveDown(Sides side) {
         if (side == Sides.BOTH) {
-            int motorLPos = motorL.getCurrentPosition();
-            int motorRPos = motorR.getCurrentPosition();
+            int motorLPos = Math.abs(getActualPosition(Sides.LEFT));
+            int motorRPos = Math.abs(getActualPosition(Sides.RIGHT));
 
-            if (Math.abs(motorLPos - motorRPos) <= 5) {
-                moveDown(Sides.LEFT);
-                moveDown(Sides.RIGHT);
+            if (Math.abs(motorLPos - motorRPos) <= 100) {
+                move(getTargetPosition(Sides.BOTH) - VIPER_SPEED, Sides.LEFT);
             } else if (motorLPos > motorRPos) {
-                moveDown(Sides.LEFT);
+                move(motorRPos, Sides.LEFT);
             } else {
-                moveDown(Sides.RIGHT);
+                move(motorLPos, Sides.RIGHT);
             }
+
         } else {
             move(getTargetPosition(side) - VIPER_SPEED, side);
         }
