@@ -18,12 +18,13 @@ public class ControlMap {
     }
 
     // VIPER SLIDE
-    public boolean SlideDown() {
-        return gamepad1.left_bumper;
+
+    public boolean BothSlidesUp() {
+        return gamepad1.right_bumper;
     }
 
-    public boolean SlideUp() {
-        return gamepad1.right_bumper;
+    public boolean BothSlidesDown() {
+        return gamepad1.left_bumper;
     }
 
     public boolean UpdateSlide() {

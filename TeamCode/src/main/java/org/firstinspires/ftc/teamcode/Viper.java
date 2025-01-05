@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 public class Viper {
     private static int MAX_VIPER_POS = 6100; // changed from 312rpm motor to 223rpm and adjusted num accordingly
     private static int MIN_VIPER_POS = 0;
-    private static int VIPER_SPEED = 30;
+    private static int VIPER_SPEED = 150;
     private static double VIPER_POWER = 1;
 
     private DcMotorEx motorL;
@@ -26,11 +26,40 @@ public class Viper {
     }
 
     public void moveUp(Sides side) {
-        move(getTargetPosition(side) + VIPER_SPEED, side);
+        if (side == Sides.BOTH) {
+            int motorLPos = motorL.getCurrentPosition();
+            int motorRPos = motorR.getCurrentPosition();
+
+            if (Math.abs(motorLPos - motorRPos) <= 5) {
+                moveUp(Sides.LEFT);
+                moveUp(Sides.RIGHT);
+            } else if (motorLPos > motorRPos) {
+                moveUp(Sides.LEFT);
+            } else {
+                moveUp(Sides.RIGHT);
+            }
+
+        } else {
+            move(getTargetPosition(side) + VIPER_SPEED, side);
+        }
     }
 
     public void moveDown(Sides side) {
-        move(getTargetPosition(side) - VIPER_SPEED, side);
+        if (side == Sides.BOTH) {
+            int motorLPos = motorL.getCurrentPosition();
+            int motorRPos = motorR.getCurrentPosition();
+
+            if (Math.abs(motorLPos - motorRPos) <= 5) {
+                moveDown(Sides.LEFT);
+                moveDown(Sides.RIGHT);
+            } else if (motorLPos > motorRPos) {
+                moveDown(Sides.LEFT);
+            } else {
+                moveDown(Sides.RIGHT);
+            }
+        } else {
+            move(getTargetPosition(side) - VIPER_SPEED, side);
+        }
     }
 
     public void move(int targetPos) {
