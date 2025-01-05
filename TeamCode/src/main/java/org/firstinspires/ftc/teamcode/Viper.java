@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 public class Viper {
     private static int MAX_VIPER_POS = 6100; // changed from 312rpm motor to 223rpm and adjusted num accordingly
     private static int MIN_VIPER_POS = 0;
-    private static int VIPER_SPEED = 30;
+    private static int VIPER_SPEED = 150;
     private static double VIPER_POWER = 1;
 
     private DcMotorEx motorL;
