@@ -33,40 +33,24 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
-        double chamberTime = 4;
-        double wallTime = 3;
-
-        double firstTurn = turnRelative(Math.toRadians(90), turnToCoords(10, -54, 0, -32));
-        double secondTurn = turnRelative(Math.toRadians(270), turnToCoords(0, -38, 48, -56));
-        double thirdTurn = turnRelative(turnToCoords(0, -38, 48, -56), Math.toRadians(90));
-        double fourthTurn = turnRelative(Math.toRadians(90), turnToCoords(48, -56, 0, -32))+Math.PI;
-
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setColorScheme(new ColorSchemeRedDark())
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(30, 60, Math.toRadians(270), Math.toRadians(270*2), 15)
-                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(10, -60, Math.toRadians(270)))
-                        .back(6)
-                        .turn(firstTurn)
-                        .lineToConstantHeading(new Vector2d(0, -32))
-                        .turn(-firstTurn)
-                        .waitSeconds(chamberTime)
-                        // SPECIMEN -> HIGH CHAMBER
+                .setConstraints(40, 40, Math.toRadians(180), Math.toRadians(180), 14.35)
+                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(10, -60, Math.toRadians(90)))
                         .forward(6)
-                        .turn(secondTurn)
-                        .lineToConstantHeading(new Vector2d(48, -56))
-                        .turn(thirdTurn)
+                        .splineTo(new Vector2d(0, -42), Math.toRadians(90))
+                        .waitSeconds(6)
                         .back(6)
-                        .waitSeconds(wallTime)
-                        // SPECIMEN -> MAILBOX
-                        // APRIL TAG
-                        .forward(6)
-                        .turn(fourthTurn)
-                        .lineToConstantHeading(new Vector2d(0, -32))
-                        .turn(-fourthTurn+Math.PI)
-                        .waitSeconds(chamberTime)
-                        // SPECIMEN -> HIGH CHAMBER
-                        .forward(10)
+                        .splineTo(new Vector2d(24, -48), Math.toRadians(90))
+                        .waitSeconds(1)
+                        .turn(Math.toRadians(90))
+                        .splineTo(new Vector2d(45, -54), Math.toRadians(270))
+                        .waitSeconds(3)
+                        .back(6)
+                        .splineTo(new Vector2d(24, -48), Math.toRadians(90))
+                        .turn(Math.toRadians(180))
+                        .splineTo(new Vector2d(0, -42), Math.toRadians(90))
                         .build());
 
 

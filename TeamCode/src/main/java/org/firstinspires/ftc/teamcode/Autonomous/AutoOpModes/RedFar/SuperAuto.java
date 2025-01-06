@@ -37,9 +37,10 @@ public class SuperAuto extends LinearOpMode {
     public static int START_ANGLE = blue ? 270 : 90;
     public static int INVERTED_START_ANGLE = blue ? 90 : 270;
     public static int SUBMERSIBLE_X = 0;
+    public static int SUBMERSIBLE_X2 = 4;
     public static int SUBMERSIBLE_Y = 42*bluef;
     public static int OBSERVATION_X = -45*bluef;
-    public static int OBSERVATION_Y = 48*bluef;
+    public static int OBSERVATION_Y = 54*bluef;
     public static int MID_X = -24*bluef;
     public static int MID_Y = 48*bluef;
     public static int MID_ANGLE = START_ANGLE;
@@ -71,6 +72,43 @@ public class SuperAuto extends LinearOpMode {
         }
     }
 
+    public void runApril() {
+        if (doApril) {
+            double[] april;
+            long startTime = System.currentTimeMillis();
+            while ((System.currentTimeMillis() - startTime < APRIL_TIME) && !isStopRequested()) {
+                bot.frames.loop();
+                april = reader.read();
+                if (april.length == 3) {
+                    double x = april[0];
+                    double y = april[1];
+//                    double yaw = april[2];
+                    double yaw = drive.getPoseEstimate().getHeading();
+                    startPose = new Pose2d(x, y, yaw);
+                    drive.setPoseEstimate(startPose);
+                    status("Pose Updated with april tags");
+                }
+            }
+        }
+    }
+
+    public void tele(String caption, String message) {
+        telemetry.addData(caption, message);
+        dashTelemetry.addData(caption, message);
+        telemetry.update();
+        dashTelemetry.update();
+    }
+
+    public void status(String message) {
+        tele("Status", message);
+    }
+
+    public void doPos() {
+        tele("X", ""+drive.getPoseEstimate().getX());
+        tele("Y", ""+drive.getPoseEstimate().getY());
+        tele("Heading", ""+drive.getPoseEstimate().getHeading());
+    }
+
     @Override
     public void runOpMode() {
         bot = new Hardware(hardwareMap);
@@ -93,6 +131,7 @@ public class SuperAuto extends LinearOpMode {
 
         // lift before start
         bot.frames.lift();
+        status("Lifting arm...");
         while (bot.frames.isBusy() && !isStopRequested()) { bot.frames.loop(); }
 
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
@@ -103,20 +142,19 @@ public class SuperAuto extends LinearOpMode {
                     bot.viper.move(3050, Viper.Sides.LEFT);
                 })
                 .build();
+        status("Going to submersible...");
         drive.followTrajectorySequence(trajSeq);
         startPose = trajSeq.end();
 
         bot.frames.topPole();
         while (bot.frames.isBusy() && !isStopRequested()) { bot.frames.loop(); }
 
+        status("Aligning with distance sensor...");
         drive2distance(5.5, 0.25);
 
+        status("Placing specimen on high chamber...");
         bot.frames.topSpecimen();
         while (bot.frames.isBusy() && !isStopRequested()) { bot.frames.loop(); }
-
-        while (bot.frames.isBusy() && !isStopRequested()) {
-            bot.frames.loop();
-        }
 
         trajSeq = drive.trajectorySequenceBuilder(startPose)
                 .back(6)
@@ -125,42 +163,63 @@ public class SuperAuto extends LinearOpMode {
                 })
                 .splineTo(new Vector2d(MID_X, MID_Y), Math.toRadians(MID_ANGLE))
                 .build();
+        status("Going to april position...");
         drive.followTrajectorySequence(trajSeq);
         startPose = trajSeq.end();
 
-        if (doApril) {
-            double[] april;
-            long startTime = System.currentTimeMillis();
-            while ((System.currentTimeMillis() - startTime < APRIL_TIME) && !isStopRequested()) {
-                bot.frames.loop();
-                april = reader.read();
-                if (april.length == 3) {
-                    double x = april[0];
-                    double y = april[1];
-//                    double yaw = april[2];
-                    double yaw = drive.getPoseEstimate().getHeading();
-                    startPose = new Pose2d(x, y, yaw);
-                    drive.setPoseEstimate(startPose);
-                    telemetry.addData("RR Status", "Pose Updated");
-                    telemetry.update();
-                }
-            }
-        }
+        status("Reading april tag...");
+        runApril();
 
         trajSeq = drive.trajectorySequenceBuilder(startPose)
                 .splineTo(new Vector2d(OBSERVATION_X, OBSERVATION_Y), Math.toRadians(INVERTED_START_ANGLE))
                 .forward(4)
                 .build();
+        status("Moving to observation zone...");
         drive.followTrajectorySequence(trajSeq);
         startPose = trajSeq.end();
 
+        status("Aligning with distance sensor...");
         drive2distance(4, 0.4);
 
+        status("Picking up specimen...");
         bot.basket.setClosed();
         bot.frames.afterWall();
         while (bot.frames.isBusy() && !isStopRequested()) {
             bot.frames.loop();
         }
+
+        trajSeq = drive.trajectorySequenceBuilder(startPose)
+                .splineTo(new Vector2d(MID_X, MID_Y), Math.toRadians(START_ANGLE))
+                .turn(Math.toRadians(180))
+                .build();
+        status("Going to april position...");
+        drive.followTrajectorySequence(trajSeq);
+        startPose = trajSeq.end();
+
+        status("Reading april tag...");
+        runApril();
+
+        trajSeq = drive.trajectorySequenceBuilder(startPose)
+                .splineTo(new Vector2d(SUBMERSIBLE_X2, SUBMERSIBLE_Y), Math.toRadians(START_ANGLE))
+                .addDisplacementMarker(20, () -> {
+                    bot.viper.move(3050, Viper.Sides.LEFT);
+                })
+                .build();
+        status("Going to submersible...");
+        drive.followTrajectorySequence(trajSeq);
+        startPose = trajSeq.end();
+
+        bot.frames.topPole();
+        while (bot.frames.isBusy() && !isStopRequested()) { bot.frames.loop(); }
+
+        status("Aligning with distance sensor...");
+        drive2distance(5.5, 0.25);
+
+        status("Placing specimen on high chamber...");
+        bot.frames.topSpecimen();
+        while (bot.frames.isBusy() && !isStopRequested()) { bot.frames.loop(); }
+
+        status("Lowering arm...");
         bot.frames.zeroArm();
         while (bot.frames.isBusy() && !isStopRequested()) {
             bot.frames.loop();
