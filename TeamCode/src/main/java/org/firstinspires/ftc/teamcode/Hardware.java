@@ -9,15 +9,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.util.Encoder;
-
 public class Hardware {
 
     public RevColorSensorV3 colorSensor;
     ColorDistanceSensor colorDistanceSensor;
 
-    public ModernRoboticsI2cRangeSensor distanceSensor;
-    DistanceSensorTest distanceSensorTest;
+    public ModernRoboticsI2cRangeSensor DistanceSensor;
+    public Distance distanceSensor;
 
     // Drive motors
     public DcMotorEx leftFrontMotor;
@@ -42,7 +40,6 @@ public class Hardware {
     public static boolean motorsInitialized = false;
 
     //    public ColorDistanceSensor ColorDistanceSensor;
-    public DistanceSensorTest DistanceSensorTest;
 
     public Servo basketServo;
     public Basket basket;
@@ -55,8 +52,8 @@ public class Hardware {
 //        colorDistanceSensor = new ColorDistanceSensor(colorSensor);
 
         // Distance sensor
-        distanceSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "distance_sensor");
-        distanceSensorTest = new DistanceSensorTest(distanceSensor);
+        DistanceSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "distance_sensor");
+        distanceSensor = new Distance(DistanceSensor);
 
         // Drive motors
         leftFrontMotor = hardwareMap.get(DcMotorEx.class, "left_front");
