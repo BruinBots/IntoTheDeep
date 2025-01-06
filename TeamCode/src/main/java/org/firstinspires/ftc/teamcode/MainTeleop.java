@@ -34,12 +34,23 @@ public class MainTeleop extends OpMode {
     public double FAST_DRIVE_SPEED = 0.65; // original speed
     public double SLOW_DRIVE_SPEED = 0.30; // half fast speed
 
+    public static boolean enableMotorBurner = false;
+    MotorBurner burnerViperL;
+    MotorBurner burnerViperR;
+    MotorBurner burnerArm;
+
     @Override
     public void init() {
         dash = FtcDashboard.getInstance();
         dashTelemetry = dash.getTelemetry();
         bot = new Hardware(hardwareMap);
         controlMap = new ControlMap(gamepad1, gamepad2);
+
+        if (enableMotorBurner) {
+            burnerViperL = new MotorBurner(bot.viperMotorL, 9, this, 2);
+            burnerViperR = new MotorBurner(bot.viperMotorR, 9, this, 2);
+            burnerArm = new MotorBurner(bot.armMotor, 9, this, 1);
+        }
     }
 
     public void displayMotorTelemetry(String caption, DcMotorEx motor) {
@@ -274,5 +285,11 @@ public class MainTeleop extends OpMode {
         bot.arm.moveArm(armPos); // Move arm
         bot.arm.moveWrist(wristPos); // Move wrists
         bot.moveBotMecanum(drive, turn, strafe, DRIVE_SPEED); // actually move the robot
+
+        if (enableMotorBurner) {
+            burnerViperL.loop();
+            burnerViperR.loop();
+            burnerArm.loop();
+        }
     }
 }
