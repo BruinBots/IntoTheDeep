@@ -4,19 +4,14 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-public class DistanceSensorTest {
+public class Distance {
     private final ModernRoboticsI2cRangeSensor distanceSensor;
-    public double READING_DISTANCE;
 
-    public DistanceSensorTest(ModernRoboticsI2cRangeSensor sensor) {
+    public Distance(ModernRoboticsI2cRangeSensor sensor) {
         distanceSensor = sensor;
     }
 
-    public void getValues() {
-        READING_DISTANCE = distanceSensor.getDistance(DistanceUnit.CM);
-    }
-
-    public void loop() {
-        getValues();
+    public double getValue() {
+        return(distanceSensor.getDistance(DistanceUnit.CM));
     }
 }

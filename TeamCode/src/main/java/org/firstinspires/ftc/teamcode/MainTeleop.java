@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -235,8 +234,7 @@ public class MainTeleop extends OpMode {
             bot.arm.syncWristToArm();
         }
 
-        bot.distanceSensorTest.loop();
-        doTelemetry("Distance", bot.distanceSensorTest.READING_DISTANCE);
+        doTelemetry("Distance", bot.distanceSensor.getValue());
 
         //        bot.colorDistanceSensor.loop();
 //        if (bot.colorDistanceSensor.READING_DISTANCE <= 1) {
@@ -261,7 +259,7 @@ public class MainTeleop extends OpMode {
         doTelemetry("Xtra0", controlMap.Xtra0());
         doTelemetry("Xtra1", controlMap.Xtra1());
         doTelemetry("Xtra2", controlMap.Xtra2());
-        doTelemetry("Intake", bot.intake.getPosistion());
+        doTelemetry("Intake", bot.intake.getPosition());
         displayMotorTelemetry("Viper Motor L", bot.viperMotorL);
         displayMotorTelemetry("Viper Motor R", bot.viperMotorR);
         displayMotorTelemetry("Arm Motor", bot.armMotor);

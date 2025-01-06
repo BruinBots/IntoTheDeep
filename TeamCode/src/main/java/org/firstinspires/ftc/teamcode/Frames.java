@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Thread.sleep;
-
 public class Frames {
     private abstract class Frame {
         public double startTime = -1;

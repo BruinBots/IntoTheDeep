@@ -50,14 +50,14 @@ public class SuperAuto extends LinearOpMode {
     public void drive2distance(double target, double tolerance) {
         double sum = 0;
         for (int i = 0; i < 5; i ++) {
-            sum += bot.distanceSensor.getDistance(DistanceUnit.INCH);
+            sum += bot.DistanceSensor.getDistance(DistanceUnit.INCH);
         }
         double curDist = sum/5;
 
         while (Math.abs(curDist - target) > tolerance) {
             sum = 0;
             for (int i = 0; i < 5; i ++) {
-                sum += bot.distanceSensor.getDistance(DistanceUnit.INCH);
+                sum += bot.DistanceSensor.getDistance(DistanceUnit.INCH);
             }
             curDist = sum/5;
             telemetry.addData("Current Distance", curDist);

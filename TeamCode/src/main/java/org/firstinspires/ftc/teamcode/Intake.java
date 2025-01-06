@@ -22,8 +22,8 @@ public class Intake {
     }
 
 
-    public double getPosistion() {
-        return (double) servo.getPosition();
+    public double getPosition() {
+        return servo.getPosition();
     }
 
 }
