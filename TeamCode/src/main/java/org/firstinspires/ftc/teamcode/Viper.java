@@ -31,7 +31,7 @@ public class Viper {
             int motorRPos = Math.abs(getActualPosition(Sides.RIGHT));
 
             if (Math.abs(motorLPos - motorRPos) <= 100) {
-                move(getTargetPosition(Sides.BOTH) + VIPER_SPEED, Sides.LEFT);
+                move(getTargetPosition(Sides.BOTH) + VIPER_SPEED, Sides.BOTH);
             } else if (motorLPos < motorRPos) {
                 move(motorRPos, Sides.LEFT);
             } else {
@@ -49,7 +49,7 @@ public class Viper {
             int motorRPos = Math.abs(getActualPosition(Sides.RIGHT));
 
             if (Math.abs(motorLPos - motorRPos) <= 100) {
-                move(getTargetPosition(Sides.BOTH) - VIPER_SPEED, Sides.LEFT);
+                move(getTargetPosition(Sides.BOTH) - VIPER_SPEED, Sides.BOTH);
             } else if (motorLPos > motorRPos) {
                 move(motorRPos, Sides.LEFT);
             } else {
