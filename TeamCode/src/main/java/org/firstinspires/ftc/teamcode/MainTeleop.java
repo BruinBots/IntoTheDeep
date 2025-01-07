@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveCancelable;
 
 @Config
 @TeleOp(name = "Main TeleOp", group = "Iterative Opmode")
@@ -34,6 +36,9 @@ public class MainTeleop extends OpMode {
     public double FAST_DRIVE_SPEED = 0.65; // original speed
     public double SLOW_DRIVE_SPEED = 0.30; // half fast speed
 
+    private TeleDistanceDriver rrDriver;
+    private ChamberPlacer chamberPlacer;
+
     public static boolean enableMotorBurner = false;
     MotorBurner burnerViperL;
     MotorBurner burnerViperR;
@@ -45,6 +50,8 @@ public class MainTeleop extends OpMode {
         dashTelemetry = dash.getTelemetry();
         bot = new Hardware(hardwareMap);
         controlMap = new ControlMap(gamepad1, gamepad2);
+        rrDriver = new TeleDistanceDriver(hardwareMap);
+        chamberPlacer = new ChamberPlacer(bot, rrDriver);
 
         if (enableMotorBurner) {
             burnerViperL = new MotorBurner(bot.viperMotorL, 9, this, 2);
@@ -91,6 +98,10 @@ public class MainTeleop extends OpMode {
         }
         if (turn > 1) {
             turn = 1;
+        }
+
+        if (drive > 0 || strafe > 0 || turn > 0) {
+            rrDriver.drive.breakFollowing();
         }
 
         strafe = Math.copySign(Math.pow(strafe, 2), strafe);
@@ -246,26 +257,6 @@ public class MainTeleop extends OpMode {
         }
 
         doTelemetry("Distance", bot.distanceSensor.getValue());
-
-        //        bot.colorDistanceSensor.loop();
-//        if (bot.colorDistanceSensor.READING_DISTANCE <= 1) {
-//            isPixel = true;
-//        }
-//        else {
-//            isPixel = false;
-//        }
-//
-//        if (isPixel && colorActionEnabled) {
-//            // If the pixel is not the current OP color, outtake for 1 second
-//            ColorDistanceSensor.Colors color = bot.colorDistanceSensor.color;
-//            if (color != currentOP && color != ColorDistanceSensor.Colors.yellow) {
-//                bot.intake.standby();
-//            } else {
-//                bot.intake.engage();
-//            }
-//        }
-
-
         // Telemetry
         doTelemetry("Xtra0", controlMap.Xtra0());
         doTelemetry("Xtra1", controlMap.Xtra1());
@@ -291,5 +282,10 @@ public class MainTeleop extends OpMode {
             burnerViperR.loop();
             burnerArm.loop();
         }
+
+        if (rrDriver.isBusy() || rrDriver.needsRunning()) {
+            rrDriver.loop();
+        }
+        chamberPlacer.loop();
     }
 }

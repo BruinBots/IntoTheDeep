@@ -158,6 +158,26 @@ public class Frames {
         }
     }
 
+    private class ViperSanityFrame extends Frame {
+        private int viperMin;
+        private int viperMax;
+
+        public ViperSanityFrame(int min, int max) {
+            this.viperMin = min;
+            this.viperMax = max;
+        }
+
+        public boolean run() {
+            return true;
+        }
+
+        public boolean sanity() {
+            int curViper = bot.viperMotorL.getCurrentPosition();
+
+            return curViper >= viperMin && curViper <= viperMax;
+        }
+    }
+
     public class ArmMinMaxFrame extends Frame {
         private int max;
         private int min;
@@ -269,6 +289,7 @@ public class Frames {
     };
 
     public Frame[] topSpecimenFrames = new Frame[] {
+            new ViperSanityFrame(2200, 4000),
             new ViperFrame(1950, 5),
             new BasketOpenFrame(),
     };
