@@ -171,6 +171,7 @@ public class SuperAuto extends LinearOpMode {
         runApril();
 
         trajSeq = drive.trajectorySequenceBuilder(startPose)
+                .turn(Math.toRadians(90))
                 .splineTo(new Vector2d(OBSERVATION_X, OBSERVATION_Y), Math.toRadians(INVERTED_START_ANGLE))
                 .forward(4)
                 .build();
@@ -189,6 +190,8 @@ public class SuperAuto extends LinearOpMode {
         }
 
         trajSeq = drive.trajectorySequenceBuilder(startPose)
+                .back(6)
+                .turn(Math.toRadians(180))
                 .splineTo(new Vector2d(MID_X, MID_Y), Math.toRadians(START_ANGLE))
                 .turn(Math.toRadians(180))
                 .build();
@@ -200,6 +203,7 @@ public class SuperAuto extends LinearOpMode {
         runApril();
 
         trajSeq = drive.trajectorySequenceBuilder(startPose)
+                .turn(Math.toRadians(180))
                 .splineTo(new Vector2d(SUBMERSIBLE_X2, SUBMERSIBLE_Y), Math.toRadians(START_ANGLE))
                 .addDisplacementMarker(20, () -> {
                     bot.viper.move(3050, Viper.Sides.LEFT);
