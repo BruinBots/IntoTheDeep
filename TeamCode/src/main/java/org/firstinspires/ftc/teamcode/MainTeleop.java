@@ -106,7 +106,7 @@ public class MainTeleop extends OpMode {
             turn = 1;
         }
 
-        if (drive > 0 || strafe > 0 || turn > 0) {
+        if (drive != 0 || strafe != 0 || turn != 0) {
             rrDriver.drive.breakFollowing();
             rrDriver.setTarget(0, 0);
         }
