@@ -226,7 +226,7 @@ public class MainTeleop extends OpMode {
         } else {
             if (viperLeftPressed) {
                 viperLeftPressed = false;
-                bot.viper.move(bot.viper.getActualPosition(Viper.Sides.LEFT), Viper.Sides.LEFT
+                bot.viper.move(Math.abs(bot.viper.getActualPosition(Viper.Sides.LEFT)), Viper.Sides.LEFT
                 );
             }
         }
@@ -234,22 +234,15 @@ public class MainTeleop extends OpMode {
         if (controlMap.BothSlidesUp()) {
             bothViperPressed = true;
             bot.viper.moveUp(Viper.Sides.BOTH);
-        } else {
-            if (bothViperPressed) {
-                bothViperPressed = false;
-                bot.viper.move(bot.viper.getActualPosition(Viper.Sides.LEFT), Viper.Sides.LEFT);
-                bot.viper.move(bot.viper.getActualPosition(Viper.Sides.RIGHT), Viper.Sides.RIGHT);
-            }
-        }
-
-        if (controlMap.BothSlidesDown()) {
+        } else if (controlMap.BothSlidesDown()){
             bothViperPressed = true;
             bot.viper.moveDown(Viper.Sides.BOTH);
-        } else {
+        }
+        else {
             if (bothViperPressed) {
                 bothViperPressed = false;
-                bot.viper.move(bot.viper.getActualPosition(Viper.Sides.LEFT), Viper.Sides.LEFT);
-                bot.viper.move(bot.viper.getActualPosition(Viper.Sides.RIGHT), Viper.Sides.RIGHT);
+                bot.viper.move(Math.abs(bot.viper.getActualPosition(Viper.Sides.LEFT)), Viper.Sides.LEFT);
+                bot.viper.move(Math.abs(bot.viper.getActualPosition(Viper.Sides.RIGHT)), Viper.Sides.RIGHT);
             }
         }
 
