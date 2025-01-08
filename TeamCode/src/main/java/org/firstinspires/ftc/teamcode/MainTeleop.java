@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -38,6 +39,7 @@ public class MainTeleop extends OpMode {
 
     private TeleDistanceDriver rrDriver;
     private ChamberPlacer chamberPlacer;
+    private WallPicker wallPicker;
 
     public static boolean enableMotorBurner = false;
     MotorBurner burnerViperL;
@@ -50,8 +52,9 @@ public class MainTeleop extends OpMode {
         dashTelemetry = dash.getTelemetry();
         bot = new Hardware(hardwareMap);
         controlMap = new ControlMap(gamepad1, gamepad2);
-//        rrDriver = new TeleDistanceDriver(hardwareMap);
-//        chamberPlacer = new ChamberPlacer(bot, rrDriver);
+        rrDriver = new TeleDistanceDriver(hardwareMap, telemetry);
+        chamberPlacer = new ChamberPlacer(bot, rrDriver);
+        wallPicker = new WallPicker(bot, rrDriver);
 
         if (enableMotorBurner) {
             burnerViperL = new MotorBurner(bot.viperMotorL, 9, this, 2);
@@ -78,12 +81,15 @@ public class MainTeleop extends OpMode {
 
         bot.init(true);
 
+        rrDriver.drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         bot.frames.lift();
     }
 
     @Override
     public void loop() {
+
+        rrDriver.drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Drive
         drive = gamepad2.left_stick_y - gamepad1.left_stick_y;
@@ -100,9 +106,10 @@ public class MainTeleop extends OpMode {
             turn = 1;
         }
 
-//        if (drive > 0 || strafe > 0 || turn > 0) {
-//            rrDriver.drive.breakFollowing();
-//        }
+        if (drive > 0 || strafe > 0 || turn > 0) {
+            rrDriver.drive.breakFollowing();
+            rrDriver.setTarget(0, 0);
+        }
 
         strafe = Math.copySign(Math.pow(strafe, 2), strafe);
         drive = Math.copySign(Math.pow(drive, 2), drive);
@@ -201,7 +208,11 @@ public class MainTeleop extends OpMode {
         if (controlMap.UpdateSlide()) {
             bot.viper.resetEncoders();
         }
-        
+
+        if (controlMap.DistanceTest()) {
+            wallPicker.start();
+        }
+
 
 //        if (controlMap.SlideUp()) {
 //            viperPressed = true;
@@ -277,9 +288,11 @@ public class MainTeleop extends OpMode {
             burnerArm.loop();
         }
 
-//        if (rrDriver.isBusy() || rrDriver.needsRunning()) {
-//            rrDriver.loop();
-//        }
-//        chamberPlacer.loop();
+        rrDriver.drive.update();
+        if (rrDriver.needsRunning() && !rrDriver.isBusy()) {
+            rrDriver.loop();
+        }
+        chamberPlacer.loop();
+        wallPicker.loop();
     }
 }

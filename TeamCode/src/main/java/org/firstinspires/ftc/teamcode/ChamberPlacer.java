@@ -23,7 +23,7 @@ public class ChamberPlacer {
 
     public void loop() {
         if (state == ChamberState.DISTANCE) {
-            rrDriver.setTarget(4, 0.4);
+            rrDriver.setTarget(5.5, 0.25);
             if (!rrDriver.needsRunning()) {
                 bot.frames.topSpecimen();
                 state = ChamberState.FRAMES;

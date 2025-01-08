@@ -12,6 +12,6 @@ public class Distance {
     }
 
     public double getValue() {
-        return(distanceSensor.getDistance(DistanceUnit.CM));
+        return(distanceSensor.getDistance(DistanceUnit.INCH));
     }
 }

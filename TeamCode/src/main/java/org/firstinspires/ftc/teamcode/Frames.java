@@ -290,13 +290,20 @@ public class Frames {
 
     public Frame[] topSpecimenFrames = new Frame[] {
             new ViperSanityFrame(2200, 4000),
-            new ViperFrame(1950, 5),
+            new ViperFrame(1950, 20),
             new BasketOpenFrame(),
     };
 
     public Frame[] afterWallFrames = new Frame[] {
             new WaitFrame(500),
-            new ViperFrame(1500, 5),
+            new ViperFrame(1500, 20),
+    };
+
+    public Frame[] pickupFromWallFrames = new Frame[] {
+            new ViperFrame(180, 20),
+            new BasketCloseFrame(),
+            new WaitFrame(500),
+            new ViperFrame(1500, 20),
     };
 
     public Frame[] uncurlFrames = new Frame[]{
@@ -441,4 +448,6 @@ public class Frames {
     }
 
     public void afterWall() { runFrames(afterWallFrames); }
+
+    public void pickupFromWall() { runFrames(pickupFromWallFrames); }
 }
