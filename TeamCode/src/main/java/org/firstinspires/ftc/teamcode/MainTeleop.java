@@ -50,8 +50,8 @@ public class MainTeleop extends OpMode {
         dashTelemetry = dash.getTelemetry();
         bot = new Hardware(hardwareMap);
         controlMap = new ControlMap(gamepad1, gamepad2);
-        rrDriver = new TeleDistanceDriver(hardwareMap);
-        chamberPlacer = new ChamberPlacer(bot, rrDriver);
+//        rrDriver = new TeleDistanceDriver(hardwareMap);
+//        chamberPlacer = new ChamberPlacer(bot, rrDriver);
 
         if (enableMotorBurner) {
             burnerViperL = new MotorBurner(bot.viperMotorL, 9, this, 2);
@@ -100,9 +100,9 @@ public class MainTeleop extends OpMode {
             turn = 1;
         }
 
-        if (drive > 0 || strafe > 0 || turn > 0) {
-            rrDriver.drive.breakFollowing();
-        }
+//        if (drive > 0 || strafe > 0 || turn > 0) {
+//            rrDriver.drive.breakFollowing();
+//        }
 
         strafe = Math.copySign(Math.pow(strafe, 2), strafe);
         drive = Math.copySign(Math.pow(drive, 2), drive);
@@ -226,7 +226,8 @@ public class MainTeleop extends OpMode {
         } else {
             if (viperLeftPressed) {
                 viperLeftPressed = false;
-                bot.viper.move(bot.viper.getActualPosition(Viper.Sides.LEFT), Viper.Sides.LEFT);
+                bot.viper.move(bot.viper.getActualPosition(Viper.Sides.LEFT), Viper.Sides.LEFT
+                );
             }
         }
 
@@ -283,9 +284,9 @@ public class MainTeleop extends OpMode {
             burnerArm.loop();
         }
 
-        if (rrDriver.isBusy() || rrDriver.needsRunning()) {
-            rrDriver.loop();
-        }
-        chamberPlacer.loop();
+//        if (rrDriver.isBusy() || rrDriver.needsRunning()) {
+//            rrDriver.loop();
+//        }
+//        chamberPlacer.loop();
     }
 }

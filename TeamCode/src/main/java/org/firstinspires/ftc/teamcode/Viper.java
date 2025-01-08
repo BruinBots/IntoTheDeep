@@ -27,11 +27,11 @@ public class Viper {
 
     public void moveUp(Sides side) {
         if (side == Sides.BOTH) {
-            int motorLPos = Math.abs(getActualPosition(Sides.LEFT));
-            int motorRPos = Math.abs(getActualPosition(Sides.RIGHT));
+            int motorLPos = Math.abs(getTargetPosition(Sides.LEFT));
+            int motorRPos = Math.abs(getTargetPosition(Sides.RIGHT));
 
             if (Math.abs(motorLPos - motorRPos) <= 100) {
-                move(getTargetPosition(Sides.BOTH) + VIPER_SPEED, Sides.BOTH);
+                move(Math.abs(getTargetPosition(Sides.BOTH)) + VIPER_SPEED, Sides.BOTH);
             } else if (motorLPos < motorRPos) {
                 move(motorRPos, Sides.LEFT);
             } else {
@@ -39,17 +39,17 @@ public class Viper {
             }
 
         } else {
-            move(getTargetPosition(side) + VIPER_SPEED, side);
+            move(Math.abs(getTargetPosition(side)) + VIPER_SPEED, side);
         }
     }
 
     public void moveDown(Sides side) {
         if (side == Sides.BOTH) {
-            int motorLPos = Math.abs(getActualPosition(Sides.LEFT));
-            int motorRPos = Math.abs(getActualPosition(Sides.RIGHT));
+            int motorLPos = Math.abs(getTargetPosition(Sides.LEFT));
+            int motorRPos = Math.abs(getTargetPosition(Sides.RIGHT));
 
             if (Math.abs(motorLPos - motorRPos) <= 100) {
-                move(getTargetPosition(Sides.BOTH) - VIPER_SPEED, Sides.BOTH);
+                move(Math.abs(getTargetPosition(Sides.BOTH)) - VIPER_SPEED, Sides.BOTH);
             } else if (motorLPos > motorRPos) {
                 move(motorRPos, Sides.LEFT);
             } else {
@@ -57,7 +57,7 @@ public class Viper {
             }
 
         } else {
-            move(getTargetPosition(side) - VIPER_SPEED, side);
+            move(Math.abs(getTargetPosition(side)) - VIPER_SPEED, side);
         }
     }
 
@@ -66,6 +66,7 @@ public class Viper {
     }
 
     public void move(int targetPos, Sides side) {
+        targetPos = Math.abs(targetPos);
         // if viper pos is greater or less than max/min then set to max/min
         if (targetPos < MIN_VIPER_POS) {
             targetPos = MIN_VIPER_POS;
