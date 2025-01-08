@@ -1,9 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
 public class WallPicker {
     public TeleDistanceDriver rrDriver;
     public Hardware bot;
     public WallState state;
+
+    public static int wallPickerPos = 180;
+    public static int afterWallPickerPos = 1500;
+    public static double wallPickerDistance = 3.5;
+    public static double wallPickerTolerance = 0.4;
 
     public enum WallState {
         STANDBY,
@@ -23,7 +31,7 @@ public class WallPicker {
 
     public void loop() {
         if (state == WallState.DISTANCE) {
-            rrDriver.setTarget(4, 0.4);
+            rrDriver.setTarget(wallPickerDistance, wallPickerTolerance);
             if (!rrDriver.needsRunning()) {
                 bot.frames.pickupFromWall();
                 state = WallState.FRAMES;

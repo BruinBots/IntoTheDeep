@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.apache.commons.math3.analysis.function.Constant;
+import org.firstinspires.ftc.robotcore.external.Const;
+
 public class Frames {
     private abstract class Frame {
         public double startTime = -1;
@@ -249,22 +252,6 @@ public class Frames {
             new ArmWristFrame(5000, 0.11),
     };
 
-    public Frame[] clawToBasketFrames = new Frame[]{
-            new ArmWristSanityFrame(4220, 0.22, 5500, 0.3),
-            new ArmWristFrame(4220, 0.22, 250),
-            new ArmWristFrame(4220, 0.79, 250),
-            new ArmWristFrame(3640, 0.79, 100, 100),
-            new BasketMidFrame(),
-            new ArmWristFrame(2870, 0.79, 100, 100),
-            new ArmWristFrame(2650, 0.84, 100, 100),
-            new ClawStandbyFrame(),
-            new ArmWristFrame(2650, 0.8, 250),
-            new ArmWristFrame(2650, 0.86, 250),
-            new ArmWristFrame(2650, 0.8, 250),
-            new ArmWristFrame(2650, 0.86, 250),
-//        new BasketCloseFrame(),
-    };
-
     public Frame[] standbyFrames = new Frame[]{
             new ArmMinMaxFrame(3476, 99999),
             new ArmWristFrame(3362, 0.22),
@@ -274,36 +261,26 @@ public class Frames {
             new ViperFrame(0, 1000),
     };
 
-    public Frame[] bottomBasketFrames = new Frame[]{
-            new ViperFrame(3630),
-//        new BasketOpenFrame(),
-    };
-
-    public Frame[] topBasketFrames = new Frame[]{
-            new ViperFrame(6100),
-            new BasketOpenFrame(),
-    };
-
     public Frame[] topPoleFrames = new Frame[]{
-            new ViperFrame(3050) // top pole pos
+            new ViperFrame(ChamberPlacer.startViper) // top pole pos
     };
 
     public Frame[] topSpecimenFrames = new Frame[] {
             new ViperSanityFrame(2200, 4000),
-            new ViperFrame(1950, 20),
+            new ViperFrame(ChamberPlacer.downViper, 20),
             new BasketOpenFrame(),
     };
 
     public Frame[] afterWallFrames = new Frame[] {
             new WaitFrame(500),
-            new ViperFrame(1500, 20),
+            new ViperFrame(WallPicker.afterWallPickerPos, 20),
     };
 
     public Frame[] pickupFromWallFrames = new Frame[] {
-            new ViperFrame(180, 20),
+            new ViperFrame(WallPicker.wallPickerPos, 20),
             new BasketCloseFrame(),
             new WaitFrame(500),
-            new ViperFrame(1500, 20),
+            new ViperFrame(WallPicker.afterWallPickerPos, 20),
     };
 
     public Frame[] uncurlFrames = new Frame[]{
@@ -405,24 +382,12 @@ public class Frames {
         runFrames(peckFrames);
     }
 
-    public void clawToBasket() {
-        runFrames(clawToBasketFrames);
-    }
-
     public void afterGrab() {
         runFrames(standbyFrames);
     }
 
     public void zeroBasket() {
         runFrames(zeroBasketFrames);
-    }
-
-    public void bottomBasket() {
-        runFrames(bottomBasketFrames);
-    }
-
-    public void topBasket() {
-        runFrames(topBasketFrames);
     }
 
     public void topPole() {

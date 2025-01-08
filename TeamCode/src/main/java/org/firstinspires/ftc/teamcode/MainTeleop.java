@@ -162,9 +162,6 @@ public class MainTeleop extends OpMode {
         if (controlMap.ArmPickingPosition()) {
             // arm position to grab sample
             bot.frames.beforeGrab();
-        } else if (controlMap.ArmMailboxPosition()) {
-            // arm position to transfer to basket
-            bot.frames.clawToBasket();
         } else if (controlMap.ArmRestPosition()) {
             // arm rest position
             bot.frames.afterGrab();
@@ -178,13 +175,8 @@ public class MainTeleop extends OpMode {
         if (controlMap.BottomSlide()) {
             // Move slide to 0
             bot.frames.zeroBasket();
-        } else if (controlMap.BottomBasket()) {
-            // Move slide to bottom basket
-            bot.frames.bottomBasket();
-        } else if (controlMap.TopBasket()) {
-            // Move slide to top basket
-            bot.frames.topBasket();
-        } else if (controlMap.TopPole()) {
+        }
+        else if (controlMap.TopPole()) {
             // Move slide to top pole
             bot.frames.topPole();
         }

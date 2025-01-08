@@ -4,18 +4,18 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.AprilReader;
+import org.firstinspires.ftc.teamcode.ChamberPlacer;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Viper;
+import org.firstinspires.ftc.teamcode.WallPicker;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TrajectorySegment;
 
 @Config
 @Autonomous(name = "SuperAuto", preselectTeleOp = "Main Teleop")
@@ -150,7 +150,7 @@ public class SuperAuto extends LinearOpMode {
         while (bot.frames.isBusy() && !isStopRequested()) { bot.frames.loop(); }
 
         status("Aligning with distance sensor...");
-        drive2distance(5.5, 0.25);
+        drive2distance(ChamberPlacer.chamberPlacerDistance, ChamberPlacer.chamberPlacerTolerance);
 
         status("Placing specimen on high chamber...");
         bot.frames.topSpecimen();
@@ -180,7 +180,7 @@ public class SuperAuto extends LinearOpMode {
         startPose = trajSeq.end();
 
         status("Aligning with distance sensor...");
-        drive2distance(4, 0.4);
+        drive2distance(WallPicker.wallPickerDistance, WallPicker.wallPickerTolerance);
 
         status("Picking up specimen...");
         bot.basket.setClosed();
@@ -206,7 +206,7 @@ public class SuperAuto extends LinearOpMode {
                 .turn(Math.toRadians(180))
                 .splineTo(new Vector2d(SUBMERSIBLE_X2, SUBMERSIBLE_Y), Math.toRadians(START_ANGLE))
                 .addDisplacementMarker(20, () -> {
-                    bot.viper.move(3050, Viper.Sides.LEFT);
+                    bot.viper.move(ChamberPlacer.startViper, Viper.Sides.LEFT);
                 })
                 .build();
         status("Going to submersible...");
@@ -217,7 +217,7 @@ public class SuperAuto extends LinearOpMode {
         while (bot.frames.isBusy() && !isStopRequested()) { bot.frames.loop(); }
 
         status("Aligning with distance sensor...");
-        drive2distance(5.5, 0.25);
+        drive2distance(ChamberPlacer.chamberPlacerDistance, ChamberPlacer.chamberPlacerTolerance);
 
         status("Placing specimen on high chamber...");
         bot.frames.topSpecimen();
