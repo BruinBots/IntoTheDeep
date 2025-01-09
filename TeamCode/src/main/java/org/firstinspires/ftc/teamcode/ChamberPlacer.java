@@ -25,6 +25,8 @@ public class ChamberPlacer {
         state = ChamberState.STANDBY;
     }
 
+    public void stop() { state = ChamberState.STANDBY; }
+
     public void start() {
         state = ChamberState.DISTANCE;
     }

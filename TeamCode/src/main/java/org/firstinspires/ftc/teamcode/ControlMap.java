@@ -33,11 +33,11 @@ public class ControlMap {
 
     public boolean DistanceTest() { return gamepad1.left_trigger > 0.5; }
 
-    public boolean BottomBasket() {
+    public boolean RunChamberPlacer() {
         return gamepad1.a;
     }
 
-    public boolean TopBasket() {
+    public boolean RunWallPicker() {
         return gamepad1.x;
     }
 

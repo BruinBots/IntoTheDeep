@@ -201,7 +201,11 @@ public class MainTeleop extends OpMode {
             bot.viper.resetEncoders();
         }
 
-        if (controlMap.DistanceTest()) {
+        if (controlMap.RunChamberPlacer()) {
+            wallPicker.stop();
+            chamberPlacer.start();
+        } else if (controlMap.RunWallPicker()) {
+            chamberPlacer.stop();
             wallPicker.start();
         }
 

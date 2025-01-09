@@ -25,6 +25,8 @@ public class WallPicker {
         state = WallState.STANDBY;
     }
 
+    public void stop() { state = WallPicker.WallState.STANDBY; }
+
     public void start() {
         state = WallState.DISTANCE;
     }
