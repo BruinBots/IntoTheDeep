@@ -103,7 +103,7 @@ public class Frames {
         public boolean run() {
             bot.basket.setOpen();
 
-            return waitUntilTime(250);
+            return waitUntilTime(0);
         }
 
     }
@@ -267,20 +267,20 @@ public class Frames {
 
     public Frame[] topSpecimenFrames = new Frame[] {
             new ViperSanityFrame(2200, 4000),
-            new ViperFrame(ChamberPlacer.downViper, 20),
+            new ViperFrame(ChamberPlacer.downViper, 100),
             new BasketOpenFrame(),
     };
 
     public Frame[] afterWallFrames = new Frame[] {
             new WaitFrame(500),
-            new ViperFrame(WallPicker.afterWallPickerPos, 20),
+            new ViperFrame(WallPicker.afterWallPickerPos, 750),
     };
 
     public Frame[] pickupFromWallFrames = new Frame[] {
             new ViperFrame(WallPicker.wallPickerPos, 20),
             new BasketCloseFrame(),
             new WaitFrame(500),
-            new ViperFrame(WallPicker.afterWallPickerPos, 20),
+            new ViperFrame(WallPicker.afterWallPickerPos, 99999),
     };
 
     public Frame[] uncurlFrames = new Frame[]{

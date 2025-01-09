@@ -10,8 +10,8 @@ public class WallPicker {
 
     public static int wallPickerPos = 180;
     public static int afterWallPickerPos = 1500;
-    public static double wallPickerDistance = 3.5;
-    public static double wallPickerTolerance = 0.4;
+    public static double wallPickerDistance = 4;
+    public static double wallPickerTolerance = 0.5;
 
     public enum WallState {
         STANDBY,
