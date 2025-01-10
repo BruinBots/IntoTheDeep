@@ -20,8 +20,8 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import java.util.ArrayDeque;
 
 @Config
-@Autonomous(name = "FasterAuto", preselectTeleOp = "Main Teleop")
-public class FasterAuto extends LinearOpMode {
+@Autonomous(name = "LinesAuto", preselectTeleOp = "Main Teleop")
+public class LinesAuto extends LinearOpMode {
 
     public static boolean blue = false;
     public static int START_X = 10;
@@ -36,7 +36,7 @@ public class FasterAuto extends LinearOpMode {
     public static int START_Y = 60 * bluef;
     public static int SUBMERSIBLE_Y = 30 * bluef;
     public static int OBSERVATION_X = -45 * bluef;
-    public static int OBSERVATION_Y = 54 * bluef;
+    public static int OBSERVATION_Y = 48 * bluef;
     public static int MID_X = -24 * bluef;
     public static int MID_Y = 48 * bluef;
     public Pose2d startPose;
@@ -84,32 +84,28 @@ public class FasterAuto extends LinearOpMode {
         if (doApril) {
             double[] april;
             long startTime = System.currentTimeMillis();
-            while ((System.currentTimeMillis() - startTime < APRIL_TIME) && !isStopRequested()) {
+            while ((System.currentTimeMillis() - startTime < APRIL_TIME)) {
                 bot.frames.loop();
-                april = reader.read();
-                if (april.length == 3) {
-                    double x = april[0];
-                    double y = april[1];
-                    double yaw = april[2];
-                    double heading = yaw + Math.atan(YOFFSET/XOFFSET);
-                    startPose = new Pose2d(x, y, heading);
-                    drive.setPoseEstimate(startPose);
-                    status("Pose Updated with april tags");
+                aprilLoop();
+                if (isStopRequested()) {
+                    return;
                 }
             }
         }
     }
 
     public void aprilLoop() {
-        double[] april = reader.read();
-        if (april.length == 3) {
-            double x = april[0];
-            double y = april[1];
-            double yaw = april[2];
-            double heading = yaw + Math.atan(YOFFSET/XOFFSET);
-            startPose = new Pose2d(x, y, heading);
-            drive.setPoseEstimate(startPose);
-            status("Pose Updated with april tags");
+        if (doApril) {
+            double[] april = reader.read();
+            if (april.length == 3) {
+                double x = april[0];
+                double y = april[1];
+                double yaw = april[2];
+                int id = (int)(april[3]);
+                startPose = new Pose2d(x, y, yaw);
+                drive.setPoseEstimate(startPose);
+                status("Pose Updated with April Tag #" + april[3]);
+            }
         }
     }
 
@@ -184,7 +180,7 @@ public class FasterAuto extends LinearOpMode {
 
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
                 .forward(6)
-                .splineTo(new Vector2d(SUBMERSIBLE_X, SUBMERSIBLE_Y), Math.toRadians(START_ANGLE))
+                .lineToConstantHeading(new Vector2d(SUBMERSIBLE_X, SUBMERSIBLE_Y))
                 .addDisplacementMarker(2, () -> {
                     // Start lifting viper
                     bot.viper.move(3050, Viper.Sides.LEFT);
@@ -204,6 +200,7 @@ public class FasterAuto extends LinearOpMode {
         bot.frames.topPole();
         while (bot.frames.isBusy()) {
             bot.frames.loop();
+            aprilLoop();
             if (isStopRequested()) {
                 return;
             }
@@ -219,15 +216,15 @@ public class FasterAuto extends LinearOpMode {
             if (isStopRequested()) {
                 return;
             }
+            aprilLoop();
         }
 
         trajSeq = drive.trajectorySequenceBuilder(startPose)
                 .back(6)
                 .addDisplacementMarker(2, () -> {
-                    bot.viper.move(180, Viper.Sides.LEFT);
+                    bot.viper.move(WallPicker.wallPickerPos, Viper.Sides.LEFT);
                 })
-                .turn(Math.toRadians(-90))
-                .splineTo(new Vector2d(OBSERVATION_X, OBSERVATION_Y), Math.toRadians(INVERTED_START_ANGLE))
+                .lineToLinearHeading(new Pose2d(OBSERVATION_X, OBSERVATION_Y, Math.toRadians(INVERTED_START_ANGLE)))
                 .forward(4)
                 .build();
         status("Moving to observation zone...");
@@ -252,12 +249,13 @@ public class FasterAuto extends LinearOpMode {
             if (isStopRequested()) {
                 return;
             }
+            aprilLoop();
         }
 
         trajSeq = drive.trajectorySequenceBuilder(startPose)
                 .back(6)
                 .turn(Math.toRadians(-90))
-                .splineTo(new Vector2d(SUBMERSIBLE_X2, SUBMERSIBLE_Y), Math.toRadians(START_ANGLE))
+                .lineToLinearHeading(new Pose2d(SUBMERSIBLE_X2, SUBMERSIBLE_Y, Math.toRadians(START_ANGLE)))
                 .addDisplacementMarker(20, () -> {
                     bot.viper.move(ChamberPlacer.startViper, Viper.Sides.LEFT);
                 })
@@ -285,6 +283,7 @@ public class FasterAuto extends LinearOpMode {
             if (isStopRequested()) {
                 return;
             }
+            aprilLoop();
         }
 
         trajSeq = drive.trajectorySequenceBuilder(startPose)
@@ -292,13 +291,13 @@ public class FasterAuto extends LinearOpMode {
                 .turn(Math.toRadians(-90))
                 .forward(6)
                 .splineTo(new Vector2d(SAMPLE0X, SAMPLE0Y), Math.toRadians(START_ANGLE))
-                .splineTo(new Vector2d(SAMPLE1X, SAMPLEY), Math.toRadians(START_ANGLE))
+                .lineToConstantHeading(new Vector2d(SAMPLE1X, SAMPLEY))
                 .back(SAMPLE_PUSH)
                 .forward(SAMPLE_PULL)
-                .splineTo(new Vector2d(SAMPLE2X, SAMPLEY), Math.toRadians(START_ANGLE))
+                .lineToConstantHeading(new Vector2d(SAMPLE2X, SAMPLEY))
                 .back(SAMPLE_PUSH)
                 .forward(SAMPLE_PULL)
-                .splineTo(new Vector2d(SAMPLE3X, SAMPLEY), Math.toRadians(START_ANGLE))
+                .lineToConstantHeading(new Vector2d(SAMPLE3X, SAMPLEY))
                 .back(SAMPLE_PUSH)
                 .build();
         drive.followTrajectorySequence(trajSeq);

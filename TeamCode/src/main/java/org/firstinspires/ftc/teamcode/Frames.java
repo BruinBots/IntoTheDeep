@@ -339,6 +339,11 @@ public class Frames {
         curIdx = 0;
     }
 
+    public void stop() {
+        this.curFrames = new Frame[]{};
+        this.curIdx = 0;
+    }
+
     public boolean isBusy() {
         return curFrames.length > 0;
     }
