@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.WallPicker;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
+import java.util.ArrayDeque;
+
 @Config
 @Autonomous(name = "FasterAuto", preselectTeleOp = "Main Teleop")
 public class FasterAuto extends LinearOpMode {
@@ -46,22 +48,17 @@ public class FasterAuto extends LinearOpMode {
 
     public static int SAMPLE0X = bluef*-36;
     public static int SAMPLE0Y = bluef*12;
-    public static int SAMPLE0BX = bluef*-46;
-    public static int SAMPLE0BY = bluef*12;
+    public static int SAMPLEY = bluef*6;
+    public static int SAMPLE1X = bluef*-46;
+    public static int SAMPLE2X = bluef*-54;
+    public static int SAMPLE3X = bluef*-62;
+    public static int SAMPLE_PUSH = 48;
+    public static int SAMPLE_PULL = 36;
 
     public void drive2distance(double target, double tolerance) {
-        double sum = 0;
-        for (int i = 0; i < 5; i++) {
-            sum += bot.DistanceSensor.getDistance(DistanceUnit.INCH);
-        }
-        double curDist = sum / 5;
-
+        double curDist = getRunningAverage();
         while (Math.abs(curDist - target) > tolerance) {
-            sum = 0;
-            for (int i = 0; i < 5; i++) {
-                sum += bot.DistanceSensor.getDistance(DistanceUnit.INCH);
-            }
-            curDist = sum / 5;
+            curDist = getRunningAverage();
             telemetry.addData("Current Distance", curDist);
             dashTelemetry.addData("Current Distance", curDist);
             telemetry.update();
@@ -92,6 +89,26 @@ public class FasterAuto extends LinearOpMode {
                 }
             }
         }
+    }
+
+    public ArrayDeque<Double> runningAverages = new ArrayDeque<>();
+
+    public void updateRunningAverage() {
+        double distance = bot.DistanceSensor.getDistance(DistanceUnit.INCH);
+        int count = runningAverages.size();
+
+        if (count == 10) {
+            runningAverages.pollFirst();
+        }
+        runningAverages.addLast(distance);
+    }
+
+    public double getRunningAverage() {
+        double sum = 0;
+        for (double d: runningAverages) {
+            sum += d;
+        }
+        return sum / runningAverages.size();
     }
 
     public void tele(String caption, String message) {
@@ -152,8 +169,15 @@ public class FasterAuto extends LinearOpMode {
                 })
                 .build();
         status("Going to submersible...");
-        drive.followTrajectorySequence(trajSeq);
+        drive.followTrajectorySequenceAsync(trajSeq);
         startPose = trajSeq.end();
+
+        while (drive.isBusy()) {
+            if (isStopRequested()) {
+                return;
+            }
+            updateRunningAverage();
+        }
 
         bot.frames.topPole();
         while (bot.frames.isBusy()) {
@@ -185,8 +209,15 @@ public class FasterAuto extends LinearOpMode {
                 .forward(4)
                 .build();
         status("Moving to observation zone...");
-        drive.followTrajectorySequence(trajSeq);
+        drive.followTrajectorySequenceAsync(trajSeq);
         startPose = trajSeq.end();
+
+        while (drive.isBusy()) {
+            if (isStopRequested()) {
+                return;
+            }
+            updateRunningAverage();
+        }
 
         status("Aligning with distance sensor...");
         drive2distance(WallPicker.wallPickerDistance, WallPicker.wallPickerTolerance);
@@ -210,12 +241,13 @@ public class FasterAuto extends LinearOpMode {
                 })
                 .build();
         status("Going to submersible...");
-        drive.followTrajectorySequence(trajSeq);
+        drive.followTrajectorySequenceAsync(trajSeq);
         startPose = trajSeq.end();
 
         bot.frames.topPole();
-        while (bot.frames.isBusy()) {
+        while (drive.isBusy()) {
             bot.frames.loop();
+            updateRunningAverage();
             if (isStopRequested()) {
                 return;
             }
@@ -238,8 +270,14 @@ public class FasterAuto extends LinearOpMode {
                 .turn(Math.toRadians(-90))
                 .forward(6)
                 .splineTo(new Vector2d(SAMPLE0X, SAMPLE0Y), Math.toRadians(START_ANGLE))
-                .splineTo(new Vector2d(SAMPLE0BX, SAMPLE0BY), Math.toRadians(INVERTED_START_ANGLE))
-                .forward(40)
+                .splineTo(new Vector2d(SAMPLE1X, SAMPLEY), Math.toRadians(START_ANGLE))
+                .back(SAMPLE_PUSH)
+                .forward(SAMPLE_PULL)
+                .splineTo(new Vector2d(SAMPLE2X, SAMPLEY), Math.toRadians(START_ANGLE))
+                .back(SAMPLE_PUSH)
+                .forward(SAMPLE_PULL)
+                .splineTo(new Vector2d(SAMPLE3X, SAMPLEY), Math.toRadians(START_ANGLE))
+                .back(SAMPLE_PUSH)
                 .build();
         drive.followTrajectorySequence(trajSeq);
         startPose = trajSeq.end();

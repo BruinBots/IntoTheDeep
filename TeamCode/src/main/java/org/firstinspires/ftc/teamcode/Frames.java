@@ -273,7 +273,7 @@ public class Frames {
 
     public Frame[] afterWallFrames = new Frame[] {
             new WaitFrame(500),
-            new ViperFrame(WallPicker.afterWallPickerPos, 750),
+            new ViperFrame(WallPicker.afterWallPickerPos, 1000),
     };
 
     public Frame[] pickupFromWallFrames = new Frame[] {
