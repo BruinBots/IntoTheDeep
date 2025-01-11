@@ -90,6 +90,7 @@ public class AprilReader {
     public double[] read() {
         if (!tagProcessor.getDetections().isEmpty()) {
             AprilTagDetection tag = tagProcessor.getDetections().get(0);
+//            double[] xy = getAprilTagCoordinates(tag.id);
             return new double[]{tag.ftcPose.x, tag.ftcPose.y, tag.ftcPose.yaw, tag.id};
         }
         return new double[]{};

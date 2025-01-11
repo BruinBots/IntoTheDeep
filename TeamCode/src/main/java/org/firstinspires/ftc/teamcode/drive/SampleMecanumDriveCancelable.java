@@ -62,6 +62,7 @@ public class SampleMecanumDriveCancelable extends MecanumDrive {
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
+    public static double TIMEOUT = 0.5;
 
     private TrajectorySequenceRunnerCancelable trajectorySequenceRunner;
 
@@ -79,7 +80,7 @@ public class SampleMecanumDriveCancelable extends MecanumDrive {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), TIMEOUT);
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 

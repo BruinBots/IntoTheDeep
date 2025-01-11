@@ -60,37 +60,61 @@ public class LinesAuto extends LinearOpMode {
     public static double XOFFSET = 7;
     public static double YOFFSET = 3.5;
 
+    public static double distGain = 0.2;
+    public static double scaleFactor = 0.5;
+
+//    public void drive2distance(double target, double tolerance) {
+//        updateRunningAverage();
+//        double curDist = getRunningAverage();
+//        while (Math.abs(curDist - target) > tolerance) {
+//            updateRunningAverage();
+//            curDist = getRunningAverage();
+//            telemetry.addData("Current Distance", curDist);
+//            dashTelemetry.addData("Current Distance", curDist);
+//            telemetry.update();
+//            dashTelemetry.update();
+//            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
+//                    .forward(curDist - target)
+//                    .build();
+//            drive.followTrajectorySequenceAsync(trajSeq);
+//            startPose = trajSeq.end();
+//            while (drive.isBusy()) {
+//                drive.update();
+//                if (isStopRequested()) {
+//                    return;
+//                }
+//                updateRunningAverage();
+//            }
+//        }
+//    }
+
     public void drive2distance(double target, double tolerance) {
+        // Scaling factor for distance to submersible into drive commands
         runningAverages.clear();
 
-        for (int i = 0; i < 5; i ++) {
-            updateRunningAverage();
-        }
-        double curDist = getRunningAverage();
-        while (Math.abs(curDist - target) > tolerance) {
-            runningAverages.clear();
 
-            for (int i = 0; i < 5; i ++) {
-                updateRunningAverage();
+        updateRunningAverage();
+        double curDist = getRunningAverage();
+
+        while (Math.abs(curDist - target) > tolerance) {
+            if (isStopRequested()) {
+                return;
             }
-            curDist = getRunningAverage();
+
             telemetry.addData("Current Distance", curDist);
             dashTelemetry.addData("Current Distance", curDist);
             telemetry.update();
             dashTelemetry.update();
-            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
-                    .forward(curDist - target)
-                    .build();
-            drive.followTrajectorySequenceAsync(trajSeq);
-            startPose = trajSeq.end();
-            while (drive.isBusy()) {
-                drive.update();
-                if (isStopRequested()) {
-                    return;
-                }
-                updateRunningAverage();
-            }
+
+            // Drive the robot forward and backwards based on distance to the submersible
+            bot.moveBotMecanum(distGain * (target - curDist), 0, 0, scaleFactor);
+            // Update Roadrunner localizer
+            drive.update();
+
+            updateRunningAverage();
+            curDist = getRunningAverage();
         }
+        bot.moveBotMecanum(0, 0, 0, 0);
     }
 
     public void runApril() {
@@ -258,7 +282,6 @@ public class LinesAuto extends LinearOpMode {
 
         trajSeq = drive.trajectorySequenceBuilder(startPose)
                 .back(6)
-//                .turn(Math.toRadians(-90))
                 .lineToLinearHeading(new Pose2d(SUBMERSIBLE_X2, SUBMERSIBLE_Y, Math.toRadians(START_ANGLE)))
                 .addDisplacementMarker(2, () -> {
                     bot.viper.move(ChamberPlacer.startViper, Viper.Sides.LEFT);
@@ -268,17 +291,12 @@ public class LinesAuto extends LinearOpMode {
         drive.followTrajectorySequenceAsync(trajSeq);
         startPose = trajSeq.end();
 
-        bot.frames.topPole();
         while (drive.isBusy()) {
             drive.update();
-//            bot.frames.loop();
             updateRunningAverage();
             if (isStopRequested()) {
                 return;
             }
-//            if (getRunningAverage() < ChamberPlacer.chamberPlacerDistance) {
-//                drive.breakFollowing();
-//            }
         }
 
         status("Aligning with distance sensor...");
@@ -301,7 +319,6 @@ public class LinesAuto extends LinearOpMode {
                 })
                 .strafeTo(new Vector2d(SAMPLE0X, drive.getPoseEstimate().getY()))
                 .forward(24)
-//                .lineToConstantHeading(new Vector2d(drive.getPoseEstimate().getX(), SAMPLE0Y))
                 .lineToLinearHeading(new Pose2d(SAMPLE1X, SAMPLEY, Math.toRadians(INVERTED_START_ANGLE)))
                 .forward(SAMPLE_PUSH)
                 .back(SAMPLE_PULL)
