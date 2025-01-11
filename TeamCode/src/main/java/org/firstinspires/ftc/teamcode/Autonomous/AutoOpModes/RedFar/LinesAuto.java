@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Viper;
 import org.firstinspires.ftc.teamcode.WallPicker;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveCancelable;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 import java.util.ArrayDeque;
@@ -43,10 +45,10 @@ public class LinesAuto extends LinearOpMode {
     private Hardware bot;
     private Telemetry dashTelemetry;
     private FtcDashboard dash;
-    private SampleMecanumDrive drive;
+    private SampleMecanumDriveCancelable drive;
     private AprilReader reader;
 
-    public static int SAMPLE0X = bluef*-36;
+    public static int SAMPLE0X = bluef*-40;
     public static int SAMPLE0Y = bluef*12;
     public static int SAMPLEY = bluef*6;
     public static int SAMPLE1X = bluef*-46;
@@ -59,8 +61,18 @@ public class LinesAuto extends LinearOpMode {
     public static double YOFFSET = 3.5;
 
     public void drive2distance(double target, double tolerance) {
+        runningAverages.clear();
+
+        for (int i = 0; i < 5; i ++) {
+            updateRunningAverage();
+        }
         double curDist = getRunningAverage();
         while (Math.abs(curDist - target) > tolerance) {
+            runningAverages.clear();
+
+            for (int i = 0; i < 5; i ++) {
+                updateRunningAverage();
+            }
             curDist = getRunningAverage();
             telemetry.addData("Current Distance", curDist);
             dashTelemetry.addData("Current Distance", curDist);
@@ -72,6 +84,7 @@ public class LinesAuto extends LinearOpMode {
             drive.followTrajectorySequenceAsync(trajSeq);
             startPose = trajSeq.end();
             while (drive.isBusy()) {
+                drive.update();
                 if (isStopRequested()) {
                     return;
                 }
@@ -97,14 +110,14 @@ public class LinesAuto extends LinearOpMode {
     public void aprilLoop() {
         if (doApril) {
             double[] april = reader.read();
-            if (april.length == 3) {
+            if (april.length == 4) {
                 double x = april[0];
                 double y = april[1];
                 double yaw = april[2];
                 int id = (int)(april[3]);
                 startPose = new Pose2d(x, y, yaw);
                 drive.setPoseEstimate(startPose);
-                status("Pose Updated with April Tag #" + april[3]);
+                status("Pose Updated with April Tag #" + id);
             }
         }
     }
@@ -115,7 +128,7 @@ public class LinesAuto extends LinearOpMode {
         double distance = bot.DistanceSensor.getDistance(DistanceUnit.INCH);
         int count = runningAverages.size();
 
-        if (count == 10) {
+        if (count == 5) {
             runningAverages.pollFirst();
         }
         runningAverages.addLast(distance);
@@ -157,7 +170,7 @@ public class LinesAuto extends LinearOpMode {
 
         // RR
         startPose = new Pose2d(START_X, START_Y, Math.toRadians(START_ANGLE));
-        drive = new SampleMecanumDrive(hardwareMap);
+        drive = new SampleMecanumDriveCancelable(hardwareMap);
         drive.setPoseEstimate(startPose);
 
         // April Tags
@@ -170,27 +183,17 @@ public class LinesAuto extends LinearOpMode {
             }
         }
 
-        // lift before start
-        bot.frames.lift();
-        bot.frames.loop();
-        status("Lifting arm...");
-//        while (bot.frames.isBusy() && !isStopRequested()) {
-//            bot.frames.loop();
-//        }
+        bot.viper.move(3050, Viper.Sides.LEFT);
 
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
-                .forward(6)
                 .lineToConstantHeading(new Vector2d(SUBMERSIBLE_X, SUBMERSIBLE_Y))
-                .addDisplacementMarker(2, () -> {
-                    // Start lifting viper
-                    bot.viper.move(3050, Viper.Sides.LEFT);
-                })
                 .build();
         status("Going to submersible...");
         drive.followTrajectorySequenceAsync(trajSeq);
         startPose = trajSeq.end();
 
         while (drive.isBusy()) {
+            drive.update();
             if (isStopRequested()) {
                 return;
             }
@@ -232,6 +235,7 @@ public class LinesAuto extends LinearOpMode {
         startPose = trajSeq.end();
 
         while (drive.isBusy()) {
+            drive.update();
             if (isStopRequested()) {
                 return;
             }
@@ -254,9 +258,9 @@ public class LinesAuto extends LinearOpMode {
 
         trajSeq = drive.trajectorySequenceBuilder(startPose)
                 .back(6)
-                .turn(Math.toRadians(-90))
+//                .turn(Math.toRadians(-90))
                 .lineToLinearHeading(new Pose2d(SUBMERSIBLE_X2, SUBMERSIBLE_Y, Math.toRadians(START_ANGLE)))
-                .addDisplacementMarker(20, () -> {
+                .addDisplacementMarker(2, () -> {
                     bot.viper.move(ChamberPlacer.startViper, Viper.Sides.LEFT);
                 })
                 .build();
@@ -266,11 +270,15 @@ public class LinesAuto extends LinearOpMode {
 
         bot.frames.topPole();
         while (drive.isBusy()) {
-            bot.frames.loop();
+            drive.update();
+//            bot.frames.loop();
             updateRunningAverage();
             if (isStopRequested()) {
                 return;
             }
+//            if (getRunningAverage() < ChamberPlacer.chamberPlacerDistance) {
+//                drive.breakFollowing();
+//            }
         }
 
         status("Aligning with distance sensor...");
@@ -287,38 +295,24 @@ public class LinesAuto extends LinearOpMode {
         }
 
         trajSeq = drive.trajectorySequenceBuilder(startPose)
-                .back(6)
-                .turn(Math.toRadians(-90))
-                .forward(6)
-                .splineTo(new Vector2d(SAMPLE0X, SAMPLE0Y), Math.toRadians(START_ANGLE))
-                .lineToConstantHeading(new Vector2d(SAMPLE1X, SAMPLEY))
-                .back(SAMPLE_PUSH)
-                .forward(SAMPLE_PULL)
+                .back(12)
+                .addDisplacementMarker(() -> {
+                    bot.viper.move(0, Viper.Sides.LEFT);
+                })
+                .strafeTo(new Vector2d(SAMPLE0X, drive.getPoseEstimate().getY()))
+                .forward(24)
+//                .lineToConstantHeading(new Vector2d(drive.getPoseEstimate().getX(), SAMPLE0Y))
+                .lineToLinearHeading(new Pose2d(SAMPLE1X, SAMPLEY, Math.toRadians(INVERTED_START_ANGLE)))
+                .forward(SAMPLE_PUSH)
+                .back(SAMPLE_PULL)
                 .lineToConstantHeading(new Vector2d(SAMPLE2X, SAMPLEY))
-                .back(SAMPLE_PUSH)
-                .forward(SAMPLE_PULL)
+                .forward(SAMPLE_PUSH)
+                .back(SAMPLE_PULL)
                 .lineToConstantHeading(new Vector2d(SAMPLE3X, SAMPLEY))
-                .back(SAMPLE_PUSH)
+                .forward(SAMPLE_PUSH)
                 .build();
+
         drive.followTrajectorySequence(trajSeq);
         startPose = trajSeq.end();
-
-        status("Lowering arm...");
-        bot.frames.zeroArm();
-        while (bot.frames.isBusy()) {
-            bot.frames.loop();
-            if (isStopRequested()) {
-                return;
-            }
-        }
-
-        status("Lowering viper...");
-        bot.frames.zeroBasket();
-        while (bot.frames.isBusy()) {
-            bot.frames.loop();
-            if (isStopRequested()) {
-                return;
-            }
-        }
     }
 }
