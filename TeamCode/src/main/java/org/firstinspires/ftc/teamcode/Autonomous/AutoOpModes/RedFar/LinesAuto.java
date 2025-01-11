@@ -110,6 +110,7 @@ public class LinesAuto extends LinearOpMode {
             bot.moveBotMecanum(distGain * (target - curDist), 0, 0, scaleFactor);
             // Update Roadrunner localizer
             drive.update();
+            startPose = drive.getPoseEstimate();
 
             updateRunningAverage();
             curDist = getRunningAverage();
