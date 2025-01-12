@@ -1,17 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Servo;
 
 public class CarJack {
 
-    Servo carJackServo;
+    CRServo carJackServo;
     DigitalChannel limitSwitch;
-    double goingUpPos = 1;
-    double goingDownPos = 0;
-    double stillPos = 0.5;
+    double goingUpPower = 1;
+    double goingDownPower = 0;
+    double stillPower = 0.5;
 
-    public CarJack(Servo servo, DigitalChannel limitSwitch) {
+    public CarJack(CRServo servo, DigitalChannel limitSwitch) {
         this.carJackServo = servo;
         this.limitSwitch = limitSwitch;
     }
@@ -20,16 +20,16 @@ public class CarJack {
         if (limitSwitch.getState()) { // if limit switch is pressed
             stop();
         } else {
-            carJackServo.setPosition(goingUpPos);
+            carJackServo.setPower(goingUpPower);
         }
     }
 
     public void moveDown() {
-        carJackServo.setPosition(goingDownPos);
+        carJackServo.setPower(goingDownPower);
     }
 
     public void stop() {
-        carJackServo.setPosition(stillPos);
+        carJackServo.setPower(stillPower);
     }
 
 }

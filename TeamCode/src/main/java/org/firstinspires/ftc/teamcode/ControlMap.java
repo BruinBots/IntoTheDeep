@@ -76,11 +76,11 @@ public class ControlMap {
 
     // WRIST
     public boolean RotateWristToMailbox() {
-        return gamepad2.dpad_down;
+        return gamepad2.dpad_down && Xtra0();
     }
 
     public boolean RotateWristOppositeMailbox() {
-        return gamepad2.dpad_up;
+        return gamepad2.dpad_up && Xtra0();
     }
 
     // CLAW
@@ -103,13 +103,12 @@ public class ControlMap {
 
     // CARJACK
     public boolean CarJackUp() {
-        return false;
+        return gamepad2.dpad_up && Xtra1();
     }
 
     public boolean CarJackDown() {
-        return false;
+        return gamepad2.dpad_down && Xtra1();
     }
-
 
     public boolean Xtra0() {
         return !(Xtra1() || Xtra2());

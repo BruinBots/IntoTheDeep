@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.MainTeleop.engageAtStart;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -39,7 +40,7 @@ public class Hardware {
     public Intake intake;
 
     public CarJack carJack;
-    public Servo carJackServo;
+    public CRServo carJackServo;
     public DigitalChannel carJackSwitch;
 
     public static boolean motorsInitialized = false;
@@ -88,7 +89,7 @@ public class Hardware {
         basketServo = hardwareMap.get(Servo.class, "basket_servo");
         basket = new Basket(basketServo);
 
-        carJackServo = hardwareMap.get(Servo.class, "car_jack_servo");
+        carJackServo = hardwareMap.get(CRServo.class, "car_jack_servo");
         carJackSwitch = hardwareMap.get(DigitalChannel.class, "car_jack_switch");
         carJack = new CarJack(carJackServo, carJackSwitch);
 
