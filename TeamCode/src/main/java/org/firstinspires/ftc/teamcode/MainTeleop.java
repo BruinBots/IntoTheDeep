@@ -37,6 +37,9 @@ public class MainTeleop extends OpMode {
     public double FAST_DRIVE_SPEED = 0.65; // original speed
     public double SLOW_DRIVE_SPEED = 0.30; // half fast speed
 
+    public static double TARGET = 6;
+    public static double TOLERANCE = 1;
+
     private TeleDistanceDriver rrDriver;
     private ChamberPlacer chamberPlacer;
     private WallPicker wallPicker;
@@ -81,15 +84,15 @@ public class MainTeleop extends OpMode {
 
         bot.init(true);
 
-        rrDriver.drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rrDriver.drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        bot.frames.lift();
+//        bot.frames.lift();
     }
 
     @Override
     public void loop() {
 
-        rrDriver.drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rrDriver.drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Drive
         drive = gamepad2.left_stick_y - gamepad1.left_stick_y;
@@ -107,7 +110,7 @@ public class MainTeleop extends OpMode {
         }
 
         if (drive != 0 || strafe != 0 || turn != 0) {
-            rrDriver.drive.breakFollowing();
+//            rrDriver.drive.breakFollowing();
             rrDriver.setTarget(0, 0);
         }
 
@@ -294,10 +297,11 @@ public class MainTeleop extends OpMode {
             burnerArm.loop();
         }
 
-        rrDriver.drive.update();
-        if (rrDriver.needsRunning() && !rrDriver.isBusy()) {
+//        rrDriver.drive.update();
+        if (rrDriver.needsRunning()) {
             rrDriver.loop();
         }
+        rrDriver.updateRunningAverage();
         chamberPlacer.loop();
         wallPicker.loop();
     }

@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -13,8 +14,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.AprilReader;
 import org.firstinspires.ftc.teamcode.ChamberPlacer;
 import org.firstinspires.ftc.teamcode.Hardware;
+import org.firstinspires.ftc.teamcode.TeleDistanceDriver;
 import org.firstinspires.ftc.teamcode.Viper;
 import org.firstinspires.ftc.teamcode.WallPicker;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveCancelable;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -63,6 +66,8 @@ public class LinesAuto extends LinearOpMode {
     public static double distGain = 0.2;
     public static double scaleFactor = 0.5;
 
+    public static int SUBMERSIBLE_VEL = 30;
+
 //    public void drive2distance(double target, double tolerance) {
 //        updateRunningAverage();
 //        double curDist = getRunningAverage();
@@ -101,19 +106,30 @@ public class LinesAuto extends LinearOpMode {
                 return;
             }
 
+            updateRunningAverage();
+            curDist = getRunningAverage();
+
             telemetry.addData("Current Distance", curDist);
             dashTelemetry.addData("Current Distance", curDist);
             telemetry.update();
             dashTelemetry.update();
 
             // Drive the robot forward and backwards based on distance to the submersible
-            bot.moveBotMecanum(distGain * (target - curDist), 0, 0, scaleFactor);
-            // Update Roadrunner localizer
-            drive.update();
+
+            double error = target - curDist;
+            double power;
+
+            if (error >= 0) {
+                power = TeleDistanceDriver.drivePower;
+            }
+            else {
+                power = -TeleDistanceDriver.drivePower;
+            }
+
+            bot.moveBotMecanum(-power, 0, 0, 1);
             startPose = drive.getPoseEstimate();
 
             updateRunningAverage();
-            curDist = getRunningAverage();
         }
         bot.moveBotMecanum(0, 0, 0, 0);
     }
@@ -208,10 +224,29 @@ public class LinesAuto extends LinearOpMode {
             }
         }
 
-        bot.viper.move(3050, Viper.Sides.LEFT);
 
+
+
+
+        /*
+        --- MOVE TO SUBMERSIBLE ---
+        +20pts
+
+        Sync:
+        1. Drive to submersible
+        2. Align with distance sensor
+        3. Place specimen on high chamber
+
+        Async:
+        - Move left viper to placing position
+        - Update distance sensor running average
+         */
+
+        bot.viper.move(3050, Viper.Sides.LEFT); // Start lifting viper
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
+                .setVelConstraint(new MecanumVelocityConstraint(SUBMERSIBLE_VEL, DriveConstants.TRACK_WIDTH))
                 .lineToConstantHeading(new Vector2d(SUBMERSIBLE_X, SUBMERSIBLE_Y))
+                .resetVelConstraint()
                 .build();
         status("Going to submersible...");
         drive.followTrajectorySequenceAsync(trajSeq);
@@ -247,6 +282,23 @@ public class LinesAuto extends LinearOpMode {
             aprilLoop();
         }
 
+
+
+
+
+        /*
+        --- MOVE TO OBSERVATION ZONE ---
+
+        Sync:
+        1. Drive to observation zone
+        2. Align with distance sensor
+        3. Pick up specimen from wall
+
+        Async:
+        - Lower left viper slide
+        - Update distance sensor running average
+         */
+
         trajSeq = drive.trajectorySequenceBuilder(startPose)
                 .back(6)
                 .addDisplacementMarker(2, () -> {
@@ -281,8 +333,26 @@ public class LinesAuto extends LinearOpMode {
             aprilLoop();
         }
 
+
+
+
+
+        /*
+        --- MOVE TO SUBMERSIBLE ---
+        +20pts
+
+        Sync:
+        1. Move to submersible
+        2. Align with distance sensor
+        3. Place specimen on high chamber
+
+        Async
+        - Move left viper to placing position
+        - Update distance sensor running average
+         */
+
         trajSeq = drive.trajectorySequenceBuilder(startPose)
-                .back(6)
+                .back(4)
                 .lineToLinearHeading(new Pose2d(SUBMERSIBLE_X2, SUBMERSIBLE_Y, Math.toRadians(START_ANGLE)))
                 .addDisplacementMarker(2, () -> {
                     bot.viper.move(ChamberPlacer.startViper, Viper.Sides.LEFT);
@@ -313,6 +383,15 @@ public class LinesAuto extends LinearOpMode {
             aprilLoop();
         }
 
+
+
+
+
+        /*
+        --- SAMPLES ---
+        TODO: Make this do what the engineering portfolio says we do
+         */
+
         trajSeq = drive.trajectorySequenceBuilder(startPose)
                 .back(12)
                 .addDisplacementMarker(() -> {
@@ -330,7 +409,16 @@ public class LinesAuto extends LinearOpMode {
                 .forward(SAMPLE_PUSH)
                 .build();
 
-        drive.followTrajectorySequence(trajSeq);
+        status("Pushing samples...");
+        drive.followTrajectorySequenceAsync(trajSeq);
         startPose = trajSeq.end();
+
+        while (drive.isBusy()) {
+            drive.update();
+            aprilLoop();
+            if (isStopRequested()) {
+                return;
+            }
+        }
     }
 }

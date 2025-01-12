@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autonomous.AutoBases;
 import android.content.res.AssetManager;
 import android.util.Size;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -90,8 +91,9 @@ public class AprilReader {
     public double[] read() {
         if (!tagProcessor.getDetections().isEmpty()) {
             AprilTagDetection tag = tagProcessor.getDetections().get(0);
-//            double[] xy = getAprilTagCoordinates(tag.id);
-            return new double[]{tag.ftcPose.x, tag.ftcPose.y, tag.ftcPose.yaw, tag.id};
+            Position pos = tag.robotPose.getPosition();
+            YawPitchRollAngles orientation = tag.robotPose.getOrientation();
+            return new double[]{pos.x, pos.y, orientation.getYaw()-Math.toRadians(90), tag.id};
         }
         return new double[]{};
     }
