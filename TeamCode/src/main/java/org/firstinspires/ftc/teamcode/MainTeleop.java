@@ -253,9 +253,9 @@ public class MainTeleop extends OpMode {
             }
         }
 
-        if (controlMap.carJackUp()) {
+        if (controlMap.CarJackUp()) {
             bot.carJack.moveUp();
-        } else if (controlMap.carJackDown()) {
+        } else if (controlMap.CarJackDown()) {
             bot.carJack.moveDown();
         } else {
             bot.carJack.stop();

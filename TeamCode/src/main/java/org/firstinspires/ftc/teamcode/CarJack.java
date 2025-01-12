@@ -18,7 +18,7 @@ public class CarJack {
 
     public void moveUp() {
         if (limitSwitch.getState()) { // if limit switch is pressed
-            carJackServo.setPosition(stillPos);
+            stop();
         } else {
             carJackServo.setPosition(goingUpPos);
         }
