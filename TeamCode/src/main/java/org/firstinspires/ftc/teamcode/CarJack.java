@@ -7,8 +7,8 @@ public class CarJack {
 
     CRServo carJackServo;
     DigitalChannel limitSwitch;
-    double goingUpPower = 1;
-    double goingDownPower = -1;
+    double goingUpPower = -1;
+    double goingDownPower = 1;
     double stillPower = 0;
 
     public CarJack(CRServo servo, DigitalChannel limitSwitch) {
@@ -30,6 +30,10 @@ public class CarJack {
 
     public void stop() {
         carJackServo.setPower(stillPower);
+    }
+    
+    public boolean limitSwitchState() {
+        return limitSwitch.getState();
     }
 
 }

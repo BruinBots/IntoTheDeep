@@ -275,6 +275,8 @@ public class MainTeleop extends OpMode {
         displayMotorTelemetry("Viper Motor R", bot.viperMotorR);
         displayMotorTelemetry("Arm Motor", bot.armMotor);
         doTelemetry("Wrist Position", bot.wristServo.getPosition());
+        doTelemetry("CarJack Power", bot.carJackServo.getPower());
+        doTelemetry("CarJack Switch", bot.carJack.limitSwitchState());
 //        doTelemetry("Color", bot.colorDistanceSensor.color);
 //        doTelemetry("Distance", bot.colorDistanceSensor.READING_DISTANCE);
         doTelemetry("Is Pixel", isPixel);
