@@ -6,6 +6,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -36,6 +37,10 @@ public class Hardware {
     // Intake system
     public Servo intakeServo;
     public Intake intake;
+
+    public CarJack carJack;
+    public Servo carJackServo;
+    public DigitalChannel carJackSwitch;
 
     public static boolean motorsInitialized = false;
 
@@ -82,6 +87,10 @@ public class Hardware {
 
         basketServo = hardwareMap.get(Servo.class, "basket_servo");
         basket = new Basket(basketServo);
+
+        carJackServo = hardwareMap.get(Servo.class, "car_jack_servo");
+        carJackSwitch = hardwareMap.get(DigitalChannel.class, "car_jack_switch");
+        carJack = new CarJack(carJackServo, carJackSwitch);
 
         frames = new Frames(this);
     }

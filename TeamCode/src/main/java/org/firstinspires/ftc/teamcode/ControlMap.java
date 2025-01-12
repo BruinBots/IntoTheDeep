@@ -101,6 +101,15 @@ public class ControlMap {
         return gamepad2.right_bumper;
     }
 
+    // CARJACK
+    public boolean CarJackUp() {
+        return false;
+    }
+
+    public boolean CarJackDown() {
+        return false;
+    }
+
 
     public boolean Xtra0() {
         return !(Xtra1() || Xtra2());
