@@ -364,6 +364,13 @@ public class TwoSpecimenAuto extends LinearOpMode {
             }
         }
 
+        trajSeq = drive.trajectorySequenceBuilder(startPose)
+                .back(6)
+                .build();
+        status("Backing up...");
+        drive.followTrajectorySequence(trajSeq);
+        startPose = trajSeq.end();
+
         bot.frames.zeroBasket();
         while (bot.frames.isBusy()) {
             bot.frames.loop();
