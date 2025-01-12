@@ -366,8 +366,13 @@ public class TwoSpecimenAuto extends LinearOpMode {
 
         trajSeq = drive.trajectorySequenceBuilder(startPose)
                 .back(6)
+                .addDisplacementMarker(2, () -> {
+                    bot.viper.move(0, Viper.Sides.LEFT);
+                })
+                .lineToConstantHeading(new Vector2d(OBSERVATION_X, OBSERVATION_Y))
+                .back(4)
                 .build();
-        status("Backing up...");
+        status("Moving to observation zone...");
         drive.followTrajectorySequence(trajSeq);
         startPose = trajSeq.end();
 
