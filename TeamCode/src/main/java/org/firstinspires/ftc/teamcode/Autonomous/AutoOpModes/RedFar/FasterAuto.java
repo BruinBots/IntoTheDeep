@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import java.util.ArrayDeque;
 
 @Config
-@Autonomous(name = "FasterAuto", preselectTeleOp = "Main Teleop")
+@Autonomous(name = "Deprecated:  FasterAuto", preselectTeleOp = "Main Teleop")
 public class FasterAuto extends LinearOpMode {
 
     public static boolean blue = false;

@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
-@Autonomous(name = "SuperAuto", preselectTeleOp = "Main Teleop")
+@Autonomous(name = "Deprecated: SuperAuto", preselectTeleOp = "Main Teleop")
 public class SuperAuto extends LinearOpMode {
 
     public static boolean blue = false;

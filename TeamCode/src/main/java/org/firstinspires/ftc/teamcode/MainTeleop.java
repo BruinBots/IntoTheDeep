@@ -111,6 +111,8 @@ public class MainTeleop extends OpMode {
 
         if (drive != 0 || strafe != 0 || turn != 0) {
 //            rrDriver.drive.breakFollowing();
+            chamberPlacer.stop();
+            wallPicker.stop();
             rrDriver.setTarget(0, 0);
         }
 
@@ -289,7 +291,9 @@ public class MainTeleop extends OpMode {
 
         bot.arm.moveArm(armPos); // Move arm
         bot.arm.moveWrist(wristPos); // Move wrists
-        bot.moveBotMecanum(drive, turn, strafe, DRIVE_SPEED); // actually move the robot
+        if (!rrDriver.needsRunning()) {
+            bot.moveBotMecanum(drive, turn, strafe, DRIVE_SPEED); // actually move the robot
+        }
 
         if (enableMotorBurner) {
             burnerViperL.loop();

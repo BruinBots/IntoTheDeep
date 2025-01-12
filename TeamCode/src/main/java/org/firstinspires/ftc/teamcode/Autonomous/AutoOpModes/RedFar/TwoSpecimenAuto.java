@@ -25,8 +25,8 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import java.util.ArrayDeque;
 
 @Config
-@Autonomous(name = "Dev: LinesAuto", preselectTeleOp = "Main Teleop")
-public class LinesAuto extends LinearOpMode {
+@Autonomous(name = "TwoSpecimenAuto", preselectTeleOp = "Main Teleop")
+public class TwoSpecimenAuto extends LinearOpMode {
 
     public static boolean blue = false;
     public static int START_X = 10;
@@ -50,15 +50,6 @@ public class LinesAuto extends LinearOpMode {
     private FtcDashboard dash;
     private SampleMecanumDriveCancelable drive;
     private AprilReader reader;
-
-    public static int SAMPLE0X = bluef*-40;
-    public static int SAMPLE0Y = bluef*12;
-    public static int SAMPLEY = bluef*6;
-    public static int SAMPLE1X = bluef*-46;
-    public static int SAMPLE2X = bluef*-54;
-    public static int SAMPLE3X = bluef*-62;
-    public static int SAMPLE_PUSH = 48;
-    public static int SAMPLE_PULL = 36;
 
     public static int SUBMERSIBLE_VEL = 30;
 
@@ -89,7 +80,6 @@ public class LinesAuto extends LinearOpMode {
 
     public void drive2distance(double target, double tolerance) {
         // Scaling factor for distance to submersible into drive commands
-
         updateRunningAverage();
         double curDist = getRunningAverage();
 
@@ -372,42 +362,11 @@ public class LinesAuto extends LinearOpMode {
             if (isStopRequested()) {
                 return;
             }
-            aprilLoop();
         }
 
-
-
-
-
-        /*
-        --- SAMPLES ---
-        TODO: Make this do what the engineering portfolio says we do
-         */
-
-        trajSeq = drive.trajectorySequenceBuilder(startPose)
-                .back(12)
-                .addDisplacementMarker(() -> {
-                    bot.viper.move(0, Viper.Sides.LEFT);
-                })
-                .strafeTo(new Vector2d(SAMPLE0X, drive.getPoseEstimate().getY()))
-                .forward(24)
-                .lineToLinearHeading(new Pose2d(SAMPLE1X, SAMPLEY, Math.toRadians(INVERTED_START_ANGLE)))
-                .forward(SAMPLE_PUSH)
-                .back(SAMPLE_PULL)
-                .lineToConstantHeading(new Vector2d(SAMPLE2X, SAMPLEY))
-                .forward(SAMPLE_PUSH)
-                .back(SAMPLE_PULL)
-                .lineToConstantHeading(new Vector2d(SAMPLE3X, SAMPLEY))
-                .forward(SAMPLE_PUSH)
-                .build();
-
-        status("Pushing samples...");
-        drive.followTrajectorySequenceAsync(trajSeq);
-        startPose = trajSeq.end();
-
-        while (drive.isBusy()) {
-            drive.update();
-            aprilLoop();
+        bot.frames.zeroBasket();
+        while (bot.frames.isBusy()) {
+            bot.frames.loop();
             if (isStopRequested()) {
                 return;
             }
