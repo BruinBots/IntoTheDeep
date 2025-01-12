@@ -20,11 +20,11 @@ public class ControlMap {
     // VIPER SLIDE
 
     public boolean BothSlidesUp() {
-        return gamepad1.right_bumper;
+        return gamepad1.dpad_up;
     }
 
     public boolean BothSlidesDown() {
-        return gamepad1.left_bumper;
+        return gamepad1.dpad_down;
     }
 
     public boolean UpdateSlide() {
@@ -50,11 +50,11 @@ public class ControlMap {
     }
 
     public boolean LeftSlideUp() {
-        return gamepad1.dpad_up;
+        return gamepad1.right_bumper;
     }
 
     public boolean LeftSlideDown() {
-        return gamepad1.dpad_down;
+        return gamepad1.left_bumper;
     }
 
     public boolean BasketClosed() {
