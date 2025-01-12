@@ -8,8 +8,8 @@ public class CarJack {
     CRServo carJackServo;
     DigitalChannel limitSwitch;
     double goingUpPower = 1;
-    double goingDownPower = 0;
-    double stillPower = 0.5;
+    double goingDownPower = -1;
+    double stillPower = 0;
 
     public CarJack(CRServo servo, DigitalChannel limitSwitch) {
         this.carJackServo = servo;
