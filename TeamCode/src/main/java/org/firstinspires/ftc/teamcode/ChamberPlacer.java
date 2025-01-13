@@ -42,6 +42,7 @@ public class ChamberPlacer {
         else if (state == ChamberState.FRAMES) {
             if (bot.frames.isBusy()) {
                 bot.frames.loop();
+
             }
             else {
                 state = ChamberState.STANDBY;

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autonomous.AutoBases;
 import android.content.res.AssetManager;
 import android.util.Size;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -20,8 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+@Config
 public class AprilReader {
     private AprilTagProcessor tagProcessor;
+
+    public static double deltaYaw = 90;
 
     public AprilReader(HardwareMap hardwareMap) {
         Position cameraPosition = new Position(DistanceUnit.INCH, -7, 3.5, 13.5, 0);
@@ -93,7 +97,7 @@ public class AprilReader {
             AprilTagDetection tag = tagProcessor.getDetections().get(0);
             Position pos = tag.robotPose.getPosition();
             YawPitchRollAngles orientation = tag.robotPose.getOrientation();
-            return new double[]{pos.x, pos.y, orientation.getYaw()-Math.toRadians(90), tag.id};
+            return new double[]{pos.x, pos.y, orientation.getYaw()+Math.toRadians(deltaYaw), tag.id};
         }
         return new double[]{};
     }

@@ -28,6 +28,11 @@ public class TeleDistanceDriver {
 
     public static double drivePower = 0.2;
 
+    public double curPower = 0;
+
+    public long lastTime;
+    public static int timeout = 500;
+
     public void setTarget(double target, double tolerance) {
         this.target = target;
         this.tolerance = tolerance;
@@ -54,6 +59,7 @@ public class TeleDistanceDriver {
     }
 
     public void loop() {
+        lastTime = System.currentTimeMillis();
 //        double sum = 0;
 //        for (int i = 0; i < 5; i ++) {
 //            sum += bot.DistanceSensor.getDistance(DistanceUnit.INCH);
@@ -75,8 +81,8 @@ public class TeleDistanceDriver {
         updateRunningAverage();
         double curDist = getRunningAverage();
 
-        telemetry.addData("Current Distance", curDist);
-        dashTelemetry.addData("Current Distance", curDist);
+//        telemetry.addData("Current Distance", curDist);
+//        dashTelemetry.addData("Current Distance", curDist);
 
         // Drive the robot forward and backwards based on distance to the submersible
 
@@ -90,9 +96,11 @@ public class TeleDistanceDriver {
             power = -drivePower;
         }
 
+        curPower = -power;
+
         bot.moveBotMecanum(-power, 0, 0, 1);
 
-        updateRunningAverage();
+//        updateRunningAverage();
     }
 
     public boolean needsRunning() {

@@ -174,7 +174,9 @@ public class MainTeleop extends OpMode {
             // arm hanging position
             bot.frames.peck();
         }
-        bot.frames.loop();
+        if (bot.frames.isBusy()) {
+            bot.frames.loop();
+        }
 
         // Slide Hotkeys
         if (controlMap.BottomSlide()) {
@@ -270,7 +272,7 @@ public class MainTeleop extends OpMode {
             bot.arm.syncWristToArm();
         }
 
-        doTelemetry("Distance", bot.distanceSensor.getValue());
+        doTelemetry("Distance", rrDriver.getRunningAverage());
         // Telemetry
         doTelemetry("Xtra0", controlMap.Xtra0());
         doTelemetry("Xtra1", controlMap.Xtra1());
@@ -286,6 +288,12 @@ public class MainTeleop extends OpMode {
 //        doTelemetry("Distance", bot.colorDistanceSensor.READING_DISTANCE);
         doTelemetry("Is Pixel", isPixel);
         doTelemetry("Basket Pos", bot.basket.getPosition());
+        doTelemetry("ChamberPlacer State", chamberPlacer.state);
+        doTelemetry("WallPicker State", wallPicker.state);
+        doTelemetry("Needs Running", rrDriver.needsRunning());
+        doTelemetry("Driver Power", rrDriver.curPower);
+        doTelemetry("Target", rrDriver.target);
+        doTelemetry("Tolerance", rrDriver.tolerance);
         telemetry.update();
         dashTelemetry.update();
 
@@ -308,5 +316,9 @@ public class MainTeleop extends OpMode {
         rrDriver.updateRunningAverage();
         chamberPlacer.loop();
         wallPicker.loop();
+
+        if (chamberPlacer.state == ChamberPlacer.ChamberState.STANDBY && wallPicker.state == WallPicker.WallState.STANDBY) {
+            rrDriver.setTarget(0, 0);
+        }
     }
 }

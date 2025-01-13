@@ -36,7 +36,7 @@ public class LinesAuto extends LinearOpMode {
     public static int SUBMERSIBLE_X = 0;
     public static int SUBMERSIBLE_X2 = 4;
     public static int APRIL_TIME = 1000;
-    public static boolean doApril = false;
+    public static boolean doApril = true;
     private static int bluef = blue ? 1 : -1;
     public static int START_Y = 60 * bluef;
     public static int SUBMERSIBLE_Y = 30 * bluef;
@@ -148,6 +148,12 @@ public class LinesAuto extends LinearOpMode {
                 double y = april[1];
                 double yaw = april[2];
                 int id = (int)(april[3]);
+                tele("April X", ""+x);
+                tele("April Y", ""+y);
+                tele("April Heading", ""+yaw);
+                if (Math.abs(x - drive.getPoseEstimate().getX()) > 24 || Math.abs(y - drive.getPoseEstimate().getY()) > 24 || Math.abs(yaw - drive.getPoseEstimate().getHeading()) > 45) {
+                    return;
+                }
                 startPose = new Pose2d(x, y, yaw);
                 drive.setPoseEstimate(startPose);
                 status("Pose Updated with April Tag #" + id);
@@ -271,7 +277,7 @@ public class LinesAuto extends LinearOpMode {
             if (isStopRequested()) {
                 return;
             }
-            aprilLoop();
+//            aprilLoop();
         }
 
 
@@ -309,6 +315,7 @@ public class LinesAuto extends LinearOpMode {
                 return;
             }
             updateRunningAverage();
+            aprilLoop();
         }
 
         status("Aligning with distance sensor...");
@@ -372,7 +379,7 @@ public class LinesAuto extends LinearOpMode {
             if (isStopRequested()) {
                 return;
             }
-            aprilLoop();
+//            aprilLoop();
         }
 
 
