@@ -14,9 +14,10 @@ public class ChamberPlacer {
     public static double chamberPlacerTolerance = 0.25;
 
     public enum ChamberState {
+        PRE_FRAMES,
         STANDBY,
         DISTANCE,
-        FRAMES
+        POST_FRAMES
     }
 
     public ChamberPlacer(Hardware bot, TeleDistanceDriver rrDriver) {
@@ -25,21 +26,32 @@ public class ChamberPlacer {
         state = ChamberState.STANDBY;
     }
 
-    public void stop() { state = ChamberState.STANDBY; }
+    public void stop() {
+        bot.frames.beforeChamber();
+        state = ChamberState.PRE_FRAMES;
+    }
 
     public void start() {
         state = ChamberState.DISTANCE;
     }
 
     public void loop() {
-        if (state == ChamberState.DISTANCE) {
+        if (state == ChamberState.PRE_FRAMES) {
+            if (bot.frames.isBusy()) {
+                bot.frames.loop();
+            }
+            else {
+                state = ChamberState.DISTANCE;
+            }
+        }
+        else if (state == ChamberState.DISTANCE) {
             rrDriver.setTarget(chamberPlacerDistance, chamberPlacerTolerance);
             if (!rrDriver.needsRunning()) {
                 bot.frames.topSpecimen();
-                state = ChamberState.FRAMES;
+                state = ChamberState.POST_FRAMES;
             }
         }
-        else if (state == ChamberState.FRAMES) {
+        else if (state == ChamberState.POST_FRAMES) {
             if (bot.frames.isBusy()) {
                 bot.frames.loop();
 

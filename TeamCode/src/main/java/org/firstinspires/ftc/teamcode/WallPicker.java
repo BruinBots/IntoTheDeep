@@ -14,6 +14,7 @@ public class WallPicker {
     public static double wallPickerTolerance = 0.25;
 
     public enum WallState {
+        PRE_FRAMES,
         STANDBY,
         DISTANCE,
         FRAMES
@@ -28,11 +29,20 @@ public class WallPicker {
     public void stop() { state = WallPicker.WallState.STANDBY; }
 
     public void start() {
-        state = WallState.DISTANCE;
+        bot.frames.beforeWall();
+        state = WallState.PRE_FRAMES;
     }
 
     public void loop() {
-        if (state == WallState.DISTANCE) {
+        if (state == WallState.PRE_FRAMES) {
+            if (bot.frames.isBusy()) {
+                bot.frames.loop();
+            }
+            else {
+                state = WallState.DISTANCE;
+            }
+        }
+        else if (state == WallState.DISTANCE) {
             rrDriver.setTarget(wallPickerDistance, wallPickerTolerance);
             if (!rrDriver.needsRunning()) {
                 bot.frames.pickupFromWall();

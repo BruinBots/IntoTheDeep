@@ -271,6 +271,10 @@ public class Frames {
             new BasketOpenFrame(),
     };
 
+    public Frame[] beforeChamberFrames = new Frame[] {
+            new ViperFrame(ChamberPlacer.startViper, 50),
+    };
+
     public Frame[] afterWallFrames = new Frame[] {
             new WaitFrame(500),
             new ViperFrame(WallPicker.afterWallPickerPos, 1000),
@@ -281,6 +285,10 @@ public class Frames {
             new BasketCloseFrame(),
             new WaitFrame(500),
             new ViperFrame(WallPicker.afterWallPickerPos, 99999),
+    };
+
+    public Frame[] beforeWallFrames = new Frame[] {
+            new ViperFrame(WallPicker.wallPickerPos, 50),
     };
 
     public Frame[] uncurlFrames = new Frame[]{
@@ -420,4 +428,8 @@ public class Frames {
     public void afterWall() { runFrames(afterWallFrames); }
 
     public void pickupFromWall() { runFrames(pickupFromWallFrames); }
+
+    public void beforeChamber() { runFrames(beforeChamberFrames); }
+
+    public void beforeWall() { runFrames(beforeWallFrames); }
 }
