@@ -9,8 +9,8 @@ public class WallPicker {
     public WallState state;
 
     public static int wallPickerPos = 180;
-    public static int afterWallPickerPos = 1500;
-    public static double wallPickerDistance = 4;
+    public static int afterWallPickerPos = ChamberPlacer.startViper;
+    public static double wallPickerDistance = 3.75;
     public static double wallPickerTolerance = 0.25;
 
     public enum WallState {

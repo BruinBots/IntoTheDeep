@@ -10,7 +10,7 @@ public class ChamberPlacer {
 
     public static int startViper = 3050;
     public static int downViper = 2000;
-    public static double chamberPlacerDistance = 5.5;
+    public static double chamberPlacerDistance = 5.25;
     public static double chamberPlacerTolerance = 0.25;
 
     public enum ChamberState {
@@ -27,12 +27,12 @@ public class ChamberPlacer {
     }
 
     public void stop() {
-        bot.frames.beforeChamber();
-        state = ChamberState.PRE_FRAMES;
+        state = ChamberState.STANDBY;
     }
 
     public void start() {
-        state = ChamberState.DISTANCE;
+        bot.frames.beforeChamber();
+        state = ChamberState.PRE_FRAMES;
     }
 
     public void loop() {

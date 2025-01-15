@@ -25,7 +25,7 @@ import java.util.Properties;
 public class AprilReader {
     private AprilTagProcessor tagProcessor;
 
-    public static double deltaYaw = 90;
+    public static double deltaYaw = 180;
 
     public AprilReader(HardwareMap hardwareMap) {
         Position cameraPosition = new Position(DistanceUnit.INCH, -7, 3.5, 13.5, 0);
