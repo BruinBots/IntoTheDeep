@@ -28,11 +28,11 @@ public class TeleDistanceDriver {
 
 //    public static double drivePower = 0.2;
 
-    public static double farPower = 0.35;
+    public static double farPower = 0.4;
     public static double midPower = 0.2;
     public static double nearPower = 0.15;
 
-    public static double farThreshold = 12;
+    public static double farThreshold = 8;
     public static double nearThreshold = 4;
 
     public double curPower = 0;
@@ -85,9 +85,10 @@ public class TeleDistanceDriver {
             power = nearPower;
         }
 
-        curPower = -Math.copySign(power, error);
+        power = -Math.copySign(power, error);
+        curPower = power;
 
-        bot.moveBotMecanum(-power, 0, 0, 1);
+        bot.moveBotMecanum(power, 0, 0, 1);
     }
 
     public boolean needsRunning() {

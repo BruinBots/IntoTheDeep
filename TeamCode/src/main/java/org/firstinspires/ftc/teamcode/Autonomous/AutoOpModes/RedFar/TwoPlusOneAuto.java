@@ -31,20 +31,20 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import java.util.ArrayDeque;
 
 @Config
-@Autonomous(name = "Dev: LinesAuto", preselectTeleOp = "Main Teleop")
-public class LinesAuto extends LinearOpMode {
+@Autonomous(name = "TwoPlusOneAuto", preselectTeleOp = "Main Teleop")
+public class TwoPlusOneAuto extends LinearOpMode {
 
     public static boolean blue = false;
-    public static int START_X = 10;
+    private static int bluef = blue ? 1 : -1;
+
+    public static int START_X = bluef*-10;
     public static int START_ANGLE = blue ? 270 : 90;
     public static int MID_ANGLE = START_ANGLE;
     public static int INVERTED_START_ANGLE = blue ? 90 : 270;
     public static int SUBMERSIBLE_X = 0;
-    public static int SUBMERSIBLE_X2 = 3;
-    public static int SUBMERSIBLE_X3 = 6;
+    public static int SUBMERSIBLE_X2 = bluef*-4;
     public static int APRIL_TIME = 1000;
-    public static boolean doApril = true;
-    private static int bluef = blue ? 1 : -1;
+    public static boolean doApril = false;
     public static int START_Y = 60 * bluef;
     public static int SUBMERSIBLE_Y = 30 * bluef;
     public static int OBSERVATION_X = -45 * bluef;
@@ -58,6 +58,8 @@ public class LinesAuto extends LinearOpMode {
     private SampleMecanumDriveCancelable drive;
     private AprilReader reader;
 
+    public static int SUBMERSIBLE_VEL = 40;
+
     public static int SAMPLE0X = bluef*-36;
     public static int SAMPLE0Y = bluef*12;
     public static int SAMPLEY = bluef*6;
@@ -66,8 +68,6 @@ public class LinesAuto extends LinearOpMode {
     public static int SAMPLE3X = bluef*-60;
     public static int SAMPLE_PUSH = 48;
     public static int SAMPLE_PULL = 36;
-
-    public static int SUBMERSIBLE_VEL = 40;
 
     public static int STRAFE_DIST = 6;
     public static int PRE_SAMPLE_BACK_DIST = 24;
@@ -101,10 +101,8 @@ public class LinesAuto extends LinearOpMode {
 
     public void drive2distance(double target, double tolerance) {
         // Scaling factor for distance to submersible into drive commands
-
         updateRunningAverage();
         double curDist = getRunningAverage();
-        double curPower;
 
         while (Math.abs(curDist - target) > tolerance) {
             if (isStopRequested()) {
@@ -176,12 +174,6 @@ public class LinesAuto extends LinearOpMode {
                 double y = april[1];
                 double yaw = april[2];
                 int id = (int)(april[3]);
-                tele("April X", ""+x);
-                tele("April Y", ""+y);
-                tele("April Heading", ""+yaw);
-                if (Math.abs(x - drive.getPoseEstimate().getX()) > 24 || Math.abs(y - drive.getPoseEstimate().getY()) > 24 || Math.abs(yaw - drive.getPoseEstimate().getHeading()) > 45) {
-                    return;
-                }
                 startPose = new Pose2d(x, y, yaw);
                 drive.setPoseEstimate(startPose);
                 status("Pose Updated with April Tag #" + id);
@@ -279,12 +271,7 @@ public class LinesAuto extends LinearOpMode {
         startPose = trajSeq.end();
 
         while (drive.isBusy()) {
-            try {
-                drive.update();
-            } catch (IndexOutOfBoundsException ignored) {
-
-            }
-
+            drive.update();
             if (isStopRequested()) {
                 return;
             }
@@ -294,7 +281,7 @@ public class LinesAuto extends LinearOpMode {
         bot.frames.topPole();
         while (bot.frames.isBusy()) {
             bot.frames.loop();
-//            aprilLoop();
+            aprilLoop();
             if (isStopRequested()) {
                 return;
             }
@@ -310,16 +297,123 @@ public class LinesAuto extends LinearOpMode {
             if (isStopRequested()) {
                 return;
             }
-//            aprilLoop();
+            aprilLoop();
         }
 
 
 
 
+
         /*
-        --- SAMPLES ---
-        TODO: Make this do what the engineering portfolio says we do
+        --- MOVE TO OBSERVATION ZONE ---
+
+        Sync:
+        1. Drive to observation zone
+        2. Align with distance sensor
+        3. Pick up specimen from wall
+
+        Async:
+        - Lower left viper slide
+        - Update distance sensor running average
          */
+
+        trajSeq = drive.trajectorySequenceBuilder(startPose)
+                .back(6)
+                .addDisplacementMarker(2, () -> {
+                    bot.viper.move(WallPicker.wallPickerPos, Viper.Sides.LEFT);
+                })
+                .lineToLinearHeading(new Pose2d(OBSERVATION_X, OBSERVATION_Y, Math.toRadians(INVERTED_START_ANGLE)))
+                .forward(4)
+                .build();
+        status("Moving to observation zone...");
+        drive.followTrajectorySequenceAsync(trajSeq);
+        startPose = trajSeq.end();
+
+        while (drive.isBusy()) {
+            drive.update();
+            if (isStopRequested()) {
+                return;
+            }
+            updateRunningAverage();
+        }
+
+        status("Aligning with distance sensor...");
+        drive2distance(WallPicker.wallPickerDistance, WallPicker.wallPickerTolerance);
+
+        status("Picking up specimen...");
+        bot.basket.setClosed();
+        bot.frames.afterWall();
+        while (bot.frames.isBusy()) {
+            bot.frames.loop();
+            if (isStopRequested()) {
+                return;
+            }
+            aprilLoop();
+        }
+
+
+
+
+
+        /*
+        --- MOVE TO SUBMERSIBLE ---
+        +20pts
+
+        Sync:
+        1. Move to submersible
+        2. Align with distance sensor
+        3. Place specimen on high chamber
+
+        Async
+        - Move left viper to placing position
+        - Update distance sensor running average
+         */
+
+        trajSeq = drive.trajectorySequenceBuilder(startPose)
+                .back(4)
+                .lineToLinearHeading(new Pose2d(SUBMERSIBLE_X2, SUBMERSIBLE_Y, Math.toRadians(START_ANGLE)))
+                .addDisplacementMarker(2, () -> {
+                    bot.viper.move(ChamberPlacer.startViper, Viper.Sides.LEFT);
+                })
+                .build();
+        status("Going to submersible...");
+        drive.followTrajectorySequenceAsync(trajSeq);
+        startPose = trajSeq.end();
+
+        while (drive.isBusy()) {
+            drive.update();
+            updateRunningAverage();
+            if (isStopRequested()) {
+                return;
+            }
+        }
+
+        status("Aligning with distance sensor...");
+        drive2distance(ChamberPlacer.chamberPlacerDistance, ChamberPlacer.chamberPlacerTolerance);
+
+        status("Placing specimen on high chamber...");
+        bot.frames.topSpecimen();
+        while (bot.frames.isBusy()) {
+            bot.frames.loop();
+            if (isStopRequested()) {
+                return;
+            }
+        }
+
+//        trajSeq = drive.trajectorySequenceBuilder(startPose)
+//                .back(6)
+//                .addDisplacementMarker(2, () -> {
+//                    bot.viper.move(0, Viper.Sides.LEFT);
+//                })
+//                .lineToConstantHeading(new Vector2d(OBSERVATION_X, OBSERVATION_Y))
+//                .back(4)
+//                .build();
+//        status("Moving to observation zone...");
+//        drive.followTrajectorySequence(trajSeq);
+//        startPose = trajSeq.end();
+
+
+
 
         trajSeq = drive.trajectorySequenceBuilder(startPose)
                 .back(12)
@@ -359,225 +453,12 @@ public class LinesAuto extends LinearOpMode {
 
 
 
-        /*
-        --- MOVE TO OBSERVATION ZONE ---
-
-        Sync:
-        1. Drive to observation zone
-        2. Align with distance sensor
-        3. Pick up specimen from wall
-
-        Async:
-        - Lower left viper slide
-        - Update distance sensor running average
-         */
-
-//        trajSeq = drive.trajectorySequenceBuilder(startPose)
-////                .back(6)
-////                .addDisplacementMarker(2, () -> {
-////                    bot.viper.move(WallPicker.wallPickerPos, Viper.Sides.LEFT);
-////                })
-////                .lineToLinearHeading(new Pose2d(OBSERVATION_X, OBSERVATION_Y, Math.toRadians(INVERTED_START_ANGLE)))
-////                .forward(4)
-//                .build();
-//        status("Moving to observation zone...");
-//        drive.followTrajectorySequenceAsync(trajSeq);
-//        startPose = trajSeq.end();
-
-        while (drive.isBusy()) {
-            drive.update();
-            if (isStopRequested()) {
-                return;
-            }
-            updateRunningAverage();
-            aprilLoop();
-        }
-
-        status("Aligning with distance sensor...");
-        drive2distance(WallPicker.wallPickerDistance, WallPicker.wallPickerTolerance);
-
-        status("Picking up specimen...");
-        bot.basket.setClosed();
-        bot.frames.afterWall();
-        while (bot.frames.isBusy()) {
-            bot.frames.loop();
-            if (isStopRequested()) {
-                return;
-            }
-            aprilLoop();
-        }
-
-
-
-
-        /*
-        --- MOVE TO SUBMERSIBLE ---
-        +20pts
-
-        Sync:
-        1. Move to submersible
-        2. Align with distance sensor
-        3. Place specimen on high chamber
-
-        Async
-        - Move left viper to placing position
-        - Update distance sensor running average
-         */
-
-        trajSeq = drive.trajectorySequenceBuilder(startPose)
-                .back(4)
-                .lineToLinearHeading(new Pose2d(SUBMERSIBLE_X2, SUBMERSIBLE_Y, Math.toRadians(START_ANGLE)))
-                .addDisplacementMarker(2, () -> {
-                    bot.viper.move(ChamberPlacer.startViper, Viper.Sides.LEFT);
-                })
-                .build();
-        status("Going to submersible...");
-        drive.followTrajectorySequenceAsync(trajSeq);
-        startPose = trajSeq.end();
-
-        while (drive.isBusy()) {
-            try {
-                drive.update();
-            } catch (IndexOutOfBoundsException ignored) {
-
-            }
-            updateRunningAverage();
-            if (isStopRequested()) {
-                return;
-            }
-        }
-
-        status("Aligning with distance sensor...");
-        drive2distance(ChamberPlacer.chamberPlacerDistance, ChamberPlacer.chamberPlacerTolerance);
-
-        status("Placing specimen on high chamber...");
-        bot.frames.topSpecimen();
-        while (bot.frames.isBusy()) {
-            bot.frames.loop();
-            if (isStopRequested()) {
-                return;
-            }
-//            aprilLoop();
-        }
-
-
-
-
-        /*
-        --- MOVE TO OBSERVATION ZONE ---
-
-        Sync:
-        1. Drive to observation zone
-        2. Align with distance sensor
-        3. Pick up specimen from wall
-
-        Async:
-        - Lower left viper slide
-        - Update distance sensor running average
-         */
-
-        trajSeq = drive.trajectorySequenceBuilder(startPose)
-                .back(6)
-                .addDisplacementMarker(2, () -> {
-                    bot.viper.move(WallPicker.wallPickerPos, Viper.Sides.LEFT);
-                })
-                .lineToLinearHeading(new Pose2d(OBSERVATION_X, OBSERVATION_Y, Math.toRadians(INVERTED_START_ANGLE)))
-                .forward(4)
-                .build();
-        status("Moving to observation zone...");
-        drive.followTrajectorySequenceAsync(trajSeq);
-        startPose = trajSeq.end();
-
-        while (drive.isBusy()) {
-            drive.update();
-            if (isStopRequested()) {
-                return;
-            }
-            updateRunningAverage();
-//            aprilLoop();
-        }
-
-        status("Aligning with distance sensor...");
-        drive2distance(WallPicker.wallPickerDistance, WallPicker.wallPickerTolerance);
-
-        status("Picking up specimen...");
-        bot.basket.setClosed();
-        bot.frames.afterWall();
-        while (bot.frames.isBusy()) {
-            bot.frames.loop();
-            if (isStopRequested()) {
-                return;
-            }
-            aprilLoop();
-        }
-
-
-
-
-
-        /*
-        --- MOVE TO SUBMERSIBLE ---
-        +20pts
-
-        Sync:
-        1. Move to submersible
-        2. Align with distance sensor
-        3. Place specimen on high chamber
-
-        Async
-        - Move left viper to placing position
-        - Update distance sensor running average
-         */
-
-        trajSeq = drive.trajectorySequenceBuilder(startPose)
-                .back(4)
-                .lineToLinearHeading(new Pose2d(SUBMERSIBLE_X3, SUBMERSIBLE_Y, Math.toRadians(START_ANGLE)))
-                .addDisplacementMarker(2, () -> {
-                    bot.viper.move(ChamberPlacer.startViper, Viper.Sides.LEFT);
-                })
-                .build();
-        status("Going to submersible...");
-        drive.followTrajectorySequenceAsync(trajSeq);
-        startPose = trajSeq.end();
-
-        while (drive.isBusy()) {
-            try {
-                drive.update();
-            } catch (IndexOutOfBoundsException ignored) {
-
-            }
-            updateRunningAverage();
-            if (isStopRequested()) {
-                return;
-            }
-        }
-
-        status("Aligning with distance sensor...");
-        drive2distance(ChamberPlacer.chamberPlacerDistance, ChamberPlacer.chamberPlacerTolerance);
-
-        status("Placing specimen on high chamber...");
-        bot.frames.topSpecimen();
-        while (bot.frames.isBusy()) {
-            bot.frames.loop();
-            if (isStopRequested()) {
-                return;
-            }
-//            aprilLoop();
-        }
-
-        trajSeq = drive.trajectorySequenceBuilder(startPose)
-                .back(6)
-                .build();
-        drive.followTrajectorySequence(trajSeq);
-        startPose = trajSeq.end();
-
         bot.frames.zeroBasket();
         while (bot.frames.isBusy()) {
             bot.frames.loop();
             if (isStopRequested()) {
                 return;
             }
-//            aprilLoop();
         }
     }
 }

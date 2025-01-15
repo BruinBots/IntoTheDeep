@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -270,6 +271,16 @@ public class MainTeleop extends OpMode {
 
         if (wristArmSync) {
             bot.arm.syncWristToArm();
+        }
+
+        if (controlMap.EmergencyViperL()) {
+            bot.viperMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            bot.viperMotorL.setDirection(DcMotorSimple.Direction.REVERSE);
+            bot.viperMotorL.setPower(-Viper.VIPER_POWER/2);
+        }
+        if (controlMap.EmergencyViperR()) {
+            bot.viperMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            bot.viperMotorR.setPower(Viper.VIPER_POWER/2);
         }
 
         doTelemetry("Distance", rrDriver.getRunningAverage());

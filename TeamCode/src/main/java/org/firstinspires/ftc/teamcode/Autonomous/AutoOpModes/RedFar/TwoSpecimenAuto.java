@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.Autonomous.AutoOpModes.RedFar;
 
+import static org.firstinspires.ftc.teamcode.TeleDistanceDriver.farPower;
+import static org.firstinspires.ftc.teamcode.TeleDistanceDriver.farThreshold;
+import static org.firstinspires.ftc.teamcode.TeleDistanceDriver.midPower;
+import static org.firstinspires.ftc.teamcode.TeleDistanceDriver.nearPower;
+import static org.firstinspires.ftc.teamcode.TeleDistanceDriver.nearThreshold;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -98,20 +104,35 @@ public class TwoSpecimenAuto extends LinearOpMode {
 
             // Drive the robot forward and backwards based on distance to the submersible
 
+//            double error = target - curDist;
+//            double power;
+//
+//            if (error >= 0) {
+//                power = TeleDistanceDriver.drivePower;
+//            }
+//            else {
+//                power = -TeleDistanceDriver.drivePower;
+//            }
+//
+//            bot.moveBotMecanum(-power, 0, 0, 1);
+//            startPose = drive.getPoseEstimate();
+//
+//            updateRunningAverage();
+
             double error = target - curDist;
+            double absError = Math.abs(error);
             double power;
 
-            if (error >= 0) {
-                power = TeleDistanceDriver.drivePower;
-            }
-            else {
-                power = -TeleDistanceDriver.drivePower;
+            if (absError > farThreshold) {
+                power = farPower;
+            } else if (absError > nearThreshold) {
+                power = midPower;
+            } else {
+                power = nearPower;
             }
 
-            bot.moveBotMecanum(-power, 0, 0, 1);
+            bot.moveBotMecanum(-Math.copySign(power, error), 0, 0, 1);
             startPose = drive.getPoseEstimate();
-
-            updateRunningAverage();
         }
         bot.moveBotMecanum(0, 0, 0, 0);
     }

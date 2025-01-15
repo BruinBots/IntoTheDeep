@@ -147,4 +147,7 @@ public class ControlMap {
     public boolean CloseArm() {
         return gamepad2.b && Xtra1();
     }
+
+    public boolean EmergencyViperL() { return gamepad2.a && Xtra1(); }
+    public boolean EmergencyViperR() { return gamepad2.y && Xtra1(); }
 }
