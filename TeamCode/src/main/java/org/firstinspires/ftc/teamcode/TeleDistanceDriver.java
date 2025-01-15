@@ -26,7 +26,14 @@ public class TeleDistanceDriver {
     public double target;
     public double tolerance;
 
-    public static double drivePower = 0.2;
+//    public static double drivePower = 0.2;
+
+    public static double farPower = 0.35;
+    public static double midPower = 0.2;
+    public static double nearPower = 0.15;
+
+    public static double farThreshold = 12;
+    public static double nearThreshold = 4;
 
     public double curPower = 0;
 
@@ -60,47 +67,27 @@ public class TeleDistanceDriver {
 
     public void loop() {
         lastTime = System.currentTimeMillis();
-//        double sum = 0;
-//        for (int i = 0; i < 5; i ++) {
-//            sum += bot.DistanceSensor.getDistance(DistanceUnit.INCH);
-//        }
-//        double curDist = sum/5;
-//
-//        telemetry.addData("Current Distance", curDist);
-//        dashTelemetry.addData("Current Distance", curDist);
-//        telemetry.update();
-//        dashTelemetry.update();
-//
-//        drive.update();
-//        Pose2d startPose = drive.getPoseEstimate();
-//        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
-//                .forward(curDist - target)
-//                .build();
-//        drive.followTrajectorySequenceAsync(trajSeq);
 
         updateRunningAverage();
         double curDist = getRunningAverage();
 
-//        telemetry.addData("Current Distance", curDist);
-//        dashTelemetry.addData("Current Distance", curDist);
-
         // Drive the robot forward and backwards based on distance to the submersible
 
         double error = target - curDist;
+        double absError = Math.abs(error);
         double power;
 
-        if (error >= 0) {
-            power = drivePower;
-        }
-        else {
-            power = -drivePower;
+        if (absError > farThreshold) {
+            power = farPower;
+        } else if (absError > nearThreshold) {
+            power = midPower;
+        } else {
+            power = nearPower;
         }
 
-        curPower = -power;
+        curPower = -Math.copySign(power, error);
 
         bot.moveBotMecanum(-power, 0, 0, 1);
-
-//        updateRunningAverage();
     }
 
     public boolean needsRunning() {
@@ -108,15 +95,10 @@ public class TeleDistanceDriver {
         return (Math.abs(getRunningAverage() - target) > tolerance);
     }
 
-//    public boolean isBusy() { return drive.isBusy(); }
 
     public TeleDistanceDriver(HardwareMap hardwareMap, Telemetry telemetry) {
         bot = new Hardware(hardwareMap);
         this.telemetry = telemetry;
-
-//        drive = new SampleMecanumDriveCancelable(hardwareMap);
-//        drive.setPoseEstimate(new Pose2d(0, 0));
-//        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         dash = FtcDashboard.getInstance();
         dashTelemetry = dash.getTelemetry();
