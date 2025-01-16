@@ -245,13 +245,6 @@ public class Frames {
             new ArmWristFrame(6200, 0.22),
     };
 
-    public Frame[] specimenFrames = new Frame[]{
-            new ArmWristSanityFrame(5930, 0.22, 1000, 0.2),
-            new ArmWristFrame(5930, 0.11),
-            new ClawEngageFrame(),
-            new ArmWristFrame(5000, 0.11),
-    };
-
     public Frame[] standbyFrames = new Frame[]{
             new ArmMinMaxFrame(3476, 99999),
             new ArmWristFrame(3362, 0.22),
@@ -306,22 +299,14 @@ public class Frames {
 
     public Frame[] curlFrames = new Frame[]{
             new ArmWristSanityFrame(3374, 0.22, 1000, 0.2),
-            new ArmWristFrame(3374, 0.22, 500),
-            new ArmWristFrame(2624, 0.22, 500),
-            new ArmWristFrame(2624, 0.75, 500),
-            new ArmWristFrame(2624, 0.92, 500, 500),
-            new ArmWristFrame(1970, 0.92, 500, 500),
-            new ArmWristFrame(1970, 0.97, 500, 500),
-            new ArmWristFrame(1320, 0.97, 500, 500),
+            new ArmWristFrame(3374, 0.22, 100, 500),
+            new ArmWristFrame(2624, 0.22, 100, 500),
+            new ArmWristFrame(2624, 0.75, 500, 500),
+            new ArmWristFrame(2624, 0.92, 100, 500),
+            new ArmWristFrame(1970, 0.92, 0, 500),
+            new ArmWristFrame(1970, 0.97, 100, 500),
+            new ArmWristFrame(1320, 0.97, 0, 500),
             new ArmWristFrame(0, 1, 0, 500),
-    };
-
-    public Frame[] liftFrames = new Frame[]{
-            new ArmWristFrame(400, 1)
-    };
-
-    public Frame[] zeroArmFrames = new Frame[]{
-            new ArmWristFrame(0, 1, 250, 5)
     };
 
     public Frames(Hardware bot) {
@@ -419,13 +404,6 @@ public class Frames {
         runFrames(curlFrames);
     }
 
-    public void lift() {
-        runFrames(liftFrames);
-    }
-
-    public void zeroArm() {
-        runFrames(zeroArmFrames);
-    }
 
     public void afterWall() { runFrames(afterWallFrames); }
 
