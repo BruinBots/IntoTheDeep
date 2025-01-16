@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import java.util.ArrayDeque;
 
 @Config
-@Autonomous(name = "B-Comp: TwoSpecimenAuto", preselectTeleOp = "Main Teleop")
+@Autonomous(name = "Z-Deprecated: TwoSpecimenAuto", preselectTeleOp = "Main Teleop")
 public class TwoSpecimenAuto extends LinearOpMode {
 
     public static boolean blue = false;
