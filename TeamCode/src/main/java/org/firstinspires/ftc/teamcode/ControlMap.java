@@ -126,7 +126,7 @@ public class ControlMap {
     // MAGIC BUTTONS (Frames)
     public boolean ArmPickingPosition() {
         return gamepad2.x && Xtra0();
-    }
+    } // hover position
 
     public boolean ArmMailboxPosition() {
         return gamepad2.b && Xtra0();
@@ -138,7 +138,7 @@ public class ControlMap {
 
     public boolean ArmPecking() {
         return gamepad2.y && Xtra0();
-    }
+    } // peck
 
     public boolean OpenArm() {
         return gamepad2.x && Xtra1();

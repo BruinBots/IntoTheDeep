@@ -234,15 +234,15 @@ public class Frames {
     private double lastTime = -1;
 
     public Frame[] beforeGrabFrames = new Frame[]{
-            new ArmWristSanityFrame(7289, 0.22, 5500, 0.3),
-            new ArmWristFrame(7289, 0.22),
+            new ArmWristSanityFrame(6200, 0.22, 5500, 0.3),
+            new ArmWristFrame(6200, 0.22),
     };
 
     public Frame[] peckFrames = new Frame[]{
-            new ArmWristSanityFrame(7289, 0.22, 1000, 0.2),
-            new ArmWristFrame(7388, 0.23, 500),
+            new ArmWristSanityFrame(6200, 0.22, 1000, 0.2),
+            new ArmWristFrame(7500, 0.22, 500),
             new ClawEngageFrame(),
-            new ArmWristFrame(7289, 0.23),
+            new ArmWristFrame(6200, 0.22),
     };
 
     public Frame[] specimenFrames = new Frame[]{
