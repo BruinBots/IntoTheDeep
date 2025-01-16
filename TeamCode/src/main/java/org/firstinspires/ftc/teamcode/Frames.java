@@ -300,8 +300,8 @@ public class Frames {
     public Frame[] curlFrames = new Frame[]{
             new ArmWristSanityFrame(3374, 0.22, 1000, 0.2),
             new ArmWristFrame(3374, 0.22, 100, 500),
-            new ArmWristFrame(2624, 0.22, 100, 500),
-            new ArmWristFrame(2624, 0.75, 500, 500),
+            new ArmWristFrame(3374, 0.75, 500, 500),
+            new ArmWristFrame(2624, 0.75, 0, 500),
             new ArmWristFrame(2624, 0.92, 100, 500),
             new ArmWristFrame(1970, 0.92, 0, 500),
             new ArmWristFrame(1970, 0.97, 100, 500),
