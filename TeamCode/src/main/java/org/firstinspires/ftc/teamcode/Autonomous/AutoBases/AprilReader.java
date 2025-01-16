@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-@Config
+//@Config
 public class AprilReader {
     private AprilTagProcessor tagProcessor;
 

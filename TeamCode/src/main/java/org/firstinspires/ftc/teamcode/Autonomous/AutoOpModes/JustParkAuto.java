@@ -31,14 +31,14 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import java.util.ArrayDeque;
 
 @Config
-@Autonomous(name = "D-Dev: JustParkAuto", preselectTeleOp = "Main Teleop")
+@Autonomous(name = "Z-Comp (3) JustParkAuto", preselectTeleOp = "Main Teleop")
 public class JustParkAuto extends LinearOpMode {
 
     public static int START_X = 10;
     public static int START_Y = -60;
     public static int START_ANGLE = 90;
     public static int OBSERVATION_X = 45;
-    public static int OBSERVATION_Y = -48;
+    public static int OBSERVATION_Y = -56;
     public static int FORWARD = 4;
     public Pose2d startPose;
     private Hardware bot;

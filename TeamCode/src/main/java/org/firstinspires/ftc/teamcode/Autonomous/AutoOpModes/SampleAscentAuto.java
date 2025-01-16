@@ -14,10 +14,12 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstra
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.AprilReader;
+import org.firstinspires.ftc.teamcode.Autonomous.AutoBases.AutoDistance;
 import org.firstinspires.ftc.teamcode.ChamberPlacer;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.TeleDistanceDriver;
@@ -31,7 +33,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import java.util.ArrayDeque;
 
 @Config
-@Autonomous(name = "C-Dev: SampleAscentAuto", preselectTeleOp = "Main Teleop")
+@Autonomous(name = "B-Comp (19) SampleAscentAuto", preselectTeleOp = "Main Teleop")
 public class SampleAscentAuto extends LinearOpMode {
 
     public static int START_X = -36;
@@ -47,9 +49,10 @@ public class SampleAscentAuto extends LinearOpMode {
     private Telemetry dashTelemetry;
     private FtcDashboard dash;
     private SampleMecanumDriveCancelable drive;
+    private AutoDistance distDriver;
 
-    public static int AX = -52;
-    public static int AY = -52;
+    public static int AX = -54;
+    public static int AY = -50;
 
     public static int BX = -48;
     public static int BY = -10;
@@ -57,82 +60,20 @@ public class SampleAscentAuto extends LinearOpMode {
     public static int CX = -30;
     public static int CY = -6;
 
-    public static int VIPER = 5500;
+    public static int VIPER = 6050;
 
-    public static double BASKET_DISTANCE = 10;
+    public static double BASKET_DISTANCE = 8.5;
     public static double ASCENT_DISTANCE = 1;
+
+    public static int VEL = 20;
+
+    public static double POWER = 0.3;
 
     public void tele(String caption, String message) {
         telemetry.addData(caption, message);
         dashTelemetry.addData(caption, message);
         telemetry.update();
         dashTelemetry.update();
-    }
-
-    public void status(String message) {
-        tele("Status", message);
-    }
-
-    public void doPos() {
-        tele("X", "" + drive.getPoseEstimate().getX());
-        tele("Y", "" + drive.getPoseEstimate().getY());
-        tele("Heading", "" + drive.getPoseEstimate().getHeading());
-    }
-
-    public void drive2distance(double target, double tolerance) {
-        // Scaling factor for distance to submersible into drive commands
-        updateRunningAverage();
-        double curDist = getRunningAverage();
-
-        while (Math.abs(curDist - target) > tolerance) {
-            if (isStopRequested()) {
-                return;
-            }
-
-            updateRunningAverage();
-            curDist = getRunningAverage();
-
-            telemetry.addData("Current Distance", curDist);
-            dashTelemetry.addData("Current Distance", curDist);
-            telemetry.update();
-            dashTelemetry.update();
-
-            double error = target - curDist;
-            double absError = Math.abs(error);
-            double power;
-
-            if (absError > farThreshold) {
-                power = farPower;
-            } else if (absError > nearThreshold) {
-                power = midPower;
-            } else {
-                power = nearPower;
-            }
-
-            bot.moveBotMecanum(-Math.copySign(power, error), 0, 0, 1);
-            startPose = drive.getPoseEstimate();
-        }
-        bot.moveBotMecanum(0, 0, 0, 0);
-    }
-
-    public ArrayDeque<Double> runningAverages = new ArrayDeque<>();
-
-    public void updateRunningAverage() {
-        double distance = bot.DistanceSensor.getDistance(DistanceUnit.INCH);
-        int count = runningAverages.size();
-
-        if (count == 5) {
-            runningAverages.pollFirst();
-        }
-        runningAverages.addLast(distance);
-    }
-
-    public double getRunningAverage() {
-        double sum = 0;
-        for (double d: runningAverages) {
-            sum += d;
-        }
-        return sum / runningAverages.size();
     }
 
     @Override
@@ -149,11 +90,14 @@ public class SampleAscentAuto extends LinearOpMode {
         drive = new SampleMecanumDriveCancelable(hardwareMap);
         drive.setPoseEstimate(startPose);
 
+        distDriver = new AutoDistance(bot, this, drive, telemetry, dashTelemetry);
+
         waitForStart();
 
         bot.viper.move(VIPER, Viper.Sides.LEFT);
 
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
+                .setVelConstraint(new MecanumVelocityConstraint(VEL, DriveConstants.TRACK_WIDTH))
                 .lineToLinearHeading(new Pose2d(AX, AY, Math.toRadians(BASKET_ANGLE)))
                 .build();
 
@@ -167,9 +111,15 @@ public class SampleAscentAuto extends LinearOpMode {
             }
         }
 
-        drive2distance(BASKET_DISTANCE, 0.5);
+        startPose = distDriver.drive2distance(BASKET_DISTANCE, 0.5);
+        if (startPose == null) {
+            return;
+        }
+
+        bot.basket.setOpen();
 
         trajSeq = drive.trajectorySequenceBuilder(startPose)
+                .waitSeconds(0.5)
                 .back(6)
                 .lineToConstantHeading(new Vector2d(BX, BY))
                 .addDisplacementMarker(20, () -> {
@@ -189,6 +139,19 @@ public class SampleAscentAuto extends LinearOpMode {
             }
         }
 
-        drive2distance(ASCENT_DISTANCE, 0.5);
+        startPose = distDriver.drive2distance(ASCENT_DISTANCE, 0.5);
+        if (startPose == null) {
+            return;
+        }
+
+        bot.viperMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bot.viperMotorL.setPower(-POWER);
+
+        long curTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() - curTime < 1500) {
+            if (isStopRequested()) {
+                return;
+            }
+        }
     }
 }
