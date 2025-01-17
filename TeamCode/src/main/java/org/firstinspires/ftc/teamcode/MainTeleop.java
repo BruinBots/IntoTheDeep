@@ -43,7 +43,7 @@ public class MainTeleop extends OpMode {
     private ChamberPlacer chamberPlacer;
     private WallPicker wallPicker;
 
-    public static boolean enableMotorBurner = false;
+    public static boolean enableMotorBurner = true;
     MotorBurner burnerViperL;
     MotorBurner burnerViperR;
     MotorBurner burnerArm;
@@ -61,9 +61,9 @@ public class MainTeleop extends OpMode {
         MainTeleop.staticTelemetry = telemetry;
 
         if (enableMotorBurner) {
-            burnerViperL = new MotorBurner(bot.viperMotorL, 9, this, 2, "ViperL");
-            burnerViperR = new MotorBurner(bot.viperMotorR, 9, this, 2, "ViperR");
-            burnerArm = new MotorBurner(bot.armMotor, 9, this, 1, "Arm");
+            burnerViperL = new MotorBurner(bot.viperMotorL, 9, this, 1, "ViperL");
+            burnerViperR = new MotorBurner(bot.viperMotorR, 9, this, 1, "ViperR");
+            burnerArm = new MotorBurner(bot.armMotor, 9, this, 2, "Arm");
         }
     }
 
