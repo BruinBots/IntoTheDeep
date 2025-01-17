@@ -24,22 +24,20 @@ public class MainTeleop extends OpMode {
     double strafe = 0.0;
     public static int armPos = 0;
     boolean isPixel = false;
+
     private FtcDashboard dash;
-    private Telemetry dashTelemetry;
+    private static Telemetry dashTelemetry;
+    private static Telemetry staticTelemetry;
+
     public static double wristPos = 1;
     public static boolean wristArmSync = false;
     public static boolean engageAtStart = false;
-    public static boolean colorActionEnabled = false;
-    //    public static ColorDistanceSensor.Colors currentOP = (ColorDistanceSensor.Colors.red);
     public boolean viperLeftPressed = false;
     public boolean bothViperPressed = false;
     public boolean armPressed = false;
     public double DRIVE_SPEED;
     public double FAST_DRIVE_SPEED = 0.65; // original speed
     public double SLOW_DRIVE_SPEED = 0.30; // half fast speed
-
-    public static double TARGET = 6;
-    public static double TOLERANCE = 1;
 
     private TeleDistanceDriver rrDriver;
     private ChamberPlacer chamberPlacer;
@@ -60,10 +58,12 @@ public class MainTeleop extends OpMode {
         chamberPlacer = new ChamberPlacer(bot, rrDriver);
         wallPicker = new WallPicker(bot, rrDriver);
 
+        MainTeleop.staticTelemetry = telemetry;
+
         if (enableMotorBurner) {
-            burnerViperL = new MotorBurner(bot.viperMotorL, 9, this, 2);
-            burnerViperR = new MotorBurner(bot.viperMotorR, 9, this, 2);
-            burnerArm = new MotorBurner(bot.armMotor, 9, this, 1);
+            burnerViperL = new MotorBurner(bot.viperMotorL, 9, this, 2, "ViperL");
+            burnerViperR = new MotorBurner(bot.viperMotorR, 9, this, 2, "ViperR");
+            burnerArm = new MotorBurner(bot.armMotor, 9, this, 1, "Arm");
         }
     }
 
@@ -71,8 +71,8 @@ public class MainTeleop extends OpMode {
         doTelemetry(caption, motor.getCurrentPosition() + "=>" + motor.getTargetPosition());
     }
 
-    public void doTelemetry(String caption, Object obj) {
-        telemetry.addData(caption, obj);
+    public static void doTelemetry(String caption, Object obj) {
+        staticTelemetry.addData(caption, obj);
         dashTelemetry.addData(caption, obj);
     }
 
@@ -84,10 +84,6 @@ public class MainTeleop extends OpMode {
         DRIVE_SPEED = FAST_DRIVE_SPEED;
 
         bot.init(true);
-
-//        rrDriver.drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-//        bot.frames.lift();
     }
 
     @Override
@@ -283,8 +279,14 @@ public class MainTeleop extends OpMode {
             bot.viperMotorR.setPower(Viper.VIPER_POWER/2);
         }
 
-        doTelemetry("Distance", rrDriver.getRunningAverage());
+        if (enableMotorBurner) {
+            burnerViperL.loop();
+            burnerViperR.loop();
+            burnerArm.loop();
+        }
+
         // Telemetry
+        doTelemetry("Distance", rrDriver.getRunningAverage());
         doTelemetry("Xtra0", controlMap.Xtra0());
         doTelemetry("Xtra1", controlMap.Xtra1());
         doTelemetry("Xtra2", controlMap.Xtra2());
@@ -295,9 +297,6 @@ public class MainTeleop extends OpMode {
         doTelemetry("Wrist Position", bot.wristServo.getPosition());
         doTelemetry("CarJack Power", bot.carJackServo.getPower());
         doTelemetry("CarJack Switch", bot.carJack.limitSwitchState());
-//        doTelemetry("Color", bot.colorDistanceSensor.color);
-//        doTelemetry("Distance", bot.colorDistanceSensor.READING_DISTANCE);
-        doTelemetry("Is Pixel", isPixel);
         doTelemetry("Basket Pos", bot.basket.getPosition());
         doTelemetry("ChamberPlacer State", chamberPlacer.state);
         doTelemetry("WallPicker State", wallPicker.state);
@@ -314,13 +313,6 @@ public class MainTeleop extends OpMode {
             bot.moveBotMecanum(drive, turn, strafe, DRIVE_SPEED); // actually move the robot
         }
 
-        if (enableMotorBurner) {
-            burnerViperL.loop();
-            burnerViperR.loop();
-            burnerArm.loop();
-        }
-
-//        rrDriver.drive.update();
         if (rrDriver.needsRunning()) {
             rrDriver.loop();
         }

@@ -140,8 +140,5 @@ public class Hardware {
                 intake.standby();
             }
         }
-
-//        viper.move(0);
-//        arm.moveArm(0);
     }
 }
