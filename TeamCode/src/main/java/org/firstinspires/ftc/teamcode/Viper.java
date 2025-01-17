@@ -63,6 +63,9 @@ public class Viper {
             targetPos = MAX_VIPER_POS;
         }
 
+        motorL.setTargetPositionTolerance(25);
+        motorR.setTargetPositionTolerance(25);
+
         // set power of motors
         if (side == Sides.LEFT || side == Sides.BOTH) {
             motorL.setPower(VIPER_POWER);
