@@ -17,6 +17,7 @@ public class MotorBurner {
         this.motor = motor;
         this.maxCurrent = maxCurrent;
         this.opMode = opMode;
+        this.gamepad = gamepad;
         this.name = name;
     }
 
