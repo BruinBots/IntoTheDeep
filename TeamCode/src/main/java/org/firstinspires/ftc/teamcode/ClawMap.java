@@ -68,7 +68,7 @@ public class ClawMap {
     public static double WRIST_MAX = 1;
 
     // Step size of the wrist servo
-    public static double WRIST_SPEED = 0.02;
+    public static double WRIST_SPEED = 0.005;
 
 
     // Claw open/closed positions (0-1)
@@ -150,6 +150,12 @@ public class ClawMap {
         } else if (move == 0) {
             clawServo.setPosition(CLAW_OPENED_POS);
             telemetry.addData(pre+"Claw Status", "Open "+CLAW_OPENED_POS);
+        } else {
+            if (clawServo.getPosition() == CLAW_OPENED_POS) {
+                telemetry.addData(pre+"Claw Status", "Open "+CLAW_OPENED_POS);
+            } else {
+                telemetry.addData(pre+"Claw Status", "Closed "+CLAW_CLOSED_POS);
+            }
         }
     }
 
@@ -189,6 +195,8 @@ public class ClawMap {
             moveClaw(1);
         } else if (gamepad.dpad_left) {
             moveClaw(0);
+        } else {
+            moveClaw(-1);
         }
     }
 }
