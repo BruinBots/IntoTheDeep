@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class ServoSBA implements SBA {
     private Servo servo;
-    private int targetPos;
+    private double targetPos;
 
-    public ServoSBA(Servo servo, double power, int targetPos) {
+    public ServoSBA(Servo servo, double targetPos) {
         this.servo = servo;
         this.targetPos = targetPos;
     }
