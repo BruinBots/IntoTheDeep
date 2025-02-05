@@ -167,33 +167,33 @@ public class ClawMap {
     }
 
     public void loop() {
-        if (gamepad.left_stick_x > 0) {
+        if (gamepad.right_stick_x > 0) {
             moveTurret(1);
-        } else if (gamepad.left_stick_x < 0) {
+        } else if (gamepad.right_stick_x < 0) {
             moveTurret(-1);
         } else {
             moveTurret(0);
         }
 
-        if (gamepad.left_stick_y > 0) {
+        if (gamepad.right_stick_y > 0) {
             moveArm(1);
-        } else if (gamepad.left_stick_y < 0) {
+        } else if (gamepad.right_stick_y < 0) {
             moveArm(-1);
         } else {
             moveArm(0);
         }
 
-        if (gamepad.dpad_up) {
+        if (gamepad.left_stick_y > 0) {
             moveWrist(1);
-        } else if (gamepad.dpad_down) {
+        } else if (gamepad.left_stick_y < 0) {
             moveWrist(-1);
         } else {
             moveWrist(0);
         }
 
-        if (gamepad.dpad_right) {
+        if (gamepad.left_bumper) {
             moveClaw(1);
-        } else if (gamepad.dpad_left) {
+        } else if (gamepad.right_bumper) {
             moveClaw(0);
         } else {
             moveClaw(-1);
