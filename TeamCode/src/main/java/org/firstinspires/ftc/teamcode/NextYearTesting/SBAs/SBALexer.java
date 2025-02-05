@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.Basket;
 import org.firstinspires.ftc.teamcode.Viper;
 import org.firstinspires.ftc.teamcode.WallPicker;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -71,7 +72,7 @@ public class SBALexer {
     }
 
     public SBA[] scriptToSBAs(String script) {
-        SBA[] sbas = new SBA[] {};
+        ArrayList<SBA> sbas = new ArrayList<>();
         int i = 0;
         // Iterate through lines of the script
         for (String line: script.split("\n")) {
@@ -81,10 +82,10 @@ public class SBALexer {
             String[] components = line.split(" "); // Split line by spaces into components
             Action action = Action.valueOf(components[0]); // Action is the first component
             String[] params = Arrays.copyOfRange(components, 1, components.length); // Parameters are everything after the action
-            sbas[i] = handleAction(action, params); // Convert the action + params to an SBA
+            sbas.add(handleAction(action, params)); // Convert the action + params to an SBA
             i ++;
         }
-        return sbas;
+        return sbas.toArray(new SBA[0]);
     }
 
     public void runScript(String script) {
