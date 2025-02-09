@@ -1,11 +1,9 @@
-package org.firstinspires.ftc.teamcode.NextYearTesting.SBAs;
+package org.firstinspires.ftc.teamcode.SBAs;
 
-import static org.firstinspires.ftc.teamcode.NextYearTesting.SBAs.GlobalBot.bot;
+import static org.firstinspires.ftc.teamcode.Utils.GlobalBot.bot;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.teamcode.ClawMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,8 +29,7 @@ public class SBALexer {
     EXAMPLE SCRIPT:
 
     ARM wallPickerArmPos
-    DISTANCE wallPickerDistance wallPickerTolerance
-    SERVO basketServo baksetOpenPos
+    SERVO basketServo baksetClosePos
     WAIT 250
     ARM wallPickerAfterArmPos
 
@@ -44,20 +41,26 @@ public class SBALexer {
 
         // Populate motor dictionary
         motorMap.put("armMotor", bot.armMotor);
+
+        // XTRA
         motorMap.put("turretMotor", bot.turretMotor);
+
         // TODO: Figure out how to handle two motors at once (maybe a 2MOTOR operation)
 
         // Default motor powers
         motorPowers.put("armMotor", 0.5);
+
+        // XTRA
         motorPowers.put("turretMotor", 0.2);
 
         // Populate servo dictionary
-        servoMap.put("wristServo", bot.wristServo);
         servoMap.put("clawServo", bot.clawServo);
 
         // Populate constants
-        constants.put("clawOpenPos", ClawMap.CLAW_OPENED_POS);
-        constants.put("clawClosedPos", ClawMap.CLAW_CLOSED_POS);
+        constants.put("clawOpenPos", 1.0);
+        constants.put("clawClosedPos", 0.5); // XTRA
+        constants.put("armUpPos", 100.0);
+        constants.put("armDownPos", 200.0);
     }
 
     public SBA[] scriptToSBAs(String script) {
@@ -69,6 +72,7 @@ public class SBALexer {
                 continue;
             }
             String[] components = line.split(" "); // Split line by spaces into components
+            // MOTOR armMotor 0.5 1000
             Action action = Action.valueOf(components[0]); // Action is the first component
             String[] params = Arrays.copyOfRange(components, 1, components.length); // Parameters are everything after the action
             sbas.add(handleAction(action, params)); // Convert the action + params to an SBA
@@ -83,6 +87,14 @@ public class SBALexer {
 
     public void loop() {
         runner.loop();
+    }
+
+    public void stop() {
+        runner.stop();
+    }
+
+    public boolean isBusy() {
+        return runner.isBusy();
     }
 
     public SBA handleAction(Action action, String[] params) {
@@ -130,9 +142,12 @@ public class SBALexer {
 
         power = default power for that motor
          */
-        else {
+        else if (params.length == 2) {
             power = motorPowers.get(motorName);
             target = (int)getParam(params[1]);
+        }
+        else {
+            return new WaitSBA(0);
         }
 
         return new MotorSBA(motor, power, target);
@@ -150,7 +165,7 @@ public class SBALexer {
 
     public SBA runWait(String[] params) {
         // Get wait time (ms)
-        int wait = Integer.parseInt(params[0]);
+        int wait = (int)getParam(params[0]);
 
         return new WaitSBA(wait);
     }

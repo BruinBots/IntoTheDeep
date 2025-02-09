@@ -4,10 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.NextYearTesting.SBAs.GlobalBot;
-import org.firstinspires.ftc.teamcode.NextYearTesting.SBAs.MotorSBA;
-import org.firstinspires.ftc.teamcode.NextYearTesting.SBAs.SBALexer;
-import org.firstinspires.ftc.teamcode.NextYearTesting.SBAs.SBARunner;
+import org.firstinspires.ftc.teamcode.SBAs.SBALexer;
+import org.firstinspires.ftc.teamcode.Utils.GlobalBot;
 
 @Config
 @TeleOp(name="SBAMode")
@@ -32,6 +30,10 @@ public class SBAMode extends OpMode {
             lexer.runScript(script.replace("\\n", "\n"));
         }
         lexer.loop();
+        telemetry.addData("sbas.length", lexer.runner.curSBAs.length);
+        if (lexer.runner.curSBAs.length > 0) {
+            telemetry.addData("sbas.type", lexer.runner.curSBAs[lexer.runner.curIdx].getClass().getSimpleName());
+        }
         telemetry.addData("armMotor", claw.armMotor.getCurrentPosition() + "=>" + claw.armMotor.getTargetPosition());
         telemetry.addData("armPower", claw.armMotor.getPower());
         telemetry.addData("turretMotor", claw.turretMotor.getCurrentPosition() + "=>" + claw.turretMotor.getTargetPosition());
