@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.SBAs.MotorSBA;
+import org.firstinspires.ftc.teamcode.SBAs.SBA;
+import org.firstinspires.ftc.teamcode.SBAs.SBARunner;
 
 @Config
 public class ClawMap {
@@ -74,16 +77,20 @@ public class ClawMap {
     public static double[] WRIST_MAX = {0.23, 0.23};
 
     // Step size of the wrist servo
-    public static double WRIST_SPEED = 0.005;
+    public static double[] WRIST_SPEED = {0.005, 0.005};
 
 
     // Claw open/closed positions (0-1)
     public static double[] CLAW_CLOSED_POS = {0.43, 0.43};
     public static double[] CLAW_OPENED_POS = {0.55, 0.55};
 
+    // Reversing controls. Set to -1 per-object to reverse controls.
     public int turretFactor = 1;
     public int armFactor = 1;
     public int wristFactor = 1;
+
+    public SBA[] sbas;
+    public SBARunner runner;
 
     public ClawMap(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad, String id) {
         this.telemetry = telemetry;
@@ -105,6 +112,11 @@ public class ClawMap {
 
         wristServo = hardwareMap.get(Servo.class, "wristServo"+id);
         clawServo = hardwareMap.get(Servo.class, "clawServo"+id);
+
+        sbas = new SBA[]{
+                new MotorSBA(armMotor, 0.6, ARM_MIN[lid]),
+        };
+        runner = new SBARunner();
     }
 
     public void moveTurret(int move) {
@@ -135,9 +147,10 @@ public class ClawMap {
 
     public void moveArm(int move) {
         move = move*armFactor;
-        double theta = armMotor.getCurrentPosition() * (9.0/40);
+        double theta = (double)armMotor.getCurrentPosition() * (Math.PI/800.0);
         double power = ARM_A + ARM_B*Math.sin(theta);
-        telemetry.addData("Arm Angle", Math.toDegrees(theta));
+        telemetry.addData("Arm Current Pos", armMotor.getCurrentPosition());
+        telemetry.addData("Arm Angle", theta);
         telemetry.addData("Arm Power", power);
         if (move == 0) {
             armMotor.setPower(power);
@@ -159,7 +172,7 @@ public class ClawMap {
 
     public void moveWrist(int move) {
         move = move*wristFactor;
-        double target = wristServo.getPosition() + WRIST_SPEED*move;
+        double target = wristServo.getPosition() + WRIST_SPEED[lid]*move;
         if (target <= WRIST_MIN[lid]) {
             target = WRIST_MIN[lid];
         } else if (target >= WRIST_MAX[lid]) {
@@ -224,5 +237,11 @@ public class ClawMap {
         } else {
             moveClaw(-1);
         }
+
+        if (gamepad.dpad_up && gamepad.a) {
+            runner.runSBAs(sbas);
+        }
+
+        runner.loop();
     }
 }
