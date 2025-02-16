@@ -13,6 +13,9 @@ public class ClawMode extends OpMode {
         claw1 = new ClawMap(hardwareMap, telemetry, gamepad1, "1");
         claw2 = new ClawMap(hardwareMap, telemetry, gamepad2, "2");
 
+        claw1.turretFactor = -1;
+        claw1.wristFactor = -1;
+
         claw1.init();
         claw2.init();
     }

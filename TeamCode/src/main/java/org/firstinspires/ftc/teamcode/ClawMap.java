@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 public class ClawMap {
     // Option for turret motor or servo
-    public static boolean isTurretServo = false;
+    public static boolean isTurretServo = true;
     public DcMotorEx turretMotor;
     public Servo turretServo;
 
@@ -27,6 +27,7 @@ public class ClawMap {
     // Telemetry
     public Telemetry telemetry;
     public String id;
+    public int lid;
     public String pre;
     public Gamepad gamepad;
 
@@ -36,7 +37,7 @@ public class ClawMap {
     // USE A CONTINUOUS ROTATION SERVO
     // 0 to 1, with 0 being no movement, and 1 being
     // maximum speed
-    public static double TURRET_SERVO_SPEED = 0.5;
+    public static double[] TURRET_SERVO_SPEED = {0.15, 0.15};
 
     // Position the turret servo is at rest (usually 0.5)
     public static double TURRET_SERVO_REST_POS = 0.5;
@@ -53,31 +54,41 @@ public class ClawMap {
 
     // Power of the arm motor
     // Higher = larger steps
-    public static double ARM_POWER = 0.5;
+    public static double ARM_A = 0.3;
+    public static double ARM_B = 0.3;
 
     // Speed of the arm motor
     // Ticks per loop
     // Higher = faster motion
-    public static int ARM_SPEED = 10;
+    public static int ARM_SPEED = 20;
+
+    // ARM MAX 0 MIN -180
+    public static int[] ARM_MAX = {450, 450};
+    public static int[] ARM_MIN = {0, 0};
 
 
     // Minimum wrist pos (0-1)
-    public static double WRIST_MIN = 0;
+    public static double[] WRIST_MIN = {0.13, 0.13};
 
     // Maximum wrist pos (0-1)
-    public static double WRIST_MAX = 1;
+    public static double[] WRIST_MAX = {0.23, 0.23};
 
     // Step size of the wrist servo
     public static double WRIST_SPEED = 0.005;
 
 
     // Claw open/closed positions (0-1)
-    public static double CLAW_CLOSED_POS = 0.5;
-    public static double CLAW_OPENED_POS = 0.75;
+    public static double[] CLAW_CLOSED_POS = {0.43, 0.43};
+    public static double[] CLAW_OPENED_POS = {0.55, 0.55};
+
+    public int turretFactor = 1;
+    public int armFactor = 1;
+    public int wristFactor = 1;
 
     public ClawMap(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad, String id) {
         this.telemetry = telemetry;
         this.id = id;
+        this.lid = Integer.parseInt(id)-1;
         this.pre = "["+id+"] ";
         this.gamepad = gamepad;
 
@@ -90,12 +101,14 @@ public class ClawMap {
 
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor"+id);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         wristServo = hardwareMap.get(Servo.class, "wristServo"+id);
         clawServo = hardwareMap.get(Servo.class, "clawServo"+id);
     }
 
     public void moveTurret(int move) {
+        move = move*turretFactor;
         if (move == 0) {
             if (isTurretServo) {
                 turretServo.setPosition(TURRET_SERVO_REST_POS);
@@ -107,7 +120,7 @@ public class ClawMap {
             return;
         }
         if (isTurretServo) {
-            double magnitude = TURRET_SERVO_SPEED/2;
+            double magnitude = TURRET_SERVO_SPEED[lid]/2;
             double target = TURRET_SERVO_REST_POS + magnitude*move;
             turretServo.setPosition(target);
             telemetry.addData(pre+"Turret Status", "Servo "+target);
@@ -121,23 +134,36 @@ public class ClawMap {
     }
 
     public void moveArm(int move) {
+        move = move*armFactor;
+        double theta = armMotor.getCurrentPosition() * (9.0/40);
+        double power = ARM_A + ARM_B*Math.sin(theta);
+        telemetry.addData("Arm Angle", Math.toDegrees(theta));
+        telemetry.addData("Arm Power", power);
         if (move == 0) {
-            armMotor.setPower(0);
+            armMotor.setPower(power);
             telemetry.addData(pre+"Arm Status", "Stopping motor");
             return;
         }
-        armMotor.setPower(ARM_POWER);
-        armMotor.setTargetPosition(armMotor.getCurrentPosition() + ARM_SPEED*move);
+        armMotor.setPower(power);
+        int curPos = armMotor.getCurrentPosition();
+        int target = curPos + ARM_SPEED*move;
+        if (target >= ARM_MAX[lid]) {
+            target = ARM_MAX[lid];
+        } else if (target <= ARM_MIN[lid]) {
+            target = ARM_MIN[lid];
+        }
+        armMotor.setTargetPosition(target);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        telemetry.addData(pre+"Arm Status", "Motor "+armMotor.getCurrentPosition()+"=>"+armMotor.getTargetPosition());
+        telemetry.addData(pre+"Arm Target", "Motor "+armMotor.getCurrentPosition()+"=>"+armMotor.getTargetPosition());
     }
 
     public void moveWrist(int move) {
+        move = move*wristFactor;
         double target = wristServo.getPosition() + WRIST_SPEED*move;
-        if (target < WRIST_MIN) {
-            target = WRIST_MIN;
-        } else if (target > WRIST_MAX) {
-            target = WRIST_MAX;
+        if (target <= WRIST_MIN[lid]) {
+            target = WRIST_MIN[lid];
+        } else if (target >= WRIST_MAX[lid]) {
+            target = WRIST_MAX[lid];
         }
         wristServo.setPosition(target);
         telemetry.addData(pre+"Wrist Status", "Servo "+target);
@@ -145,16 +171,16 @@ public class ClawMap {
 
     public void moveClaw(int move) {
         if (move == 1) {
-            clawServo.setPosition(CLAW_CLOSED_POS);
-            telemetry.addData(pre+"Claw Status", "Closed "+CLAW_CLOSED_POS);
+            clawServo.setPosition(CLAW_CLOSED_POS[lid]);
+            telemetry.addData(pre+"Claw Status", "Closed "+CLAW_CLOSED_POS[lid]);
         } else if (move == 0) {
-            clawServo.setPosition(CLAW_OPENED_POS);
-            telemetry.addData(pre+"Claw Status", "Open "+CLAW_OPENED_POS);
+            clawServo.setPosition(CLAW_OPENED_POS[lid]);
+            telemetry.addData(pre+"Claw Status", "Open "+CLAW_OPENED_POS[lid]);
         } else {
-            if (clawServo.getPosition() == CLAW_OPENED_POS) {
-                telemetry.addData(pre+"Claw Status", "Open "+CLAW_OPENED_POS);
+            if (clawServo.getPosition() == CLAW_OPENED_POS[lid]) {
+                telemetry.addData(pre+"Claw Status", "Open "+CLAW_OPENED_POS[lid]);
             } else {
-                telemetry.addData(pre+"Claw Status", "Closed "+CLAW_CLOSED_POS);
+                telemetry.addData(pre+"Claw Status", "Closed "+CLAW_CLOSED_POS[lid]);
             }
         }
     }
@@ -167,9 +193,9 @@ public class ClawMap {
     }
 
     public void loop() {
-        if (gamepad.right_stick_x > 0) {
+        if (gamepad.right_stick_x > 0.8) {
             moveTurret(1);
-        } else if (gamepad.right_stick_x < 0) {
+        } else if (gamepad.right_stick_x < -0.8) {
             moveTurret(-1);
         } else {
             moveTurret(0);
