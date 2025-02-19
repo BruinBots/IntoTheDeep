@@ -81,8 +81,8 @@ public class ClawMap {
 
 
     // Claw open/closed positions (0-1)
-    public static double[] CLAW_CLOSED_POS = {0.43, 0.43};
-    public static double[] CLAW_OPENED_POS = {0.55, 0.55};
+    public static double[] CLAW_CLOSED_POS = {0.43, 0.65};
+    public static double[] CLAW_OPENED_POS = {0.55, 0.53};
 
     // Reversing controls. Set to -1 per-object to reverse controls.
     public int turretFactor = 1;
