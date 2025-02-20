@@ -71,18 +71,18 @@ public class ClawMap {
 
 
     // Minimum wrist pos (0-1)
-    public static double[] WRIST_MIN = {0.13, 0.13};
+    public static double[] WRIST_MIN = {0.13, 0.22};
 
     // Maximum wrist pos (0-1)
-    public static double[] WRIST_MAX = {0.23, 0.23};
+    public static double[] WRIST_MAX = {0.23, 0.32};
 
     // Step size of the wrist servo
     public static double[] WRIST_SPEED = {0.005, 0.005};
 
 
     // Claw open/closed positions (0-1)
-    public static double[] CLAW_CLOSED_POS = {0.43, 0.65};
-    public static double[] CLAW_OPENED_POS = {0.55, 0.53};
+    public static double[] CLAW_CLOSED_POS = {0.55, 0.65};
+    public static double[] CLAW_OPENED_POS = {0.43, 0.53};
 
     // Reversing controls. Set to -1 per-object to reverse controls.
     public int turretFactor = 1;
@@ -114,7 +114,7 @@ public class ClawMap {
         clawServo = hardwareMap.get(Servo.class, "clawServo"+id);
 
         sbas = new SBA[]{
-                new MotorSBA(armMotor, 0.6, ARM_MIN[lid]),
+                new MotorSBA(armMotor, 0.4, ARM_MIN[lid]),
         };
         runner = new SBARunner();
     }

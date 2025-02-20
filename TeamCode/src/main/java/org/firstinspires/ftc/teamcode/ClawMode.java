@@ -16,8 +16,13 @@ public class ClawMode extends OpMode {
         claw1.turretFactor = -1;
         claw1.wristFactor = -1;
 
+        claw2.turretFactor = -1;
+        claw2.wristFactor = -1;
+
         claw1.init();
         claw2.init();
+        claw1.moveWrist(1);
+        claw2.moveWrist(1);
     }
 
     @Override
