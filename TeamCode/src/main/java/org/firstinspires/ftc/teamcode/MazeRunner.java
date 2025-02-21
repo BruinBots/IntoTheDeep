@@ -20,9 +20,9 @@ public class MazeRunner extends OpMode {
     @Override
     public void loop() {
 
-        drive = gamepad1.left_stick_y - gamepad2.left_stick_y;
-        strafe = gamepad2.left_stick_x - gamepad1.left_stick_x;
-        turn= gamepad1.right_stick_x + gamepad2.right_stick_x;
+        drive = gamepad2.left_stick_y - gamepad1.left_stick_y;
+        strafe = gamepad1.left_stick_x - gamepad2.left_stick_x;
+        turn= gamepad2.right_stick_x + gamepad1.right_stick_x;
 
         if (drive > 1) { drive = 1; }
         if (strafe > 1) { strafe = 1; }
@@ -32,6 +32,6 @@ public class MazeRunner extends OpMode {
         drive = Math.copySign(Math.pow(drive, 2), drive);
         turn = Math.copySign(Math.pow(turn, 2), turn);
 
-        map.moveBotMecanum(drive, turn, strafe,  0.35); // actually move the robot
+        map.moveBotMecanum(drive, turn, strafe,  0.5); // actually move the robot
     }
 }
