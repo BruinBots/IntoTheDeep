@@ -84,6 +84,9 @@ public class ClawMap {
     public static double[] CLAW_CLOSED_POS = {0.55, 0.65};
     public static double[] CLAW_OPENED_POS = {0.43, 0.53};
 
+    // Enable/disable wrist controls
+    public static boolean WRIST_MOVEMENT = false;
+
     // Reversing controls. Set to -1 per-object to reverse controls.
     public int turretFactor = 1;
     public int armFactor = 1;
@@ -206,39 +209,56 @@ public class ClawMap {
     }
 
     public void loop() {
-        if (gamepad.right_stick_x > 0.8) {
+//        if (gamepad.right_stick_x > 0.8) { // move turret right
+//            moveTurret(1);
+//        } else if (gamepad.right_stick_x < -0.8) { // move turret left
+//            moveTurret(-1);
+//        } else {
+//            moveTurret(0);
+//}
+//        if (gamepad.right_stick_y > 0) { // move arm up
+//            moveArm(1);
+//        } else if (gamepad.right_stick_y < 0) { // move arm down
+//            moveArm(-1);
+//        } else {
+//            moveArm(0);
+//        }
+
+        if (gamepad.dpad_right) {
             moveTurret(1);
-        } else if (gamepad.right_stick_x < -0.8) {
+        } else if (gamepad.dpad_left) {
             moveTurret(-1);
         } else {
             moveTurret(0);
         }
 
-        if (gamepad.right_stick_y > 0) {
+        if (gamepad.dpad_down) { // move arm up
             moveArm(1);
-        } else if (gamepad.right_stick_y < 0) {
+        } else if (gamepad.dpad_up) { // move arm down
             moveArm(-1);
         } else {
             moveArm(0);
         }
 
-        if (gamepad.left_stick_y > 0) {
-            moveWrist(1);
-        } else if (gamepad.left_stick_y < 0) {
-            moveWrist(-1);
-        } else {
-            moveWrist(0);
+        if (WRIST_MOVEMENT) {
+            if (gamepad.left_stick_y > 0) { // move wrist up
+                moveWrist(1);
+            } else if (gamepad.left_stick_y < 0) { // move wrist down
+                moveWrist(-1);
+            } else {
+                moveWrist(0);
+            }
         }
 
-        if (gamepad.left_bumper) {
+        if (gamepad.left_bumper || gamepad.left_trigger > 0.5) { // open claw
             moveClaw(1);
-        } else if (gamepad.right_bumper) {
+        } else if (gamepad.right_bumper || gamepad.right_trigger > 0.5) { // close claw
             moveClaw(0);
         } else {
             moveClaw(-1);
         }
 
-        if (gamepad.dpad_up && gamepad.a) {
+        if (gamepad.b && gamepad.a) {
             runner.runSBAs(sbas);
         }
 
