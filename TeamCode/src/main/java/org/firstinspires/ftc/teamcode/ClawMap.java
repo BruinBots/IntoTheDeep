@@ -71,9 +71,11 @@ public class ClawMap {
 
 
     // Minimum wrist pos (0-1)
+    // This is the HIGHEST wrist position
     public static double[] WRIST_MIN = {0.13, 0.22};
 
     // Maximum wrist pos (0-1)
+    // This is the LOWEST wrist position
     public static double[] WRIST_MAX = {0.23, 0.32};
 
     // Step size of the wrist servo
@@ -95,52 +97,81 @@ public class ClawMap {
     public SBA[] sbas;
     public SBARunner runner;
 
+    // Store current wrist position
+    // INCREASING wristPos results in LOWERING the wrist
+    double wristPos;
+
     public ClawMap(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad, String id) {
+        // Initialize variables
         this.telemetry = telemetry;
         this.id = id;
         this.lid = Integer.parseInt(id)-1;
         this.pre = "["+id+"] ";
         this.gamepad = gamepad;
 
+        // Check if we're using a turret servo
         if (isTurretServo) {
+            // If yes, init servo
             turretServo = hardwareMap.get(Servo.class, "turretServo"+id);
         } else {
+            // If not, using a motor for turret, init motor
             turretMotor = hardwareMap.get(DcMotorEx.class, "turretMotor"+id);
             turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
+        // Init arm motor and set it up
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor"+id);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        // Init wrist and claw servos
         wristServo = hardwareMap.get(Servo.class, "wristServo"+id);
         clawServo = hardwareMap.get(Servo.class, "clawServo"+id);
 
+        // Set starting wrist pos
+        wristPos = WRIST_MAX[lid];
+
+        // Set up SBA to instantly jump the arm up to the top pos between matches`
         sbas = new SBA[]{
                 new MotorSBA(armMotor, 0.4, ARM_MIN[lid]),
         };
-        runner = new SBARunner();
+        runner = new SBARunner(); // Setup SBA runner
     }
 
     public void moveTurret(int move) {
-        move = move*turretFactor;
-        if (move == 0) {
-            if (isTurretServo) {
+        /*
+        moveTurret(int move)
+        Moves the turret motor/servo by a factor of move
+        Higher magnitudes of move result in faster motion of the turret servo
+        or larger motion of the turret motor
+         */
+        move = move*turretFactor; // Apply reversals if necessary
+        if (move == 0) { // move == 0 indicates we don't move
+            if (isTurretServo) { // If using a servo (continuous rotation), set it to the resting position
                 turretServo.setPosition(TURRET_SERVO_REST_POS);
                 telemetry.addData(pre+"Turret Status", "Stopping servo");
-            } else {
+            } else { // If using a motor, set it to zero power (brake)
                 turretMotor.setPower(0);
                 telemetry.addData(pre+"Turret Status", "Stopping motor");
             }
             return;
         }
-        if (isTurretServo) {
-            double magnitude = TURRET_SERVO_SPEED[lid]/2;
-            double target = TURRET_SERVO_REST_POS + magnitude*move;
+        // If we're actually moving the turret (move != 0)
+        if (isTurretServo) { // If using servo,
+            /*
+            Continuous rotation servos accept values from 0-1
+            They have a rest position (usually 0.5)
+            Setting the servo to a position above its rest position causes it to rotate one way
+            Setting it to a position below its rest position causes it to rotate the other way
+            The farther the target pos is from the rest pos, the faster the servo will move
+             */
+            double magnitude = TURRET_SERVO_SPEED[lid]/2; // Split magnitude in half
+            double target = TURRET_SERVO_REST_POS + magnitude*move; // Add the split magnitude to the rest position
             turretServo.setPosition(target);
             telemetry.addData(pre+"Turret Status", "Servo "+target);
         }
         else {
+            // If using turret motor, move it in the requested direction
             turretMotor.setPower(TURRET_MOTOR_POWER);
             turretMotor.setVelocity(move*TURRET_MOTOR_SPEED, AngleUnit.DEGREES);
             turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -149,40 +180,63 @@ public class ClawMap {
     }
 
     public void moveArm(int move) {
-        move = move*armFactor;
-        double theta = (double)armMotor.getCurrentPosition() * (Math.PI/800.0);
-        double power = ARM_A + ARM_B*Math.sin(theta);
+        /*
+        moveArm(int move)
+        Moves the arm motor by a factor of move
+         */
+        move = move*armFactor; // Apply appropriate reversals
+        double theta = (double)armMotor.getCurrentPosition() * (Math.PI/800.0); // Calculate arm angle (radians)
+        double power = ARM_A + ARM_B*Math.sin(theta); // Calculate power from angle
+        /*
+                Arm
+                 |
+                 v
+          ____________________________
+         /\                          |
+        /  \                         v
+                                     mg
+
+        When the arm approaches the horizontal position,
+        more of the weight force is converted to torque
+        against the motor. As a result, more motor power
+        is required to hold position.
+         */
         telemetry.addData("Arm Current Pos", armMotor.getCurrentPosition());
         telemetry.addData("Arm Angle", theta);
         telemetry.addData("Arm Power", power);
-        if (move == 0) {
+        if (move == 0) { // Not moving arm, just hold position
             armMotor.setPower(power);
             telemetry.addData(pre+"Arm Status", "Stopping motor");
             return;
         }
+        // If moving arm
         armMotor.setPower(power);
         int curPos = armMotor.getCurrentPosition();
         int target = curPos + ARM_SPEED*move;
+        // Ensure target position is within limits
         if (target >= ARM_MAX[lid]) {
             target = ARM_MAX[lid];
         } else if (target <= ARM_MIN[lid]) {
             target = ARM_MIN[lid];
         }
-        armMotor.setTargetPosition(target);
+        armMotor.setTargetPosition(target); // Set target position
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         telemetry.addData(pre+"Arm Target", "Motor "+armMotor.getCurrentPosition()+"=>"+armMotor.getTargetPosition());
     }
 
     public void moveWrist(int move) {
+        /*
+
+         */
         move = move*wristFactor;
-        double target = wristServo.getPosition() + WRIST_SPEED[lid]*move;
-        if (target <= WRIST_MIN[lid]) {
-            target = WRIST_MIN[lid];
-        } else if (target >= WRIST_MAX[lid]) {
-            target = WRIST_MAX[lid];
+        wristPos = wristPos + WRIST_SPEED[lid]*move;
+        if (wristPos <= WRIST_MIN[lid]) {
+            wristPos = WRIST_MIN[lid];
+        } else if (wristPos >= WRIST_MAX[lid]) {
+            wristPos = WRIST_MAX[lid];
         }
-        wristServo.setPosition(target);
-        telemetry.addData(pre+"Wrist Status", "Servo "+target);
+        wristServo.setPosition(wristPos + Math.random()*0.001);
+        telemetry.addData(pre+"Wrist Status", "Servo "+wristPos);
     }
 
     public void moveClaw(int move) {
@@ -209,21 +263,6 @@ public class ClawMap {
     }
 
     public void loop() {
-//        if (gamepad.right_stick_x > 0.8) { // move turret right
-//            moveTurret(1);
-//        } else if (gamepad.right_stick_x < -0.8) { // move turret left
-//            moveTurret(-1);
-//        } else {
-//            moveTurret(0);
-//}
-//        if (gamepad.right_stick_y > 0) { // move arm up
-//            moveArm(1);
-//        } else if (gamepad.right_stick_y < 0) { // move arm down
-//            moveArm(-1);
-//        } else {
-//            moveArm(0);
-//        }
-
         if (gamepad.dpad_right) {
             moveTurret(1);
         } else if (gamepad.dpad_left) {
@@ -245,10 +284,9 @@ public class ClawMap {
                 moveWrist(1);
             } else if (gamepad.left_stick_y < 0) { // move wrist down
                 moveWrist(-1);
-            } else {
-                moveWrist(0);
             }
         }
+        moveWrist(0);
 
         if (gamepad.left_bumper || gamepad.left_trigger > 0.5) { // open claw
             moveClaw(1);

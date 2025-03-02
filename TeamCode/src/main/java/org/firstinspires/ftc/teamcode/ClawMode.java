@@ -21,8 +21,8 @@ public class ClawMode extends OpMode {
 
         claw1.init();
         claw2.init();
-        claw1.moveWrist(1);
-        claw2.moveWrist(1);
+        claw1.moveWrist(999);
+        claw2.moveWrist(999);
     }
 
     @Override
